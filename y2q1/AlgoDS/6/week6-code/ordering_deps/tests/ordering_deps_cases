@@ -1,0 +1,10 @@
+[(A, B), (B, C), (C, D)] ===> [A, B, C, D]
+[(A, B), (B, C), (C, A)] ===> CYCLE
+[(A, B), (B, C), (C, E), (A, D), (D, C)] ===> [A, B, D, C, E] OR [A, D, B, C, E]
+[(A, B), (B, C), (C, E), (A, D), (D, C), (C, E), (E, F), (F, C)] ===> CYCLE
+[(A, B), (B, C), (C, E), (A, D), (D, C), (C, E), (C, F), (E, F), (F, E)] ===> CYCLE
+[(A, B), (B, C), (A, C), (D, E), (E, F), (F, D)] ===> CYCLE
+[(A, B), (B, C), (C, A), (D, E), (E, F), (D, F)] ===> CYCLE
+[(A, B), (B, C), (A, C), (D, E), (E, F), (D, F)] ===> [A, B, C, D, E, F] OR [D, E, F, A, B, C]
+[(A, B), (C, D), (D, E)] ===> [A, B, C, D, E] OR [C, D, E, A, B]
+[(A, B), (A, C)] ===> [A, B, C] OR [A, C, B]

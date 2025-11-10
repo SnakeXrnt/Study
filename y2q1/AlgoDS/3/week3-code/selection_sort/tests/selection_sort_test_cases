@@ -1,0 +1,4 @@
+../data/very_short.txt very_short_sorted.txt
+../data/short.txt short_sorted.txt
+../data/longer.txt longer_sorted.txt
+../data/very_long.txt very_long_sorted.txt

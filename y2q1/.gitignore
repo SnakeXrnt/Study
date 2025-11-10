@@ -1,0 +1,9 @@
+**/build/
+.DS_Store
+compile_commands.json
+**/.cache/
+**/.venv/
+**/pyenv/
+project/tradingbot/pyenv/
+.env
+

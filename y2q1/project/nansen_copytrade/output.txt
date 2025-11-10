@@ -1,0 +1,53 @@
+[boot] run_copytrade starting
+[env] API key present: True
+[cfg] chain=ethereum token=0x6982508145454ce325ddbe47a25d4ec3d2311933
+[step] Flow 7d...
+[debug] flow_week keys: ['public_figure_net_flow_usd', 'public_figure_avg_flow_usd', 'public_figure_wallet_count', 'top_pnl_net_flow_usd', 'top_pnl_avg_flow_usd', 'top_pnl_wallet_count', 'whale_net_flow_usd', 'whale_avg_flow_usd', 'whale_wallet_count', 'smart_trader_net_flow_usd', 'smart_trader_avg_flow_usd', 'smart_trader_wallet_count', 'exchange_net_flow_usd', 'exchange_avg_flow_usd', 'exchange_wallet_count', 'fresh_wallets_net_flow_usd', 'fresh_wallets_avg_flow_usd', 'fresh_wallets_wallet_count']
+[debug] flow_week sample: {
+  "public_figure_net_flow_usd": -180868.01893469674,
+  "public_figure_avg_flow_usd": 31320.563533456385,
+  "public_figure_wallet_count": 3,
+  "top_pnl_net_flow_usd": -16104174.198209915,
+  "top_pnl_avg_flow_usd": 14902389.622656975,
+  "top_pnl_wallet_count": 49,
+  "whale_net_flow_usd": -7506506.4722867105,
+  "whale_avg_flow_usd": 7435975.630332304,
+  "whale_wallet_count": 9,
+  "smart_trader_net_flow_usd": -5382730.714174784,
+  "smart_trader_avg_flow_usd": 6346622.039287314,
+  "smart_trader_wallet_count": 2,
+  "exchange_net_flow_usd": 15688571.487623762,
+  "exchange_avg_flow_usd": 8473333.349
+[out] 7d smart/whale/public flows: -5382730.714174784 -7506506.4722867105 -180868.01893469674
+[step] PnL leaderboard 3m...
+[debug] leaderboard keys: ['data', 'pagination']
+[debug] leaderboard rows: 50
+[debug] first row: {
+  "trader_address": "0x25cd302e37a69d70a6ef645daea5a7de38c66e2a",
+  "trader_address_label": "Former Smart Trader [0x25cd30]",
+  "price_usd": 1.5487338676808436e-05,
+  "pnl_usd_realised": 15637825.86266651,
+  "pnl_usd_unrealised": 0.0,
+  "holding_amount": 0.0,
+  "holding_usd": 0.0,
+  "max_balance_held": 970412091914.8915,
+  "max_balance_held_usd": 15029100.723556083,
+  "still_holding_balance_ratio": 0.0,
+  "netflow_amount_usd": -15638407.530347852,
+  "netflow_amount": -970412091914.8915,
+  "roi_percent_total": 26884.467479359697,
+  "roi_percent_realised": 26884.467479359697,
+  "roi_percent_unrealised": null,
+  "pnl_usd_total": 15637825.86266651,
+  "nof_trades": 33
+}
+[out] copy candidates: 0
+[step] Vet candidates with PnL summary...
+[out] vetted wallets: 0
+[step] Smart money DEX trades...
+[out] dex trades returned: 0
+[step] Smart-money holders...
+[out] holders returned: 0
+[step] Flow 1h...
+[out] 1h smart/whale/public flows: None -516.7068052827148 0.0
+[done] run_copytrade completed

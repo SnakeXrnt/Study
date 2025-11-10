@@ -1,0 +1,7 @@
+[] ===> []
+[apple] ===> [apple]
+[apple -> banana] ===> [banana -> apple]
+[apple -> banana -> cherry] ===> [cherry -> banana -> apple]
+[apple -> banana -> cherry -> date] ===> [date -> cherry -> banana -> apple]
+[apple -> banana -> cherry -> date -> fig] ===> [fig -> date -> cherry -> banana -> apple]
+[apple -> banana -> cherry -> date -> fig -> grape] ===> [grape -> fig -> date -> cherry -> banana -> apple]

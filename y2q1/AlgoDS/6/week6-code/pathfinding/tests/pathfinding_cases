@@ -1,0 +1,10 @@
+[(A,B),(B,C),(C,D),(C,E),(A,F)] A E ===> [(A, B), (B, C), (C, E)]
+[(A,B),(B,C),(C,D),(C,E),(A,F)] A D ===> [(A, B), (B, C), (C, D)]
+[(A,B),(B,C),(C,D),(C,E),(A,F)] A F ===> [(A, F)]
+[(A,B),(B,C),(C,D),(B,D),(E,F)] A B ===> [(A, B)]
+[(A,B),(B,C),(C,D),(B,D),(E,F)] A C ===> [(A, B), (B, C)] OR [(A, B), (D, C)]
+[(A,B),(B,C),(C,D),(B,D),(E,F)] A E ===> []
+[(A,B),(B,C),(C,D),(B,D),(E,F)] A F ===> []
+[(A,B),(B,C),(A,D),(D,E),(F,G)] A E ===> [(A, D), (D, E)]
+[(A,B),(B,C),(A,D),(D,E),(F,G)] A C ===> [(A, B ), (B, C)]
+

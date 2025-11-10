@@ -1,0 +1,6 @@
+5 [watermelon] ===> [EMPTY, watermelon, EMPTY, EMPTY, EMPTY]
+5 [watermelon, kiwi] ===> [EMPTY, watermelon, EMPTY, EMPTY, kiwi]
+7 [apple, banana, cherry, date, elderberry] ===> [banana, apple, cherry, date, EMPTY, elderberry, EMPTY]
+11 [apple, banana, cherry, date, elderberry] ===> [date, elderberry, EMPTY, cherry, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, apple, banana]
+4 [apple, apple, banana, cherry, date] ===> [apple, cherry, date, banana]
+7 [apple, banana, cherry, date, banana, cherry, date] ===> [banana, apple, cherry, date, EMPTY, EMPTY, EMPTY]

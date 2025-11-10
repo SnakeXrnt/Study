@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Week 1</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+/* From extension searKing.preview-vscode */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.preview-vscode-error {
+	color: var(--vscode-editorError-foreground);
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="week-1" tabindex="-1" id="week-1">Week 1</h1>
+<h2 id="assignment-01---maintaining-a-sorted-array" tabindex="-1" id="assignment-01---maintaining-a-sorted-array">Assignment 01 - Maintaining a sorted array</h2>
+<p>My code:</p>
+<script type="module" src="https://unpkg.com/@github/clipboard-copy-element@latest"></script>
+<style>
+    .ClipboardButton {
+        position: relative;
+    }
+
+    clipboard-copy {
+        /* padding: 0.4em 0.6em; */
+        font: 0.9rem system-ui, sans-serif;
+        display: inline-block;
+        cursor: default;
+        color: var(--vscode-button-foreground);
+        background-color: var(--vscode-button-border);
+        border-color: var(--vscode-textCodeBlock-background);
+        border-radius: 6px;
+        border: 1px solid var(--vscode-widget-border);
+        box-shadow: inset 0 -1px 0 var(--vscode-widget-shadow);
+        transition: 80ms cubic-bezier(0.33, 1, 0.68, 1);
+        transition-property: color,background-color,box-shadow,border-color;
+    }
+
+    clipboard-copy:hover {
+        background-color: var(--vscode-statusBarItem-hoverBackground);
+    }
+
+    clipboard-copy:active {
+        outline: 1px solid var(--vscode-contrastActiveBorder) !important;
+        outline-offset: -1px;
+    }
+
+    clipboard-copy:focus-visible {
+        outline: 1px solid var(--vscode-focusBorder);
+    }
+
+    .d-none {
+        display: none !important;
+    }
+
+    .position-relative {
+        position: relative !important;
+    }
+
+    .position-absolute {
+        position: absolute !important;
+    }
+
+    .right-0 {
+        right: 0 !important;
+    }
+
+    .top-0 {
+        top: 0 !important;
+    }
+
+    .m-2 {
+        margin: var(--base-size-8, 8px) !important;
+    }
+
+    .color-fg-success {
+        color: #3fb950 !important;
+        stroke: #3fb950 !important;
+        border-color: #3fb950 !important;
+    }
+</style>
+<script>
+    document.addEventListener('clipboard-copy', function (event) {
+        const notice_clipboard_copy = event.target;
+        console.log(`notice_clipboard_copy = ${notice_clipboard_copy}`)
+        const notice_copy = event.target.querySelector('.clipboard-copy-icon');
+        const notice_check = event.target.querySelector('.clipboard-check-icon');
+        notice_clipboard_copy.classList.add("color-fg-success");
+        notice_copy.classList.add("d-none");
+        notice_check.classList.remove("d-none");
+        setTimeout(function () {
+            notice_clipboard_copy.classList.remove("color-fg-success");
+            notice_copy.classList.remove("d-none");
+            notice_check.classList.add("d-none");
+        }, 1000)
+    })
+</script><div class="snippet-clipboard-content notranslate position-relative overflow-auto">
+              <pre><code class="hljs language-cpp"><span class="hljs-comment">// fancy algorithm here</span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;vector&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;utils.h&quot;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;string&gt;</span></span>
+
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">binary_search</span><span class="hljs-params">(<span class="hljs-type">const</span> std::vector&lt;<span class="hljs-type">int</span>&gt;&amp; vec, <span class="hljs-type">int</span> value)</span> </span>{
+    <span class="hljs-type">int</span> left = <span class="hljs-number">0</span>;
+    <span class="hljs-type">int</span> right = vec.<span class="hljs-built_in">size</span>();
+
+    <span class="hljs-keyword">while</span> (left &lt; right) {
+        <span class="hljs-type">int</span> mid = left + (right - left) / <span class="hljs-number">2</span>;
+        <span class="hljs-keyword">if</span> (vec[mid] &lt; value) {
+            left = mid + <span class="hljs-number">1</span>;
+        } <span class="hljs-keyword">else</span> {
+            right = mid;
+        }
+    }
+    <span class="hljs-keyword">return</span> left;
+}
+
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>{
+    <span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> write a program that receives three arguments (through stdin):</span>
+    <span class="hljs-comment">// a vector of integers, followed by a command (&quot;insert&quot;, &quot;remove&quot; or &quot;contains&quot;) and an integer</span>
+    <span class="hljs-comment">// </span>
+
+    <span class="hljs-comment">// The output of the program must:</span>
+    <span class="hljs-comment">//  if command is &quot;insert&quot; or &quot;remove&quot;: the modified vector after applying the command</span>
+    <span class="hljs-comment">//  if command is &quot;contains&quot;: &quot;true&quot; (or &quot;false&quot;) if the vector contains the element (or not)</span>
+    <span class="hljs-comment">//</span>
+    <span class="hljs-comment">// See the utils.h file for writing / reading vectors</span>
+    std::vector&lt;<span class="hljs-type">int</span>&gt; vec;
+    std::string operation;
+    <span class="hljs-type">int</span> number;
+
+    std::cout &lt;&lt; <span class="hljs-string">&quot;what do you want ([1, 2, 3, 4, 5] insert 6) : &quot;</span>;
+    std::cin &gt;&gt; vec &gt;&gt; operation &gt;&gt; number;
+
+    std::cout &lt;&lt; <span class="hljs-string">&quot;you have give me &quot;</span> &lt;&lt; vec &lt;&lt; operation &lt;&lt; number &lt;&lt; std::endl;
+
+    <span class="hljs-keyword">if</span> (operation == <span class="hljs-string">&quot;insert&quot;</span>) {
+        <span class="hljs-type">int</span> pos = <span class="hljs-built_in">binary_search</span>(vec, number); <span class="hljs-comment">// O(log_n)</span>
+        vec.<span class="hljs-built_in">insert</span>(vec.<span class="hljs-built_in">begin</span>() + pos, number); <span class="hljs-comment">// O(n)</span>
+        std::cout &lt;&lt; <span class="hljs-string">&quot;After insert: &quot;</span> &lt;&lt; vec &lt;&lt; std::endl; <span class="hljs-comment">// O(log_n) + O(n) = O(log_n+n)</span>
+    } 
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (operation == <span class="hljs-string">&quot;remove&quot;</span>) {
+        <span class="hljs-type">int</span> pos = <span class="hljs-built_in">binary_search</span>(vec, number);
+        <span class="hljs-keyword">if</span> (pos &lt; vec.<span class="hljs-built_in">size</span>() &amp;&amp; vec[pos] == number) {
+            vec.<span class="hljs-built_in">erase</span>(vec.<span class="hljs-built_in">begin</span>() + pos);        
+        }
+        std::cout &lt;&lt; <span class="hljs-string">&quot;After remove: &quot;</span> &lt;&lt; vec &lt;&lt; std::endl;
+    } 
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (operation == <span class="hljs-string">&quot;contains&quot;</span>) {
+        <span class="hljs-type">int</span> pos = <span class="hljs-built_in">binary_search</span>(vec, number);
+        <span class="hljs-type">bool</span> found = pos &lt; vec.<span class="hljs-built_in">size</span>() &amp;&amp; vec[pos] == number;
+        std::cout &lt;&lt; (found ? <span class="hljs-string">&quot;Yes&quot;</span> : <span class="hljs-string">&quot;No&quot;</span>) &lt;&lt; std::endl;
+    } 
+    <span class="hljs-keyword">else</span> {
+        std::cout &lt;&lt; <span class="hljs-string">&quot;Unknown operation.&quot;</span> &lt;&lt; std::endl;
+    }
+}
+
+</code></pre>
+
+              <div class="zeroclipboard-container position-absolute right-0 top-0">
+                <clipboard-copy aria-label="Copy" class="ClipboardButton clipboard-copy m-2 p-0 tooltipped-no-delay"
+                  value="// fancy algorithm here
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &quot;utils.h&quot;
+#include &lt;string&gt;
+
+
+int binary_search(const std::vector&lt;int&gt;&amp; vec, int value) {
+    int left = 0;
+    int right = vec.size();
+
+    while (left &lt; right) {
+        int mid = left + (right - left) / 2;
+        if (vec[mid] &lt; value) {
+            left = mid + 1;
+        } else {
+            right = mid;
+        }
+    }
+    return left;
+}
+
+
+int main() {
+    // TODO: write a program that receives three arguments (through stdin):
+    // a vector of integers, followed by a command (&quot;insert&quot;, &quot;remove&quot; or &quot;contains&quot;) and an integer
+    // 
+
+    // The output of the program must:
+    //  if command is &quot;insert&quot; or &quot;remove&quot;: the modified vector after applying the command
+    //  if command is &quot;contains&quot;: &quot;true&quot; (or &quot;false&quot;) if the vector contains the element (or not)
+    //
+    // See the utils.h file for writing / reading vectors
+    std::vector&lt;int&gt; vec;
+    std::string operation;
+    int number;
+
+    std::cout &lt;&lt; &quot;what do you want ([1, 2, 3, 4, 5] insert 6) : &quot;;
+    std::cin &gt;&gt; vec &gt;&gt; operation &gt;&gt; number;
+
+    std::cout &lt;&lt; &quot;you have give me &quot; &lt;&lt; vec &lt;&lt; operation &lt;&lt; number &lt;&lt; std::endl;
+
+    if (operation == &quot;insert&quot;) {
+        int pos = binary_search(vec, number); // O(log_n)
+        vec.insert(vec.begin() + pos, number); // O(n)
+        std::cout &lt;&lt; &quot;After insert: &quot; &lt;&lt; vec &lt;&lt; std::endl; // O(log_n) + O(n) = O(log_n+n)
+    } 
+    else if (operation == &quot;remove&quot;) {
+        int pos = binary_search(vec, number);
+        if (pos &lt; vec.size() &amp;&amp; vec[pos] == number) {
+            vec.erase(vec.begin() + pos);        
+        }
+        std::cout &lt;&lt; &quot;After remove: &quot; &lt;&lt; vec &lt;&lt; std::endl;
+    } 
+    else if (operation == &quot;contains&quot;) {
+        int pos = binary_search(vec, number);
+        bool found = pos &lt; vec.size() &amp;&amp; vec[pos] == number;
+        std::cout &lt;&lt; (found ? &quot;Yes&quot; : &quot;No&quot;) &lt;&lt; std::endl;
+    } 
+    else {
+        std::cout &lt;&lt; &quot;Unknown operation.&quot; &lt;&lt; std::endl;
+    }
+}" tabindex="0" role="button">
+                  <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true"
+                    class="octicon octicon-copy clipboard-copy-icon m-2">
+                    <path
+                      d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z">
+                    </path>
+                    <path
+                      d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z">
+                    </path>
+                  </svg>
+                  <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true"
+                    class="octicon octicon-check clipboard-check-icon color-fg-success d-none m-2">
+                    <path
+                      d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z">
+                    </path>
+                  </svg>
+                </clipboard-copy>
+              </div>
+            </div><p>Time complexity: this algorithm has a time complexity of (0 (log n)) because ......</p>
+<h2 id="assignment-02---first-occurence" tabindex="-1" id="assignment-02---first-occurence">Assignment 02 - first occurence</h2>
+<p>My code:</p>
+<div class="snippet-clipboard-content notranslate position-relative overflow-auto">
+              <pre><code class="hljs language-cpp"><span class="hljs-comment">// fancy algorithm here</span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;vector&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;utils.h&quot;</span></span>
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>{
+    <span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> write a program that receives two arguments over stdin, separated by spaces:</span>
+    <span class="hljs-comment">// a vector of integers, followed by an integer to search for</span>
+    <span class="hljs-comment">//</span>
+    <span class="hljs-comment">// The program MUST use binary search to find the first occurrence of the integer</span>
+    <span class="hljs-comment">// and return its index. If the integer is not found, it should return the index</span>
+    <span class="hljs-comment">// at which the value should be inserted to maintain sorted order.</span>
+
+    <span class="hljs-comment">// See the utils.h file for writing / reading vectors</span>
+    std::vector&lt;<span class="hljs-type">int</span>&gt; vec;
+    <span class="hljs-type">int</span> value;
+
+    std::cout &lt;&lt; <span class="hljs-string">&quot;gimme the vector and the integer seperated with space ~~ &quot;</span> &lt;&lt; std::endl;
+    std::cin &gt;&gt; vec &gt;&gt; value;
+
+    <span class="hljs-type">int</span> left = <span class="hljs-number">0</span>;
+    <span class="hljs-type">int</span> right = vec.<span class="hljs-built_in">size</span>();
+
+    <span class="hljs-keyword">while</span> (left &lt; right) {
+        <span class="hljs-type">int</span> mid = left + (right - left) / <span class="hljs-number">2</span>;
+        <span class="hljs-keyword">if</span> (vec[mid] &lt; value) {
+            left = mid + <span class="hljs-number">1</span>;
+        } <span class="hljs-keyword">else</span> {
+            right = mid;
+        }
+    }
+
+    <span class="hljs-keyword">if</span> (vec[left] == value) {
+        std::cout &lt;&lt; <span class="hljs-string">&quot;found!&quot;</span> &lt;&lt; std::endl;
+    } <span class="hljs-keyword">else</span> {
+        std::cout &lt;&lt; <span class="hljs-string">&quot;not found&quot;</span> &lt;&lt; std::endl;
+    }
+    
+    std::cout &lt;&lt; left &lt;&lt; std::endl;
+
+}
+
+</code></pre>
+
+              <div class="zeroclipboard-container position-absolute right-0 top-0">
+                <clipboard-copy aria-label="Copy" class="ClipboardButton clipboard-copy m-2 p-0 tooltipped-no-delay"
+                  value="// fancy algorithm here
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &quot;utils.h&quot;
+
+int main() {
+    // TODO: write a program that receives two arguments over stdin, separated by spaces:
+    // a vector of integers, followed by an integer to search for
+    //
+    // The program MUST use binary search to find the first occurrence of the integer
+    // and return its index. If the integer is not found, it should return the index
+    // at which the value should be inserted to maintain sorted order.
+
+    // See the utils.h file for writing / reading vectors
+    std::vector&lt;int&gt; vec;
+    int value;
+
+    std::cout &lt;&lt; &quot;gimme the vector and the integer seperated with space ~~ &quot; &lt;&lt; std::endl;
+    std::cin &gt;&gt; vec &gt;&gt; value;
+
+    int left = 0;
+    int right = vec.size();
+
+    while (left &lt; right) {
+        int mid = left + (right - left) / 2;
+        if (vec[mid] &lt; value) {
+            left = mid + 1;
+        } else {
+            right = mid;
+        }
+    }
+
+    if (vec[left] == value) {
+        std::cout &lt;&lt; &quot;found!&quot; &lt;&lt; std::endl;
+    } else {
+        std::cout &lt;&lt; &quot;not found&quot; &lt;&lt; std::endl;
+    }
+    
+    std::cout &lt;&lt; left &lt;&lt; std::endl;
+
+}" tabindex="0" role="button">
+                  <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true"
+                    class="octicon octicon-copy clipboard-copy-icon m-2">
+                    <path
+                      d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z">
+                    </path>
+                    <path
+                      d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z">
+                    </path>
+                  </svg>
+                  <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true"
+                    class="octicon octicon-check clipboard-check-icon color-fg-success d-none m-2">
+                    <path
+                      d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z">
+                    </path>
+                  </svg>
+                </clipboard-copy>
+              </div>
+            </div><p>Time complexity: this algorithm has a time complexity of (0(Log n)) because ......</p>
+<h2 id="assignment-03---partition-array" tabindex="-1" id="assignment-03---partition-array">Assignment 03 - partition array</h2>
+<p>My code:</p>
+<div class="snippet-clipboard-content notranslate position-relative overflow-auto">
+              <pre><code class="hljs language-cpp"><span class="hljs-comment">// fancy algorithm here</span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;vector&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;utils.h&quot;</span></span>
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>{
+    <span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> write a program that receives three arguments over stdin, separated by spaces:</span>
+    <span class="hljs-comment">// a vector of integers, followed by the word &quot;move&quot; and an integer</span>
+    <span class="hljs-comment">// The program must partition the array so that all occurences of the integer</span>
+    <span class="hljs-comment">// are placed at the end of the array.</span>
+    <span class="hljs-comment">// Use the two-pointer technique and element swapping for this</span>
+    <span class="hljs-comment">// See the utils.h file for writing / reading vectors</span>
+
+    std::vector&lt;<span class="hljs-type">int</span>&gt; arr;
+    <span class="hljs-type">int</span> value;
+
+    std::cout &lt;&lt; <span class="hljs-string">&quot;Enter array and value to move to end (e.g. [3, 1, 2, 3, 4, 3, 5] 3): &quot;</span>;
+    std::cin &gt;&gt; arr &gt;&gt; value;
+<span class="hljs-comment">// [3, 1, 2, 3, 4, 3, 5, 6] 6</span>
+    <span class="hljs-type">int</span> pos = <span class="hljs-number">0</span>; <span class="hljs-comment">// placement pointer</span>
+    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; arr.<span class="hljs-built_in">size</span>(); i++) {
+        <span class="hljs-keyword">if</span> (arr[i] != value) {
+            std::cout &lt;&lt; <span class="hljs-string">&quot;swapping i&quot;</span> &lt;&lt; arr[i] &lt;&lt; <span class="hljs-string">&quot;with&quot;</span> &lt;&lt; arr[pos] &lt;&lt; std::endl;
+            <span class="hljs-keyword">if</span> (i != pos) std::<span class="hljs-built_in">swap</span>(arr[i], arr[pos]);
+            pos++;
+        }
+    }
+
+    std::cout &lt;&lt; arr &lt;&lt; std::endl;
+
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+
+</code></pre>
+
+              <div class="zeroclipboard-container position-absolute right-0 top-0">
+                <clipboard-copy aria-label="Copy" class="ClipboardButton clipboard-copy m-2 p-0 tooltipped-no-delay"
+                  value="// fancy algorithm here
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &quot;utils.h&quot;
+
+int main() {
+    // TODO: write a program that receives three arguments over stdin, separated by spaces:
+    // a vector of integers, followed by the word &quot;move&quot; and an integer
+    // The program must partition the array so that all occurences of the integer
+    // are placed at the end of the array.
+    // Use the two-pointer technique and element swapping for this
+    // See the utils.h file for writing / reading vectors
+
+    std::vector&lt;int&gt; arr;
+    int value;
+
+    std::cout &lt;&lt; &quot;Enter array and value to move to end (e.g. [3, 1, 2, 3, 4, 3, 5] 3): &quot;;
+    std::cin &gt;&gt; arr &gt;&gt; value;
+// [3, 1, 2, 3, 4, 3, 5, 6] 6
+    int pos = 0; // placement pointer
+    for (int i = 0; i &lt; arr.size(); i++) {
+        if (arr[i] != value) {
+            std::cout &lt;&lt; &quot;swapping i&quot; &lt;&lt; arr[i] &lt;&lt; &quot;with&quot; &lt;&lt; arr[pos] &lt;&lt; std::endl;
+            if (i != pos) std::swap(arr[i], arr[pos]);
+            pos++;
+        }
+    }
+
+    std::cout &lt;&lt; arr &lt;&lt; std::endl;
+
+    return 0;
+}" tabindex="0" role="button">
+                  <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true"
+                    class="octicon octicon-copy clipboard-copy-icon m-2">
+                    <path
+                      d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z">
+                    </path>
+                    <path
+                      d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z">
+                    </path>
+                  </svg>
+                  <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true"
+                    class="octicon octicon-check clipboard-check-icon color-fg-success d-none m-2">
+                    <path
+                      d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z">
+                    </path>
+                  </svg>
+                </clipboard-copy>
+              </div>
+            </div><p>Time complexity: this algorithm has a time complexity of 0(n) because .......</p>
+
+            
+            
+        </body>
+        </html>
