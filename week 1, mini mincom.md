@@ -1,4 +1,9 @@
-﻿
+this is the basic implementation of me overdoing the assignment
+
+i bascially want it to be like minicom, but i dont have time to implement some more cool stuff (like ctrl-A Z), etc
+
+```c#
+
 using System;
 using System.IO.Ports;
 
@@ -81,3 +86,4 @@ class Program {
     } 
 
 }
+```
