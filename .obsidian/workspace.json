@@ -1,0 +1,204 @@
+{
+  "main": {
+    "id": "d32b2100e69bd2bc",
+    "type": "split",
+    "children": [
+      {
+        "id": "7f5f797950efc8ee",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "9e7e05262dd9f25d",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "y2q2/AdvancedProgrammingConcepts/week1/assignment_01/README.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "README"
+            }
+          },
+          {
+            "id": "40cb7cd3b48e3e55",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "y2q2/ComputerArchitectureAndSynthesis/week1/notes/Quartus Prime Lite 20.1.1 on Arch Linux (Hyprland).md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Quartus Prime Lite 20.1.1 on Arch Linux (Hyprland)"
+            }
+          }
+        ],
+        "currentTab": 1
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "558e63655b78c523",
+    "type": "split",
+    "children": [
+      {
+        "id": "f36440ac3f835f5f",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "7ed8af9d8bf1e4a5",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "4531926021e059db",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "75e11ea6c53c6fdd",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "9a924eda02133d91",
+    "type": "split",
+    "children": [
+      {
+        "id": "8111d7e44afc45ac",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "de25b7f446ab7654",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "y2q2/AdvancedProgrammingConcepts/week1/assignment_01/README.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for README"
+            }
+          },
+          {
+            "id": "efa663012b779c0f",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "y2q2/AdvancedProgrammingConcepts/week1/assignment_01/README.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from README"
+            }
+          },
+          {
+            "id": "7f07868505c7a02e",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "9d6a19948ead1edf",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "y2q2/AdvancedProgrammingConcepts/week1/assignment_01/README.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of README"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "40cb7cd3b48e3e55",
+  "lastOpenFiles": [
+    "y2q2/ComputerArchitectureAndSynthesis/week1/quartus1/output_files/week1.cdf",
+    "y2q2/ComputerArchitectureAndSynthesis/week1/quartus1/db/week1.flow.rpt.tmp",
+    "y2q2/ComputerArchitectureAndSynthesis/week1/quartus1/db/week1.eda.rpt.tmp",
+    "y2q2/ComputerArchitectureAndSynthesis/week1/quartus1/db/week1.cmp.rdb.wrk",
+    "y2q2/ComputerArchitectureAndSynthesis/week1/quartus1/db/week1.sta.rpt.tmp",
+    "y2q2/ComputerArchitectureAndSynthesis/week1/quartus1/db/week1.sta.rdb.wrk",
+    "y2q2/ComputerArchitectureAndSynthesis/week1/quartus1/db/week1.zippleback_io_sim_cache.ff_0c_fast.hsd.wrk",
+    "y2q2/ComputerArchitectureAndSynthesis/week1/quartus1/db/week1.zippleback_io_sim_cache.ii_0c_slow.hsd.wrk",
+    "y2q2/ComputerArchitectureAndSynthesis/week1/quartus1/db/week1.zippleback_io_sim_cache.ii_85c_slow.hsd.wrk",
+    "y2q2/ComputerArchitectureAndSynthesis/week1/quartus1/db/week1.tiscmp.fastest_slow_1200mv_0c.ddb",
+    "y2q2/ComputerArchitectureAndSynthesis/week1/quartus1/db/week1.tiscmp.fastest_slow_1200mv_0c.ddb.wrk",
+    "y2q2/AdvancedProgrammingConcepts/week1/assignment_01/README.md",
+    "y2q2/ComputerArchitectureAndSynthesis/week1/notes/Quartus Prime Lite 20.1.1 on Arch Linux (Hyprland).md",
+    "y2q2/AdvancedProgrammingConcepts/week1/assignment_01/img/UniquePtr.png"
+  ]
+}

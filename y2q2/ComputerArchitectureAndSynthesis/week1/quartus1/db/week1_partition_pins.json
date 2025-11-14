@@ -1,0 +1,49 @@
+{
+	"partitions" : [
+		{
+			"name" : "Top",
+			"pins" : [
+				{
+					"name" : "SUM[0]",
+					"strict" : false
+				},
+				{
+					"name" : "SUM[1]",
+					"strict" : false
+				},
+				{
+					"name" : "SUM[2]",
+					"strict" : false
+				},
+				{
+					"name" : "SUM[3]",
+					"strict" : false
+				},
+				{
+					"name" : "A[0]",
+					"strict" : false
+				},
+				{
+					"name" : "B[0]",
+					"strict" : false
+				},
+				{
+					"name" : "A[1]",
+					"strict" : false
+				},
+				{
+					"name" : "B[1]",
+					"strict" : false
+				},
+				{
+					"name" : "A[2]",
+					"strict" : false
+				},
+				{
+					"name" : "B[2]",
+					"strict" : false
+				}
+			]
+		}
+	]
+}
