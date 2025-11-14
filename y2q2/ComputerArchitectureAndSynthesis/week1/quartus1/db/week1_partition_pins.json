@@ -4,43 +4,31 @@
 			"name" : "Top",
 			"pins" : [
 				{
-					"name" : "SUM[0]",
+					"name" : "y",
 					"strict" : false
 				},
 				{
-					"name" : "SUM[1]",
+					"name" : "d[2]",
 					"strict" : false
 				},
 				{
-					"name" : "SUM[2]",
+					"name" : "s[1]",
 					"strict" : false
 				},
 				{
-					"name" : "SUM[3]",
+					"name" : "d[1]",
 					"strict" : false
 				},
 				{
-					"name" : "A[0]",
+					"name" : "s[0]",
 					"strict" : false
 				},
 				{
-					"name" : "B[0]",
+					"name" : "d[0]",
 					"strict" : false
 				},
 				{
-					"name" : "A[1]",
-					"strict" : false
-				},
-				{
-					"name" : "B[1]",
-					"strict" : false
-				},
-				{
-					"name" : "A[2]",
-					"strict" : false
-				},
-				{
-					"name" : "B[2]",
+					"name" : "d[3]",
 					"strict" : false
 				}
 			]

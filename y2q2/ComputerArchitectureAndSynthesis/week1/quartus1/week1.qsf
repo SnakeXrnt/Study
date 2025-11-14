@@ -39,7 +39,7 @@
 
 set_global_assignment -name FAMILY "MAX 10"
 set_global_assignment -name DEVICE 10M50DAF484C7G
-set_global_assignment -name TOP_LEVEL_ENTITY week1a2
+set_global_assignment -name TOP_LEVEL_ENTITY multiplexer4_1
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 20.1.1
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "14:44:49  NOVEMBER 13, 2025"
 set_global_assignment -name LAST_QUARTUS_VERSION "20.1.1 Lite Edition"
@@ -57,17 +57,21 @@ set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_
 set_global_assignment -name VHDL_FILE week1.vhd
 set_global_assignment -name VECTOR_WAVEFORM_FILE output_files/Waveform.vwf
 set_global_assignment -name VHDL_FILE week1a2.vhd
-set_location_assignment PIN_C10 -to A[0]
-set_location_assignment PIN_C11 -to A[1]
-set_location_assignment PIN_D12 -to A[2]
-set_location_assignment PIN_C12 -to B[0]
-set_location_assignment PIN_A12 -to B[1]
-set_location_assignment PIN_B12 -to B[2]
-set_location_assignment PIN_A8 -to SUM[0]
-set_location_assignment PIN_A9 -to SUM[1]
-set_location_assignment PIN_A10 -to SUM[2]
-set_location_assignment PIN_B10 -to SUM[3]
+set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
+set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
+set_global_assignment -name VHDL_INPUT_VERSION VHDL_2008
+set_global_assignment -name VHDL_SHOW_LMF_MAPPING_MESSAGES OFF
+set_global_assignment -name VHDL_FILE decoder2_4.vhd
+set_location_assignment PIN_C10 -to a[0]
+set_location_assignment PIN_C11 -to a[1]
+set_location_assignment PIN_A8 -to y[0]
+set_location_assignment PIN_A9 -to y[1]
+set_location_assignment PIN_A10 -to y[2]
+set_location_assignment PIN_B10 -to y[3]
+set_global_assignment -name VECTOR_WAVEFORM_FILE Waveform.vwf
+set_global_assignment -name VHDL_FILE multiplexer4_1.vhd
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
+set_global_assignment -name VECTOR_WAVEFORM_FILE Waveform3.vwf

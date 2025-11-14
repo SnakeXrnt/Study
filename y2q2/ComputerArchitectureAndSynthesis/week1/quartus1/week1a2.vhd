@@ -1,5 +1,3 @@
-c
-
 library ieee;
 use ieee.std_logic_1164.all;
 
@@ -34,4 +32,5 @@ begin
 	SUM(3) <= c3;
 
 end structural;
+
 

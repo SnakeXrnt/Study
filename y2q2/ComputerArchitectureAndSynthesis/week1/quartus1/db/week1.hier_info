@@ -1,46 +1,10 @@
-|week1a2
-A[0] => week1:FA0.a
-A[1] => week1:FA1.a
-A[2] => week1:FA2.a
-B[0] => week1:FA0.b
-B[1] => week1:FA1.b
-B[2] => week1:FA2.b
-SUM[0] <= week1:FA0.s
-SUM[1] <= week1:FA1.s
-SUM[2] <= week1:FA2.s
-SUM[3] <= week1:FA2.cout
-
-
-|week1a2|week1:FA0
-a => p.IN0
-a => g.IN0
-b => p.IN1
-b => g.IN1
-cin => s.IN1
-cin => cout.IN1
-s <= s.DB_MAX_OUTPUT_PORT_TYPE
-cout <= cout.DB_MAX_OUTPUT_PORT_TYPE
-
-
-|week1a2|week1:FA1
-a => p.IN0
-a => g.IN0
-b => p.IN1
-b => g.IN1
-cin => s.IN1
-cin => cout.IN1
-s <= s.DB_MAX_OUTPUT_PORT_TYPE
-cout <= cout.DB_MAX_OUTPUT_PORT_TYPE
-
-
-|week1a2|week1:FA2
-a => p.IN0
-a => g.IN0
-b => p.IN1
-b => g.IN1
-cin => s.IN1
-cin => cout.IN1
-s <= s.DB_MAX_OUTPUT_PORT_TYPE
-cout <= cout.DB_MAX_OUTPUT_PORT_TYPE
+|multiplexer4_1
+d[0] => Mux0.IN3
+d[1] => Mux0.IN2
+d[2] => Mux0.IN1
+d[3] => Mux0.IN0
+s[0] => Mux0.IN5
+s[1] => Mux0.IN4
+y <= Mux0.DB_MAX_OUTPUT_PORT_TYPE
 
 
