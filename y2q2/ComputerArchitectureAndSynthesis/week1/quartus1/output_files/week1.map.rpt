@@ -1,5 +1,5 @@
 Analysis & Synthesis report for week1
-Fri Nov 14 12:14:15 2025
+Fri Nov 14 19:00:39 2025
 Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
 
 
@@ -43,7 +43,7 @@ https://fpgasoftware.intel.com/eula.
 +----------------------------------------------------------------------------------+
 ; Analysis & Synthesis Summary                                                     ;
 +------------------------------------+---------------------------------------------+
-; Analysis & Synthesis Status        ; Successful - Fri Nov 14 12:14:15 2025       ;
+; Analysis & Synthesis Status        ; Successful - Fri Nov 14 19:00:39 2025       ;
 ; Quartus Prime Version              ; 20.1.1 Build 720 11/11/2020 SJ Lite Edition ;
 ; Revision Name                      ; week1                                       ;
 ; Top-level Entity Name              ; multiplexer4_1                              ;
@@ -174,36 +174,36 @@ https://fpgasoftware.intel.com/eula.
 +----------------------------------+-----------------+-----------------+--------------------------------------------------------------------------------------------+---------+
 
 
-+----------------------------------------------------------+
-; Analysis & Synthesis Resource Usage Summary              ;
-+---------------------------------------------+------------+
-; Resource                                    ; Usage      ;
-+---------------------------------------------+------------+
-; Estimated Total logic elements              ; 2          ;
-;                                             ;            ;
-; Total combinational functions               ; 2          ;
-; Logic element usage by number of LUT inputs ;            ;
-;     -- 4 input functions                    ; 2          ;
-;     -- 3 input functions                    ; 0          ;
-;     -- <=2 input functions                  ; 0          ;
-;                                             ;            ;
-; Logic elements by mode                      ;            ;
-;     -- normal mode                          ; 2          ;
-;     -- arithmetic mode                      ; 0          ;
-;                                             ;            ;
-; Total registers                             ; 0          ;
-;     -- Dedicated logic registers            ; 0          ;
-;     -- I/O registers                        ; 0          ;
-;                                             ;            ;
-; I/O pins                                    ; 7          ;
-;                                             ;            ;
-; Embedded Multiplier 9-bit elements          ; 0          ;
-;                                             ;            ;
-; Maximum fan-out node                        ; s[1]~input ;
-; Maximum fan-out                             ; 2          ;
-; Total fan-out                               ; 16         ;
-; Average fan-out                             ; 1.00       ;
-+---------------------------------------------+------------+
++------------------------------------------------------------+
+; Analysis & Synthesis Resource Usage Summary                ;
++---------------------------------------------+--------------+
+; Resource                                    ; Usage        ;
++---------------------------------------------+--------------+
+; Estimated Total logic elements              ; 2            ;
+;                                             ;              ;
+; Total combinational functions               ; 2            ;
+; Logic element usage by number of LUT inputs ;              ;
+;     -- 4 input functions                    ; 2            ;
+;     -- 3 input functions                    ; 0            ;
+;     -- <=2 input functions                  ; 0            ;
+;                                             ;              ;
+; Logic elements by mode                      ;              ;
+;     -- normal mode                          ; 2            ;
+;     -- arithmetic mode                      ; 0            ;
+;                                             ;              ;
+; Total registers                             ; 0            ;
+;     -- Dedicated logic registers            ; 0            ;
+;     -- I/O registers                        ; 0            ;
+;                                             ;              ;
+; I/O pins                                    ; 7            ;
+;                                             ;              ;
+; Embedded Multiplier 9-bit elements          ; 0            ;
+;                                             ;              ;
+; Maximum fan-out node                        ; sel[1]~input ;
+; Maximum fan-out                             ; 2            ;
+; Total fan-out                               ; 16           ;
+; Average fan-out                             ; 1.00         ;
++---------------------------------------------+--------------+
 
 
 +---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -261,7 +261,7 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 Info: *******************************************************************
 Info: Running Quartus Prime Analysis & Synthesis
     Info: Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
-    Info: Processing started: Fri Nov 14 12:14:11 2025
+    Info: Processing started: Fri Nov 14 19:00:33 2025
 Info: Command: quartus_map --read_settings_files=on --write_settings_files=off week1 -c week1
 Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
 Info (20030): Parallel compilation is enabled and will use 16 of the 16 processors detected
@@ -275,13 +275,13 @@ Info (12021): Found 2 design units, including 1 entities, in source file decoder
     Info (12022): Found design unit 1: decoder2_4-synth File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week1/quartus1/decoder2_4.vhd Line: 8
     Info (12023): Found entity 1: decoder2_4 File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week1/quartus1/decoder2_4.vhd Line: 3
 Info (12021): Found 2 design units, including 1 entities, in source file multiplexer4_1.vhd
-    Info (12022): Found design unit 1: multiplexer4_1-synth File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week1/quartus1/multiplexer4_1.vhd Line: 12
-    Info (12023): Found entity 1: multiplexer4_1 File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week1/quartus1/multiplexer4_1.vhd Line: 4
+    Info (12022): Found design unit 1: multiplexer4_1-synth File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week1/quartus1/multiplexer4_1.vhd Line: 13
+    Info (12023): Found entity 1: multiplexer4_1 File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week1/quartus1/multiplexer4_1.vhd Line: 5
 Info (12127): Elaborating entity "multiplexer4_1" for the top level hierarchy
-Warning (12069): Ignored assignment(s) for "y[0]" because "y" is not a bus or array File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week1/quartus1/multiplexer4_1.vhd Line: 8
-Warning (12069): Ignored assignment(s) for "y[1]" because "y" is not a bus or array File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week1/quartus1/multiplexer4_1.vhd Line: 8
-Warning (12069): Ignored assignment(s) for "y[2]" because "y" is not a bus or array File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week1/quartus1/multiplexer4_1.vhd Line: 8
-Warning (12069): Ignored assignment(s) for "y[3]" because "y" is not a bus or array File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week1/quartus1/multiplexer4_1.vhd Line: 8
+Warning (12069): Ignored assignment(s) for "y[0]" because "y" is not a bus or array File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week1/quartus1/multiplexer4_1.vhd Line: 9
+Warning (12069): Ignored assignment(s) for "y[1]" because "y" is not a bus or array File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week1/quartus1/multiplexer4_1.vhd Line: 9
+Warning (12069): Ignored assignment(s) for "y[2]" because "y" is not a bus or array File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week1/quartus1/multiplexer4_1.vhd Line: 9
+Warning (12069): Ignored assignment(s) for "y[3]" because "y" is not a bus or array File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week1/quartus1/multiplexer4_1.vhd Line: 9
 Info (286030): Timing-Driven Synthesis is running
 Info (16010): Generating hard_block partition "hard_block:auto_generated_inst"
     Info (16011): Adding 0 node(s), including 0 DDIO, 0 PLL, 0 transceiver and 0 LCELL
@@ -290,9 +290,9 @@ Info (21057): Implemented 9 device resources after synthesis - the final resourc
     Info (21059): Implemented 1 output pins
     Info (21061): Implemented 2 logic cells
 Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 5 warnings
-    Info: Peak virtual memory: 435 megabytes
-    Info: Processing ended: Fri Nov 14 12:14:15 2025
-    Info: Elapsed time: 00:00:04
-    Info: Total CPU time (on all processors): 00:00:12
+    Info: Peak virtual memory: 434 megabytes
+    Info: Processing ended: Fri Nov 14 19:00:39 2025
+    Info: Elapsed time: 00:00:06
+    Info: Total CPU time (on all processors): 00:00:19
 
 

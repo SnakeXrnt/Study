@@ -72,7 +72,7 @@ Pin Name/Usage               : Location  : Dir.   : I/O Standard      : Voltage 
 -------------------------------------------------------------------------------------------------------------
 GND                          : A1        : gnd    :                   :         :           :                
 d[2]                         : A2        : input  : 2.5 V             :         : 8         : N              
-s[1]                         : A3        : input  : 2.5 V             :         : 8         : N              
+sel[1]                       : A3        : input  : 2.5 V             :         : 8         : N              
 RESERVED_INPUT_WITH_WEAK_PULLUP : A4        :        :                   :         : 8         :                
 RESERVED_INPUT_WITH_WEAK_PULLUP : A5        :        :                   :         : 8         :                
 RESERVED_INPUT_WITH_WEAK_PULLUP : A6        :        :                   :         : 8         :                
@@ -139,7 +139,7 @@ GND                          : AB22      : gnd    :                   :         
 RESERVED_INPUT_WITH_WEAK_PULLUP : B1        :        :                   :         : 8         :                
 RESERVED_INPUT_WITH_WEAK_PULLUP : B2        :        :                   :         : 8         :                
 d[1]                         : B3        : input  : 2.5 V             :         : 8         : N              
-s[0]                         : B4        : input  : 2.5 V             :         : 8         : N              
+sel[0]                       : B4        : input  : 2.5 V             :         : 8         : N              
 d[3]                         : B5        : input  : 2.5 V             :         : 8         : N              
 GND                          : B6        : gnd    :                   :         :           :                
 RESERVED_INPUT_WITH_WEAK_PULLUP : B7        :        :                   :         : 8         :                

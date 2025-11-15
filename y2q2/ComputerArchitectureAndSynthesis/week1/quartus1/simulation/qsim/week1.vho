@@ -17,7 +17,7 @@
 -- PROGRAM "Quartus Prime"
 -- VERSION "Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition"
 
--- DATE "11/14/2025 12:24:27"
+-- DATE "11/14/2025 19:02:52"
 
 -- 
 -- Device: Altera 10M50DAF484C7G Package FBGA484
@@ -89,7 +89,7 @@ USE IEEE.STD_LOGIC_1164.ALL;
 ENTITY 	multiplexer4_1 IS
     PORT (
 	d : IN std_logic_vector(3 DOWNTO 0);
-	s : IN std_logic_vector(1 DOWNTO 0);
+	sel : IN std_logic_vector(1 DOWNTO 0);
 	y : OUT std_logic
 	);
 END multiplexer4_1;
@@ -97,9 +97,9 @@ END multiplexer4_1;
 -- Design Ports Information
 -- y	=>  Location: PIN_F7,	 I/O Standard: 2.5 V,	 Current Strength: Default
 -- d[2]	=>  Location: PIN_A2,	 I/O Standard: 2.5 V,	 Current Strength: Default
--- s[1]	=>  Location: PIN_A3,	 I/O Standard: 2.5 V,	 Current Strength: Default
+-- sel[1]	=>  Location: PIN_A3,	 I/O Standard: 2.5 V,	 Current Strength: Default
 -- d[1]	=>  Location: PIN_B3,	 I/O Standard: 2.5 V,	 Current Strength: Default
--- s[0]	=>  Location: PIN_B4,	 I/O Standard: 2.5 V,	 Current Strength: Default
+-- sel[0]	=>  Location: PIN_B4,	 I/O Standard: 2.5 V,	 Current Strength: Default
 -- d[0]	=>  Location: PIN_C5,	 I/O Standard: 2.5 V,	 Current Strength: Default
 -- d[3]	=>  Location: PIN_B5,	 I/O Standard: 2.5 V,	 Current Strength: Default
 
@@ -115,7 +115,7 @@ SIGNAL ww_devoe : std_logic;
 SIGNAL ww_devclrn : std_logic;
 SIGNAL ww_devpor : std_logic;
 SIGNAL ww_d : std_logic_vector(3 DOWNTO 0);
-SIGNAL ww_s : std_logic_vector(1 DOWNTO 0);
+SIGNAL ww_sel : std_logic_vector(1 DOWNTO 0);
 SIGNAL ww_y : std_logic;
 SIGNAL \~QUARTUS_CREATED_ADC1~_CHSEL_bus\ : std_logic_vector(4 DOWNTO 0);
 SIGNAL \~QUARTUS_CREATED_ADC2~_CHSEL_bus\ : std_logic_vector(4 DOWNTO 0);
@@ -124,10 +124,10 @@ SIGNAL \~QUARTUS_CREATED_UNVM~~busy\ : std_logic;
 SIGNAL \~QUARTUS_CREATED_ADC1~~eoc\ : std_logic;
 SIGNAL \~QUARTUS_CREATED_ADC2~~eoc\ : std_logic;
 SIGNAL \y~output_o\ : std_logic;
-SIGNAL \s[1]~input_o\ : std_logic;
+SIGNAL \sel[1]~input_o\ : std_logic;
 SIGNAL \d[0]~input_o\ : std_logic;
 SIGNAL \d[1]~input_o\ : std_logic;
-SIGNAL \s[0]~input_o\ : std_logic;
+SIGNAL \sel[0]~input_o\ : std_logic;
 SIGNAL \Mux0~0_combout\ : std_logic;
 SIGNAL \d[2]~input_o\ : std_logic;
 SIGNAL \d[3]~input_o\ : std_logic;
@@ -143,7 +143,7 @@ END COMPONENT;
 BEGIN
 
 ww_d <= d;
-ww_s <= s;
+ww_sel <= sel;
 y <= ww_y;
 ww_devoe <= devoe;
 ww_devclrn <= devclrn;
@@ -184,7 +184,7 @@ PORT MAP (
 	o => \y~output_o\);
 
 -- Location: IOIBUF_X26_Y39_N8
-\s[1]~input\ : fiftyfivenm_io_ibuf
+\sel[1]~input\ : fiftyfivenm_io_ibuf
 -- pragma translate_off
 GENERIC MAP (
 	bus_hold => "false",
@@ -192,8 +192,8 @@ GENERIC MAP (
 	simulate_z_as => "z")
 -- pragma translate_on
 PORT MAP (
-	i => ww_s(1),
-	o => \s[1]~input_o\);
+	i => ww_sel(1),
+	o => \sel[1]~input_o\);
 
 -- Location: IOIBUF_X24_Y39_N22
 \d[0]~input\ : fiftyfivenm_io_ibuf
@@ -220,7 +220,7 @@ PORT MAP (
 	o => \d[1]~input_o\);
 
 -- Location: IOIBUF_X26_Y39_N22
-\s[0]~input\ : fiftyfivenm_io_ibuf
+\sel[0]~input\ : fiftyfivenm_io_ibuf
 -- pragma translate_off
 GENERIC MAP (
 	bus_hold => "false",
@@ -228,13 +228,13 @@ GENERIC MAP (
 	simulate_z_as => "z")
 -- pragma translate_on
 PORT MAP (
-	i => ww_s(0),
-	o => \s[0]~input_o\);
+	i => ww_sel(0),
+	o => \sel[0]~input_o\);
 
 -- Location: LCCOMB_X26_Y38_N24
 \Mux0~0\ : fiftyfivenm_lcell_comb
 -- Equation(s):
--- \Mux0~0_combout\ = (\s[1]~input_o\ & (((\s[0]~input_o\)))) # (!\s[1]~input_o\ & ((\s[0]~input_o\ & ((\d[1]~input_o\))) # (!\s[0]~input_o\ & (\d[0]~input_o\))))
+-- \Mux0~0_combout\ = (\sel[1]~input_o\ & (((\sel[0]~input_o\)))) # (!\sel[1]~input_o\ & ((\sel[0]~input_o\ & ((\d[1]~input_o\))) # (!\sel[0]~input_o\ & (\d[0]~input_o\))))
 
 -- pragma translate_off
 GENERIC MAP (
@@ -244,8 +244,8 @@ GENERIC MAP (
 PORT MAP (
 	dataa => \d[0]~input_o\,
 	datab => \d[1]~input_o\,
-	datac => \s[1]~input_o\,
-	datad => \s[0]~input_o\,
+	datac => \sel[1]~input_o\,
+	datad => \sel[0]~input_o\,
 	combout => \Mux0~0_combout\);
 
 -- Location: IOIBUF_X26_Y39_N1
@@ -275,7 +275,7 @@ PORT MAP (
 -- Location: LCCOMB_X26_Y38_N2
 \Mux0~1\ : fiftyfivenm_lcell_comb
 -- Equation(s):
--- \Mux0~1_combout\ = (\s[1]~input_o\ & ((\Mux0~0_combout\ & ((\d[3]~input_o\))) # (!\Mux0~0_combout\ & (\d[2]~input_o\)))) # (!\s[1]~input_o\ & (\Mux0~0_combout\))
+-- \Mux0~1_combout\ = (\sel[1]~input_o\ & ((\Mux0~0_combout\ & ((\d[3]~input_o\))) # (!\Mux0~0_combout\ & (\d[2]~input_o\)))) # (!\sel[1]~input_o\ & (\Mux0~0_combout\))
 
 -- pragma translate_off
 GENERIC MAP (
@@ -283,7 +283,7 @@ GENERIC MAP (
 	sum_lutc_input => "datac")
 -- pragma translate_on
 PORT MAP (
-	dataa => \s[1]~input_o\,
+	dataa => \sel[1]~input_o\,
 	datab => \Mux0~0_combout\,
 	datac => \d[2]~input_o\,
 	datad => \d[3]~input_o\,

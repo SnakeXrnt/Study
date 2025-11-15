@@ -3,8 +3,8 @@ d[0] => Mux0.IN3
 d[1] => Mux0.IN2
 d[2] => Mux0.IN1
 d[3] => Mux0.IN0
-s[0] => Mux0.IN5
-s[1] => Mux0.IN4
+sel[0] => Mux0.IN5
+sel[1] => Mux0.IN4
 y <= Mux0.DB_MAX_OUTPUT_PORT_TYPE
 
 

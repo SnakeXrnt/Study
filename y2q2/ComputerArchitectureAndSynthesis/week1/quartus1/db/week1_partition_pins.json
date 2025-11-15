@@ -12,7 +12,7 @@
 					"strict" : false
 				},
 				{
-					"name" : "s[1]",
+					"name" : "sel[1]",
 					"strict" : false
 				},
 				{
@@ -20,7 +20,7 @@
 					"strict" : false
 				},
 				{
-					"name" : "s[0]",
+					"name" : "sel[0]",
 					"strict" : false
 				},
 				{
