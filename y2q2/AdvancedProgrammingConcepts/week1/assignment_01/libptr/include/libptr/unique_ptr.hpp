@@ -44,7 +44,7 @@ namespace sax
 
         UniquePtr& operator=(UniquePtr&& other){
             if (this != &other) {
-                reset();    
+                reset();
                 deleter_ = std::move(other.deleter_);
                 ptr_ = other.ptr_;    
                 other.ptr_ = nullptr; 

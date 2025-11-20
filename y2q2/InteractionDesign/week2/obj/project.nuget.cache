@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "ViEzGQJlk5c=",
+  "success": true,
+  "projectFilePath": "/home/nw1728/study/y2q2/InteractionDesign/week2/week2.csproj",
+  "expectedPackageFiles": [
+    "/home/nw1728/.nuget/packages/microsoft.aspnetcore.app.ref/9.0.9/microsoft.aspnetcore.app.ref.9.0.9.nupkg.sha512"
+  ],
+  "logs": []
+}
