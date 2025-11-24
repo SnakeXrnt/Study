@@ -1,0 +1,15 @@
+/Users/1728nw/Study/y2q2/InteractionDesign/week2/obj/Debug/net9.0/week2.GeneratedMSBuildEditorConfig.editorconfig
+/Users/1728nw/Study/y2q2/InteractionDesign/week2/obj/Debug/net9.0/week2.AssemblyInfoInputs.cache
+/Users/1728nw/Study/y2q2/InteractionDesign/week2/obj/Debug/net9.0/week2.AssemblyInfo.cs
+/Users/1728nw/Study/y2q2/InteractionDesign/week2/obj/Debug/net9.0/week2.csproj.CoreCompileInputs.cache
+/Users/1728nw/Study/y2q2/InteractionDesign/week2/obj/Debug/net9.0/week2.sourcelink.json
+/Users/1728nw/Study/y2q2/InteractionDesign/week2/bin/Debug/net9.0/week2
+/Users/1728nw/Study/y2q2/InteractionDesign/week2/bin/Debug/net9.0/week2.deps.json
+/Users/1728nw/Study/y2q2/InteractionDesign/week2/bin/Debug/net9.0/week2.runtimeconfig.json
+/Users/1728nw/Study/y2q2/InteractionDesign/week2/bin/Debug/net9.0/week2.dll
+/Users/1728nw/Study/y2q2/InteractionDesign/week2/bin/Debug/net9.0/week2.pdb
+/Users/1728nw/Study/y2q2/InteractionDesign/week2/obj/Debug/net9.0/week2.dll
+/Users/1728nw/Study/y2q2/InteractionDesign/week2/obj/Debug/net9.0/refint/week2.dll
+/Users/1728nw/Study/y2q2/InteractionDesign/week2/obj/Debug/net9.0/week2.pdb
+/Users/1728nw/Study/y2q2/InteractionDesign/week2/obj/Debug/net9.0/week2.genruntimeconfig.cache
+/Users/1728nw/Study/y2q2/InteractionDesign/week2/obj/Debug/net9.0/ref/week2.dll

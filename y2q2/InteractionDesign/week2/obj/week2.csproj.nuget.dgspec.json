@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/home/nw1728/study/y2q2/InteractionDesign/week2/week2.csproj": {}
+    "/Users/1728nw/Study/y2q2/InteractionDesign/week2/week2.csproj": {}
   },
   "projects": {
-    "/home/nw1728/study/y2q2/InteractionDesign/week2/week2.csproj": {
+    "/Users/1728nw/Study/y2q2/InteractionDesign/week2/week2.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/nw1728/study/y2q2/InteractionDesign/week2/week2.csproj",
+        "projectUniqueName": "/Users/1728nw/Study/y2q2/InteractionDesign/week2/week2.csproj",
         "projectName": "week2",
-        "projectPath": "/home/nw1728/study/y2q2/InteractionDesign/week2/week2.csproj",
-        "packagesPath": "/home/nw1728/.nuget/packages/",
-        "outputPath": "/home/nw1728/study/y2q2/InteractionDesign/week2/obj/",
+        "projectPath": "/Users/1728nw/Study/y2q2/InteractionDesign/week2/week2.csproj",
+        "packagesPath": "/Users/1728nw/.nuget/packages/",
+        "outputPath": "/Users/1728nw/Study/y2q2/InteractionDesign/week2/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/nw1728/.nuget/NuGet/NuGet.Config"
+          "/Users/1728nw/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -38,7 +38,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.100"
+        "SdkAnalysisLevel": "10.0.100"
       },
       "frameworks": {
         "net9.0": {
@@ -57,7 +57,15 @@
           "downloadDependencies": [
             {
               "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[9.0.9, 9.0.9]"
+              "version": "[9.0.11, 9.0.11]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.osx-x64",
+              "version": "[9.0.11, 9.0.11]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[9.0.11, 9.0.11]"
             }
           ],
           "frameworkReferences": {
@@ -65,7 +73,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/9.0.110/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/10.0.100/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
