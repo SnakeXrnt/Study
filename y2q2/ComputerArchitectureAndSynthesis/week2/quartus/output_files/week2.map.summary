@@ -1,0 +1,16 @@
+Analysis & Synthesis Status : Successful - Fri Nov 21 11:54:05 2025
+Quartus Prime Version : 20.1.1 Build 720 11/11/2020 SJ Lite Edition
+Revision Name : week2
+Top-level Entity Name : Counter4Bit
+Family : MAX 10
+Total logic elements : 6
+    Total combinational functions : 6
+    Dedicated logic registers : 4
+Total registers : 4
+Total pins : 7
+Total virtual pins : 0
+Total memory bits : 0
+Embedded Multiplier 9-bit elements : 0
+Total PLLs : 0
+UFM blocks : 0
+ADC blocks : 0

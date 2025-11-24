@@ -1,10 +1,100 @@
-|multiplexer4_1
-d[0] => Mux0.IN3
-d[1] => Mux0.IN2
-d[2] => Mux0.IN1
-d[3] => Mux0.IN0
-sel[0] => Mux0.IN5
-sel[1] => Mux0.IN4
-y <= Mux0.DB_MAX_OUTPUT_PORT_TYPE
+|Top7segadd
+SW[0] => week1a2:U_ADDER.A[0]
+SW[1] => week1a2:U_ADDER.A[1]
+SW[2] => week1a2:U_ADDER.A[2]
+SW[3] => week1a2:U_ADDER.B[0]
+SW[4] => week1a2:U_ADDER.B[1]
+SW[5] => week1a2:U_ADDER.B[2]
+HEX0[0] << bccd:U_7SEG.seg[0]
+HEX0[1] << bccd:U_7SEG.seg[1]
+HEX0[2] << bccd:U_7SEG.seg[2]
+HEX0[3] << bccd:U_7SEG.seg[3]
+HEX0[4] << bccd:U_7SEG.seg[4]
+HEX0[5] << bccd:U_7SEG.seg[5]
+HEX0[6] << bccd:U_7SEG.seg[6]
+
+
+|Top7segadd|week1a2:U_ADDER
+A[0] => week1:FA0.a
+A[1] => week1:FA1.a
+A[2] => week1:FA2.a
+B[0] => week1:FA0.b
+B[1] => week1:FA1.b
+B[2] => week1:FA2.b
+SUM[0] <= week1:FA0.s
+SUM[1] <= week1:FA1.s
+SUM[2] <= week1:FA2.s
+SUM[3] <= week1:FA2.cout
+
+
+|Top7segadd|week1a2:U_ADDER|week1:FA0
+a => p.IN0
+a => g.IN0
+b => p.IN1
+b => g.IN1
+cin => s.IN1
+cin => cout.IN1
+s <= s.DB_MAX_OUTPUT_PORT_TYPE
+cout <= cout.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|Top7segadd|week1a2:U_ADDER|week1:FA1
+a => p.IN0
+a => g.IN0
+b => p.IN1
+b => g.IN1
+cin => s.IN1
+cin => cout.IN1
+s <= s.DB_MAX_OUTPUT_PORT_TYPE
+cout <= cout.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|Top7segadd|week1a2:U_ADDER|week1:FA2
+a => p.IN0
+a => g.IN0
+b => p.IN1
+b => g.IN1
+cin => s.IN1
+cin => cout.IN1
+s <= s.DB_MAX_OUTPUT_PORT_TYPE
+cout <= cout.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|Top7segadd|bccd:U_7SEG
+bin[0] => Mux0.IN19
+bin[0] => Mux1.IN19
+bin[0] => Mux2.IN19
+bin[0] => Mux3.IN19
+bin[0] => Mux4.IN19
+bin[0] => Mux5.IN19
+bin[0] => Mux6.IN19
+bin[1] => Mux0.IN18
+bin[1] => Mux1.IN18
+bin[1] => Mux2.IN18
+bin[1] => Mux3.IN18
+bin[1] => Mux4.IN18
+bin[1] => Mux5.IN18
+bin[1] => Mux6.IN18
+bin[2] => Mux0.IN17
+bin[2] => Mux1.IN17
+bin[2] => Mux2.IN17
+bin[2] => Mux3.IN17
+bin[2] => Mux4.IN17
+bin[2] => Mux5.IN17
+bin[2] => Mux6.IN17
+bin[3] => Mux0.IN16
+bin[3] => Mux1.IN16
+bin[3] => Mux2.IN16
+bin[3] => Mux3.IN16
+bin[3] => Mux4.IN16
+bin[3] => Mux5.IN16
+bin[3] => Mux6.IN16
+seg[0] <= Mux6.DB_MAX_OUTPUT_PORT_TYPE
+seg[1] <= Mux5.DB_MAX_OUTPUT_PORT_TYPE
+seg[2] <= Mux4.DB_MAX_OUTPUT_PORT_TYPE
+seg[3] <= Mux3.DB_MAX_OUTPUT_PORT_TYPE
+seg[4] <= Mux2.DB_MAX_OUTPUT_PORT_TYPE
+seg[5] <= Mux1.DB_MAX_OUTPUT_PORT_TYPE
+seg[6] <= Mux0.DB_MAX_OUTPUT_PORT_TYPE
 
 

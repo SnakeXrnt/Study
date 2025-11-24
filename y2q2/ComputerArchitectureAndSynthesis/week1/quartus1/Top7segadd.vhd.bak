@@ -1,0 +1,34 @@
+library IEEE; use IEEE.STD_LOGIC_1164.all;
+
+entity top is
+    port(
+        SW   : in  std_logic_vector(5 downto 0);  -- 6 switches
+        HEX0 : out std_logic_vector(6 downto 0)   -- 7 seg display
+    );
+end entity;
+
+architecture rtl of top is
+    signal A   : std_logic_vector(2 downto 0);
+    signal B   : std_logic_vector(2 downto 0);
+    signal SUM : std_logic_vector(3 downto 0);
+begin
+    -- map switches to inputs, adjust indices to your board
+    A <= SW(2 downto 0);   -- lower 3 switches
+    B <= SW(5 downto 3);   -- upper 3 switches
+
+    -- 3 bit adder
+    U_ADDER: entity work.week1a2
+        port map(
+            A   => A,
+            B   => B,
+            SUM => SUM
+        );
+
+    -- 7 segment decoder
+    U_7SEG: entity work.bccd
+        port map(
+            bin => SUM,
+            seg => HEX0
+        );
+end architecture;
+

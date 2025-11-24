@@ -1,0 +1,18 @@
+library IEEE; use IEEE.STD_LOGIC_1164.all;
+
+entity SequentialCircuitExample is
+    port(clk: in STD_LOGIC;
+         led: out STD_LOGIC);
+end;
+
+architecture synth of SequentialCircuitExample is
+signal led_state: STD_LOGIC := '0';
+begin
+    process(clk) begin
+        if rising_edge(clk) then
+            led_state <= not led_state;
+        end if;
+    end process;
+
+    led <= led_state;
+end;
