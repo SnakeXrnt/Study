@@ -20,8 +20,23 @@
               "icon": "lucide-file",
               "title": "week 1, mini mincom"
             }
+          },
+          {
+            "id": "77acf1e54a833fc6",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "y2q2/AdvancedProgrammingConcepts/week1/assignment_01/uniqueptr.hpp.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "uniqueptr.hpp"
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -169,23 +184,25 @@
       "bases:Create new base": false
     }
   },
-  "active": "c584f8e62bce442c",
+  "active": "77acf1e54a833fc6",
   "lastOpenFiles": [
+    "y2q2/AdvancedProgrammingConcepts/week1/assignment_01/build/CMakeFiles/InstallScripts.json",
+    "y2q2/AdvancedProgrammingConcepts/week1/assignment_01/build/compile_commands.json",
+    "y2q2/AdvancedProgrammingConcepts/week1/assignment_01/build/CMakeFiles/Makefile.cmake",
+    "y2q2/AdvancedProgrammingConcepts/week1/assignment_01/build/CMakeFiles/Makefile2",
+    "y2q2/AdvancedProgrammingConcepts/week1/assignment_01/build/tests/CMakeFiles/progress.marks",
+    "y2q2/AdvancedProgrammingConcepts/week1/assignment_01/build/libptr/CMakeFiles/progress.marks",
+    "y2q2/AdvancedProgrammingConcepts/week1/assignment_01/build/CMakeFiles/progress.marks",
+    "y2q2/AdvancedProgrammingConcepts/week1/assignment_01/build/CMakeFiles/TargetDirectories.txt",
+    "y2q2/AdvancedProgrammingConcepts/week1/assignment_01/build/tests/cmake_install.cmake",
+    "y2q2/AdvancedProgrammingConcepts/week1/assignment_01/build/tests/CMakeFiles/CMakeDirectoryInformation.cmake",
+    "y2q2/AdvancedProgrammingConcepts/week1/assignment_01/build/tests/Makefile",
+    "y2q2/InteractionDesign/week1/week 1, mini mincom.md",
+    "y2q2/AdvancedProgrammingConcepts/week1/assignment_01/uniqueptr.hpp.md",
     "y2q2/AdvancedProgrammingConcepts/week2/assignment/README.md",
-    "y2q2/AdvancedProgrammingConcepts/week2/assignment/build/CMakeFiles/rpn_calc.dir/compiler_depend.make.tmpf0bd1",
-    "y2q2/AdvancedProgrammingConcepts/week2/assignment/main.cpp~",
-    "y2q2/AdvancedProgrammingConcepts/week2/assignment/build/CMakeFiles/rpn_calc.dir/compiler_depend.make.tmpd2f5c",
-    "y2q2/AdvancedProgrammingConcepts/week2/assignment/build/CMakeFiles/rpn_calc.dir/compiler_depend.make.tmp8134b",
-    "y2q2/AdvancedProgrammingConcepts/week2/assignment/build/CMakeFiles/Progress/1",
-    "y2q2/AdvancedProgrammingConcepts/week2/assignment/build/CMakeFiles/rpn_calc.dir/compiler_depend.make.tmpacbcb",
-    "y2q2/AdvancedProgrammingConcepts/week2/assignment/build/CMakeFiles/Progress/count.txt",
-    "y2q2/AdvancedProgrammingConcepts/week2/assignment/build/CMakeFiles/Progress",
-    "y2q2/AdvancedProgrammingConcepts/week2/assignment/build/CMakeFiles/rpn_calc.dir/compiler_depend.make.tmp42489",
-    "y2q2/AdvancedProgrammingConcepts/week2/assignment/include/rpn/parser.hpp~",
     "y2q2/AdvancedProgrammingConcepts/week2/assignment/img/rpn_calc.png",
     "y2q2/ComputerArchitectureAndSynthesis/week1/notes/Quartus Prime Lite 20.1.1 on Arch Linux (Hyprland).md",
     "y2q2/AdvancedProgrammingConcepts/week1/assignment_01/README.md",
-    "y2q2/InteractionDesign/week1/week 1, mini mincom.md",
     "y2q2/AdvancedProgrammingConcepts/week1/assignment_01/img/UniquePtr.png"
   ]
 }
