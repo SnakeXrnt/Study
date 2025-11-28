@@ -28,6 +28,9 @@ public class Calculator : ICalculator
             {
                 if (token.Value == "sqrt" || token.Value == "ln" || token.Value == "exp")
                 {
+                    if (stack.Count() < 1) {
+                        throw new InvalidOperationException("cannot calculate, some number is missing");
+                    }
                     var operand = stack.Pop();
                     double result = token.Value switch
                     {
@@ -40,6 +43,9 @@ public class Calculator : ICalculator
                 }
                 else
                 {
+                    if (stack.Count() < 2) {
+                        throw new InvalidOperationException("cannot calculate, some number is missing");
+                    }
                     var right = stack.Pop();
                     var left = stack.Pop();
                     double result = token.Value switch
@@ -47,7 +53,7 @@ public class Calculator : ICalculator
                         "+" => left + right,
                         "-" => left - right,
                         "*" => left * right,
-                        "/" => left / right,
+                        "/" => right == 0 ? throw new DivideByZeroException("division by zero ? monkey type of calculation") : left / right,
                         "^" => Math.Pow(left, right),
                         _ => throw new InvalidOperationException("Unsupported operator")
                     };
@@ -55,6 +61,7 @@ public class Calculator : ICalculator
                 }
             }
         }
+
 
         return stack.Pop();
     }

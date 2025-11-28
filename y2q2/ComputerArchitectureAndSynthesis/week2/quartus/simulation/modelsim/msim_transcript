@@ -9,18 +9,142 @@
 # Copying /home/nw1728/intelFPGA_lite/20.1/modelsim_ase/linuxaloem/../modelsim.ini to modelsim.ini
 # Modifying modelsim.ini
 # 
-# vcom -93 -work work {/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/Counter4Bit.vhd}
+# vcom -93 -work work {/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/ram_array.vhd}
 # Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 11:55:26 on Nov 21,2025
-# vcom -reportprogress 300 -93 -work work /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/Counter4Bit.vhd 
+# Start time: 11:08:42 on Nov 28,2025
+# vcom -reportprogress 300 -93 -work work /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/ram_array.vhd 
 # -- Loading package STANDARD
 # -- Loading package TEXTIO
 # -- Loading package std_logic_1164
 # -- Loading package NUMERIC_STD
-# -- Compiling entity Counter4Bit
-# -- Compiling architecture rtl of Counter4Bit
-# End time: 11:55:26 on Nov 21,2025, Elapsed time: 0:00:00
+# -- Compiling entity ram_array
+# -- Compiling architecture synth of ram_array
+# End time: 11:08:42 on Nov 28,2025, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
 # 
+# vcom -93 -work work {/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/ram_tb.vhd}
+# Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 11:08:42 on Nov 28,2025
+# vcom -reportprogress 300 -93 -work work /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/ram_tb.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Compiling entity ram_tb
+# -- Compiling architecture sim of ram_tb
+# End time: 11:08:42 on Nov 28,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# 
+# vsim -t 1ps -L altera -L lpm -L sgate -L altera_mf -L altera_lnsim -L fiftyfivenm -L rtl_work -L work -voptargs="+acc"  ram_tb
+# vsim -t 1ps -L altera -L lpm -L sgate -L altera_mf -L altera_lnsim -L fiftyfivenm -L rtl_work -L work -voptargs=""+acc"" ram_tb 
+# Start time: 11:08:42 on Nov 28,2025
+# Loading std.standard
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.numeric_std(body)
+# Loading work.ram_tb(sim)
+# Loading work.ram_array(fast)
+# 
+# add wave *
+# view structure
+# .main_pane.structure.interior.cs.body.struct
+# view signals
+# .main_pane.objects.interior.cs.body.tree
+# run -all
+force -freeze sim:/ram_tb/tb_clk 1 0, 0 {50 ps} -r 100
+force -freeze sim:/ram_tb/tb_we 1 0
 # 
 # stdin: <EOF>
+run
+restart
+force -freeze sim:/ram_tb/tb_clk 1 0, 0 {50 ps} -r 100
+force -freeze sim:/ram_tb/tb_we 1 0
+force -freeze sim:/ram_tb/tb_we 1 0
+force -freeze sim:/ram_tb/tb_adr 0001 0
+force -freeze sim:/ram_tb/tb_din 10101010 0
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+force -freeze sim:/ram_tb/tb_we 0 0
+force -freeze sim:/ram_tb/tb_re 1 0
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+force -freeze sim:/ram_tb/tb_re 0 0
+force -freeze sim:/ram_tb/tb_we 1 0
+force -freeze sim:/ram_tb/tb_adr 0010 0
+force -freeze sim:/ram_tb/tb_din 11111111 0
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+force -freeze sim:/ram_tb/tb_we 0 0
+force -freeze sim:/ram_tb/tb_re 1 0
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+force -freeze sim:/ram_tb/tb_we 1 0
+run
+run
+run
+run
+force -freeze sim:/ram_tb/tb_adr 0001 0
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+# End time: 11:26:31 on Nov 28,2025, Elapsed time: 0:17:49
+# Errors: 0, Warnings: 0

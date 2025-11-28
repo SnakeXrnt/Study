@@ -1,0 +1,9 @@
+transcript on
+if {[file exists rtl_work]} {
+	vdel -lib rtl_work -all
+}
+vlib rtl_work
+vmap work rtl_work
+
+vcom -93 -work work {/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/Counter4Bit.vhd}
+

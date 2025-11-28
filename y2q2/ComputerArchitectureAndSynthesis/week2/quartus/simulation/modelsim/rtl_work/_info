@@ -9,46 +9,89 @@ z2
 !i10f 100
 cModel Technology
 Z0 d/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/simulation/modelsim
-Ecounter4bit
-Z1 w1763722423
+Eram_array
+Z1 w1764263462
 Z2 DPx4 ieee 11 numeric_std 0 22 aU^R8eGcicLcUFIaBQSL>3
 Z3 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
 Z4 DPx4 ieee 14 std_logic_1164 0 22 cVAk:aDinOX8^VGI1ekP<3
 !i122 0
 R0
-Z5 8/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/Counter4Bit.vhd
-Z6 F/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/Counter4Bit.vhd
+Z5 8/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/ram_array.vhd
+Z6 F/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/ram_array.vhd
 l0
 L5 1
-VR7=PA_]BX[:;`2RIT_>Gn2
-!s100 dTd]BSNmYNT][e7CD_[V=3
+VZk4lVLJ`onbH@Bn97MKZZ3
+!s100 4fYi7kWzRa`gkBllk`m4Z1
 Z7 OV;C;2020.1;71
 31
-Z8 !s110 1763722526
+Z8 !s110 1764324522
 !i10b 1
-Z9 !s108 1763722526.000000
-Z10 !s90 -reportprogress|300|-93|-work|work|/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/Counter4Bit.vhd|
-!s107 /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/Counter4Bit.vhd|
+Z9 !s108 1764324522.000000
+Z10 !s90 -reportprogress|300|-93|-work|work|/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/ram_array.vhd|
+Z11 !s107 /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/ram_array.vhd|
 !i113 1
-Z11 o-93 -work work
-Z12 tExplicit 1 CvgOpt 0
-Artl
+Z12 o-93 -work work
+Z13 tExplicit 1 CvgOpt 0
+Asynth
 R2
 R3
 R4
-DEx4 work 11 counter4bit 0 22 R7=PA_]BX[:;`2RIT_>Gn2
+DEx4 work 9 ram_array 0 22 Zk4lVLJ`onbH@Bn97MKZZ3
 !i122 0
-l16
-L14 20
-VM2Na]Qg=ZgHSBii1CjnRA1
-!s100 [>:l96=9;XS`0Mm=NkT0D0
+l21
+L16 26
+V6oil_hi44F>[JODH7HjEP0
+!s100 J:k>3?a:f]jl<M3=aJXF11
 R7
 31
 R8
 !i10b 1
 R9
 R10
-Z13 !s107 /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/Counter4Bit.vhd|
-!i113 1
 R11
+!i113 1
 R12
+R13
+Eram_tb
+Z14 w1764265446
+R2
+R3
+R4
+!i122 1
+R0
+Z15 8/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/ram_tb.vhd
+Z16 F/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/ram_tb.vhd
+l0
+L5 1
+VdONnhhkZ^hLP=S<9K`d^V3
+!s100 ^?3>Jz^hB6XVaHGN@<[:R0
+R7
+31
+R8
+!i10b 1
+R9
+Z17 !s90 -reportprogress|300|-93|-work|work|/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/ram_tb.vhd|
+!s107 /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/ram_tb.vhd|
+!i113 1
+R12
+R13
+Asim
+R2
+R3
+R4
+DEx4 work 6 ram_tb 0 22 dONnhhkZ^hLP=S<9K`d^V3
+!i122 1
+l31
+L9 86
+VQh5I78h^m]6:D3Jk]n7@o3
+!s100 IfDUY?ji:A2N86cZ7E5S80
+R7
+31
+R8
+!i10b 1
+R9
+R17
+Z18 !s107 /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/ram_tb.vhd|
+!i113 1
+R12
+R13

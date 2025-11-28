@@ -1,0 +1,28 @@
+library IEEE; 
+use IEEE.STD_LOGIC_1164.all;
+use IEEE.NUMERIC_STD.all;
+
+entity rom_array is
+  port(clk:  in  STD_LOGIC;                      -- clock
+		 re:   in  STD_LOGIC;                      -- read enable
+       adr:  in  STD_LOGIC_VECTOR(2 downto 0);   -- address bus width 3 = 8 addresses
+       dout: out STD_LOGIC_VECTOR(15 downto 0)); -- data output width 16 bits
+end;
+
+architecture synth of rom_array is
+  type mem_array is array (7 downto 0) of STD_LOGIC_VECTOR (15 downto 0);
+    signal mem: mem_array;
+begin
+
+	process(clk)
+	begin
+		if (rising_edge(clk)) then
+		
+			if (re = '1') then
+				dout <= mem(to_integer(unsigned(adr)));
+			else
+				dout <= (others => 'Z'); -- Disable output when not reading
+			end if;
+		end if;
+	end process;
+end;

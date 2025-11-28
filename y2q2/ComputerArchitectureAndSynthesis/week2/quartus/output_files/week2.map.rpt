@@ -1,5 +1,5 @@
 Analysis & Synthesis report for week2
-Fri Nov 21 11:54:05 2025
+Thu Nov 27 18:47:04 2025
 Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
 
 
@@ -13,11 +13,15 @@ Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
   5. Analysis & Synthesis Source Files Read
   6. Analysis & Synthesis Resource Usage Summary
   7. Analysis & Synthesis Resource Utilization by Entity
-  8. General Register Statistics
-  9. Multiplexer Restructuring Statistics (Restructuring Performed)
- 10. Post-Synthesis Netlist Statistics for Top Partition
- 11. Elapsed Time Per Partition
- 12. Analysis & Synthesis Messages
+  8. Analysis & Synthesis RAM Summary
+  9. General Register Statistics
+ 10. Registers Packed Into Inferred Megafunctions
+ 11. Source assignments for altsyncram:mem_rtl_0|altsyncram_al71:auto_generated
+ 12. Parameter Settings for Inferred Entity Instance: altsyncram:mem_rtl_0
+ 13. altsyncram Parameter Settings by Entity Instance
+ 14. Post-Synthesis Netlist Statistics for Top Partition
+ 15. Elapsed Time Per Partition
+ 16. Analysis & Synthesis Messages
 
 
 
@@ -44,18 +48,18 @@ https://fpgasoftware.intel.com/eula.
 +----------------------------------------------------------------------------------+
 ; Analysis & Synthesis Summary                                                     ;
 +------------------------------------+---------------------------------------------+
-; Analysis & Synthesis Status        ; Successful - Fri Nov 21 11:54:05 2025       ;
+; Analysis & Synthesis Status        ; Successful - Thu Nov 27 18:47:04 2025       ;
 ; Quartus Prime Version              ; 20.1.1 Build 720 11/11/2020 SJ Lite Edition ;
 ; Revision Name                      ; week2                                       ;
-; Top-level Entity Name              ; Counter4Bit                                 ;
+; Top-level Entity Name              ; ram_array                                   ;
 ; Family                             ; MAX 10                                      ;
-; Total logic elements               ; 6                                           ;
-;     Total combinational functions  ; 6                                           ;
-;     Dedicated logic registers      ; 4                                           ;
-; Total registers                    ; 4                                           ;
-; Total pins                         ; 7                                           ;
+; Total logic elements               ; 8                                           ;
+;     Total combinational functions  ; 0                                           ;
+;     Dedicated logic registers      ; 8                                           ;
+; Total registers                    ; 8                                           ;
+; Total pins                         ; 23                                          ;
 ; Total virtual pins                 ; 0                                           ;
-; Total memory bits                  ; 0                                           ;
+; Total memory bits                  ; 128                                         ;
 ; Embedded Multiplier 9-bit elements ; 0                                           ;
 ; Total PLLs                         ; 0                                           ;
 ; UFM blocks                         ; 0                                           ;
@@ -69,7 +73,7 @@ https://fpgasoftware.intel.com/eula.
 ; Option                                                           ; Setting            ; Default Value      ;
 +------------------------------------------------------------------+--------------------+--------------------+
 ; Device                                                           ; 10M50DAF484C7G     ;                    ;
-; Top-level entity name                                            ; Counter4Bit        ; week2              ;
+; Top-level entity name                                            ; ram_array          ; week2              ;
 ; Family name                                                      ; MAX 10             ; Cyclone V          ;
 ; Use smart compilation                                            ; Off                ; Off                ;
 ; Enable parallel Assembler and Timing Analyzer during compilation ; On                 ; On                 ;
@@ -158,63 +162,84 @@ https://fpgasoftware.intel.com/eula.
 ; Maximum allowed            ; 16          ;
 ;                            ;             ;
 ; Average used               ; 1.00        ;
-; Maximum used               ; 16          ;
+; Maximum used               ; 1           ;
 ;                            ;             ;
 ; Usage by Processor         ; % Time Used ;
 ;     Processor 1            ; 100.0%      ;
-;     Processors 2-16        ;   0.0%      ;
 +----------------------------+-------------+
 
 
-+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Analysis & Synthesis Source Files Read                                                                                                                                  ;
-+----------------------------------+-----------------+-----------------+----------------------------------------------------------------------------------------+---------+
-; File Name with User-Entered Path ; Used in Netlist ; File Type       ; File Name with Absolute Path                                                           ; Library ;
-+----------------------------------+-----------------+-----------------+----------------------------------------------------------------------------------------+---------+
-; Counter4Bit.vhd                  ; yes             ; User VHDL File  ; /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/Counter4Bit.vhd ;         ;
-+----------------------------------+-----------------+-----------------+----------------------------------------------------------------------------------------+---------+
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Source Files Read                                                                                                                                                      ;
++----------------------------------+-----------------+------------------------------+-----------------------------------------------------------------------------------------------+---------+
+; File Name with User-Entered Path ; Used in Netlist ; File Type                    ; File Name with Absolute Path                                                                  ; Library ;
++----------------------------------+-----------------+------------------------------+-----------------------------------------------------------------------------------------------+---------+
+; ram_array.vhd                    ; yes             ; User VHDL File               ; /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/ram_array.vhd          ;         ;
+; altsyncram.tdf                   ; yes             ; Megafunction                 ; /home/nw1728/intelFPGA_lite/20.1/quartus/libraries/megafunctions/altsyncram.tdf               ;         ;
+; stratix_ram_block.inc            ; yes             ; Megafunction                 ; /home/nw1728/intelFPGA_lite/20.1/quartus/libraries/megafunctions/stratix_ram_block.inc        ;         ;
+; lpm_mux.inc                      ; yes             ; Megafunction                 ; /home/nw1728/intelFPGA_lite/20.1/quartus/libraries/megafunctions/lpm_mux.inc                  ;         ;
+; lpm_decode.inc                   ; yes             ; Megafunction                 ; /home/nw1728/intelFPGA_lite/20.1/quartus/libraries/megafunctions/lpm_decode.inc               ;         ;
+; aglobal201.inc                   ; yes             ; Megafunction                 ; /home/nw1728/intelFPGA_lite/20.1/quartus/libraries/megafunctions/aglobal201.inc               ;         ;
+; a_rdenreg.inc                    ; yes             ; Megafunction                 ; /home/nw1728/intelFPGA_lite/20.1/quartus/libraries/megafunctions/a_rdenreg.inc                ;         ;
+; altrom.inc                       ; yes             ; Megafunction                 ; /home/nw1728/intelFPGA_lite/20.1/quartus/libraries/megafunctions/altrom.inc                   ;         ;
+; altram.inc                       ; yes             ; Megafunction                 ; /home/nw1728/intelFPGA_lite/20.1/quartus/libraries/megafunctions/altram.inc                   ;         ;
+; altdpram.inc                     ; yes             ; Megafunction                 ; /home/nw1728/intelFPGA_lite/20.1/quartus/libraries/megafunctions/altdpram.inc                 ;         ;
+; db/altsyncram_al71.tdf           ; yes             ; Auto-Generated Megafunction  ; /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/db/altsyncram_al71.tdf ;         ;
++----------------------------------+-----------------+------------------------------+-----------------------------------------------------------------------------------------------+---------+
 
 
-+------------------------------------------------------------+
-; Analysis & Synthesis Resource Usage Summary                ;
-+---------------------------------------------+--------------+
-; Resource                                    ; Usage        ;
-+---------------------------------------------+--------------+
-; Estimated Total logic elements              ; 6            ;
-;                                             ;              ;
-; Total combinational functions               ; 6            ;
-; Logic element usage by number of LUT inputs ;              ;
-;     -- 4 input functions                    ; 2            ;
-;     -- 3 input functions                    ; 1            ;
-;     -- <=2 input functions                  ; 3            ;
-;                                             ;              ;
-; Logic elements by mode                      ;              ;
-;     -- normal mode                          ; 6            ;
-;     -- arithmetic mode                      ; 0            ;
-;                                             ;              ;
-; Total registers                             ; 4            ;
-;     -- Dedicated logic registers            ; 4            ;
-;     -- I/O registers                        ; 0            ;
-;                                             ;              ;
-; I/O pins                                    ; 7            ;
-;                                             ;              ;
-; Embedded Multiplier 9-bit elements          ; 0            ;
-;                                             ;              ;
-; Maximum fan-out node                        ; count_reg[0] ;
-; Maximum fan-out                             ; 5            ;
-; Total fan-out                               ; 40           ;
-; Average fan-out                             ; 1.67         ;
-+---------------------------------------------+--------------+
++---------------------------------------------------------+
+; Analysis & Synthesis Resource Usage Summary             ;
++---------------------------------------------+-----------+
+; Resource                                    ; Usage     ;
++---------------------------------------------+-----------+
+; Estimated Total logic elements              ; 8         ;
+;                                             ;           ;
+; Total combinational functions               ; 0         ;
+; Logic element usage by number of LUT inputs ;           ;
+;     -- 4 input functions                    ; 0         ;
+;     -- 3 input functions                    ; 0         ;
+;     -- <=2 input functions                  ; 0         ;
+;                                             ;           ;
+; Logic elements by mode                      ;           ;
+;     -- normal mode                          ; 0         ;
+;     -- arithmetic mode                      ; 0         ;
+;                                             ;           ;
+; Total registers                             ; 8         ;
+;     -- Dedicated logic registers            ; 8         ;
+;     -- I/O registers                        ; 0         ;
+;                                             ;           ;
+; I/O pins                                    ; 23        ;
+; Total memory bits                           ; 128       ;
+;                                             ;           ;
+; Embedded Multiplier 9-bit elements          ; 0         ;
+;                                             ;           ;
+; Maximum fan-out node                        ; clk~input ;
+; Maximum fan-out                             ; 16        ;
+; Total fan-out                               ; 111       ;
+; Average fan-out                             ; 1.79      ;
++---------------------------------------------+-----------+
 
 
-+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Analysis & Synthesis Resource Utilization by Entity                                                                                                                                                                                ;
-+----------------------------+---------------------+---------------------------+-------------+------------+--------------+---------+-----------+------+--------------+------------+---------------------+-------------+--------------+
-; Compilation Hierarchy Node ; Combinational ALUTs ; Dedicated Logic Registers ; Memory Bits ; UFM Blocks ; DSP Elements ; DSP 9x9 ; DSP 18x18 ; Pins ; Virtual Pins ; ADC blocks ; Full Hierarchy Name ; Entity Name ; Library Name ;
-+----------------------------+---------------------+---------------------------+-------------+------------+--------------+---------+-----------+------+--------------+------------+---------------------+-------------+--------------+
-; |Counter4Bit               ; 6 (6)               ; 4 (4)                     ; 0           ; 0          ; 0            ; 0       ; 0         ; 7    ; 0            ; 0          ; |Counter4Bit        ; Counter4Bit ; work         ;
-+----------------------------+---------------------+---------------------------+-------------+------------+--------------+---------+-----------+------+--------------+------------+---------------------+-------------+--------------+
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Resource Utilization by Entity                                                                                                                                                                                                                                           ;
++----------------------------------------+---------------------+---------------------------+-------------+------------+--------------+---------+-----------+------+--------------+------------+----------------------------------------------------------------+-----------------+--------------+
+; Compilation Hierarchy Node             ; Combinational ALUTs ; Dedicated Logic Registers ; Memory Bits ; UFM Blocks ; DSP Elements ; DSP 9x9 ; DSP 18x18 ; Pins ; Virtual Pins ; ADC blocks ; Full Hierarchy Name                                            ; Entity Name     ; Library Name ;
++----------------------------------------+---------------------+---------------------------+-------------+------------+--------------+---------+-----------+------+--------------+------------+----------------------------------------------------------------+-----------------+--------------+
+; |ram_array                             ; 0 (0)               ; 8 (8)                     ; 128         ; 0          ; 0            ; 0       ; 0         ; 23   ; 0            ; 0          ; |ram_array                                                     ; ram_array       ; work         ;
+;    |altsyncram:mem_rtl_0|              ; 0 (0)               ; 0 (0)                     ; 128         ; 0          ; 0            ; 0       ; 0         ; 0    ; 0            ; 0          ; |ram_array|altsyncram:mem_rtl_0                                ; altsyncram      ; work         ;
+;       |altsyncram_al71:auto_generated| ; 0 (0)               ; 0 (0)                     ; 128         ; 0          ; 0            ; 0       ; 0         ; 0    ; 0            ; 0          ; |ram_array|altsyncram:mem_rtl_0|altsyncram_al71:auto_generated ; altsyncram_al71 ; work         ;
++----------------------------------------+---------------------+---------------------------+-------------+------------+--------------+---------+-----------+------+--------------+------------+----------------------------------------------------------------+-----------------+--------------+
 Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
+
+
++---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis RAM Summary                                                                                                                              ;
++----------------------------------------------------------------+------+-------------+--------------+--------------+--------------+--------------+------+------+
+; Name                                                           ; Type ; Mode        ; Port A Depth ; Port A Width ; Port B Depth ; Port B Width ; Size ; MIF  ;
++----------------------------------------------------------------+------+-------------+--------------+--------------+--------------+--------------+------+------+
+; altsyncram:mem_rtl_0|altsyncram_al71:auto_generated|ALTSYNCRAM ; AUTO ; Single Port ; 16           ; 8            ; --           ; --           ; 128  ; None ;
++----------------------------------------------------------------+------+-------------+--------------+--------------+--------------+--------------+------+------+
 
 
 +------------------------------------------------------+
@@ -222,42 +247,136 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 +----------------------------------------------+-------+
 ; Statistic                                    ; Value ;
 +----------------------------------------------+-------+
-; Total registers                              ; 4     ;
+; Total registers                              ; 8     ;
 ; Number of registers using Synchronous Clear  ; 0     ;
 ; Number of registers using Synchronous Load   ; 0     ;
 ; Number of registers using Asynchronous Clear ; 0     ;
 ; Number of registers using Asynchronous Load  ; 0     ;
-; Number of registers using Clock Enable       ; 4     ;
+; Number of registers using Clock Enable       ; 0     ;
 ; Number of registers using Preset             ; 0     ;
 +----------------------------------------------+-------+
 
 
-+------------------------------------------------------------------------------------------------------------------------------------------+
-; Multiplexer Restructuring Statistics (Restructuring Performed)                                                                           ;
-+--------------------+-----------+---------------+----------------------+------------------------+------------+----------------------------+
-; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered ; Example Multiplexer Output ;
-+--------------------+-----------+---------------+----------------------+------------------------+------------+----------------------------+
-; 3:1                ; 4 bits    ; 8 LEs         ; 4 LEs                ; 4 LEs                  ; Yes        ; |Counter4Bit|count_reg[0]  ;
-+--------------------+-----------+---------------+----------------------+------------------------+------------+----------------------------+
++----------------------------------------------+
+; Registers Packed Into Inferred Megafunctions ;
++---------------+--------------+---------------+
+; Register Name ; Megafunction ; Type          ;
++---------------+--------------+---------------+
+; dout[0]~reg0  ; mem_rtl_0    ; RAM           ;
+; dout[1]~reg0  ; mem_rtl_0    ; RAM           ;
+; dout[2]~reg0  ; mem_rtl_0    ; RAM           ;
+; dout[3]~reg0  ; mem_rtl_0    ; RAM           ;
+; dout[4]~reg0  ; mem_rtl_0    ; RAM           ;
+; dout[5]~reg0  ; mem_rtl_0    ; RAM           ;
+; dout[6]~reg0  ; mem_rtl_0    ; RAM           ;
+; dout[7]~reg0  ; mem_rtl_0    ; RAM           ;
++---------------+--------------+---------------+
+
+
++----------------------------------------------------------------------------+
+; Source assignments for altsyncram:mem_rtl_0|altsyncram_al71:auto_generated ;
++---------------------------------+--------------------+------+--------------+
+; Assignment                      ; Value              ; From ; To           ;
++---------------------------------+--------------------+------+--------------+
+; OPTIMIZE_POWER_DURING_SYNTHESIS ; NORMAL_COMPILATION ; -    ; -            ;
++---------------------------------+--------------------+------+--------------+
+
+
++----------------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: altsyncram:mem_rtl_0      ;
++------------------------------------+----------------------+----------------+
+; Parameter Name                     ; Value                ; Type           ;
++------------------------------------+----------------------+----------------+
+; BYTE_SIZE_BLOCK                    ; 8                    ; Untyped        ;
+; AUTO_CARRY_CHAINS                  ; ON                   ; AUTO_CARRY     ;
+; IGNORE_CARRY_BUFFERS               ; OFF                  ; IGNORE_CARRY   ;
+; AUTO_CASCADE_CHAINS                ; ON                   ; AUTO_CASCADE   ;
+; IGNORE_CASCADE_BUFFERS             ; OFF                  ; IGNORE_CASCADE ;
+; WIDTH_BYTEENA                      ; 1                    ; Untyped        ;
+; OPERATION_MODE                     ; SINGLE_PORT          ; Untyped        ;
+; WIDTH_A                            ; 8                    ; Untyped        ;
+; WIDTHAD_A                          ; 4                    ; Untyped        ;
+; NUMWORDS_A                         ; 16                   ; Untyped        ;
+; OUTDATA_REG_A                      ; UNREGISTERED         ; Untyped        ;
+; ADDRESS_ACLR_A                     ; NONE                 ; Untyped        ;
+; OUTDATA_ACLR_A                     ; NONE                 ; Untyped        ;
+; WRCONTROL_ACLR_A                   ; NONE                 ; Untyped        ;
+; INDATA_ACLR_A                      ; NONE                 ; Untyped        ;
+; BYTEENA_ACLR_A                     ; NONE                 ; Untyped        ;
+; WIDTH_B                            ; 1                    ; Untyped        ;
+; WIDTHAD_B                          ; 1                    ; Untyped        ;
+; NUMWORDS_B                         ; 1                    ; Untyped        ;
+; INDATA_REG_B                       ; CLOCK1               ; Untyped        ;
+; WRCONTROL_WRADDRESS_REG_B          ; CLOCK1               ; Untyped        ;
+; RDCONTROL_REG_B                    ; CLOCK1               ; Untyped        ;
+; ADDRESS_REG_B                      ; CLOCK1               ; Untyped        ;
+; OUTDATA_REG_B                      ; UNREGISTERED         ; Untyped        ;
+; BYTEENA_REG_B                      ; CLOCK1               ; Untyped        ;
+; INDATA_ACLR_B                      ; NONE                 ; Untyped        ;
+; WRCONTROL_ACLR_B                   ; NONE                 ; Untyped        ;
+; ADDRESS_ACLR_B                     ; NONE                 ; Untyped        ;
+; OUTDATA_ACLR_B                     ; NONE                 ; Untyped        ;
+; RDCONTROL_ACLR_B                   ; NONE                 ; Untyped        ;
+; BYTEENA_ACLR_B                     ; NONE                 ; Untyped        ;
+; WIDTH_BYTEENA_A                    ; 1                    ; Untyped        ;
+; WIDTH_BYTEENA_B                    ; 1                    ; Untyped        ;
+; RAM_BLOCK_TYPE                     ; AUTO                 ; Untyped        ;
+; BYTE_SIZE                          ; 8                    ; Untyped        ;
+; READ_DURING_WRITE_MODE_MIXED_PORTS ; DONT_CARE            ; Untyped        ;
+; READ_DURING_WRITE_MODE_PORT_A      ; OLD_DATA             ; Untyped        ;
+; READ_DURING_WRITE_MODE_PORT_B      ; NEW_DATA_NO_NBE_READ ; Untyped        ;
+; INIT_FILE                          ; UNUSED               ; Untyped        ;
+; INIT_FILE_LAYOUT                   ; PORT_A               ; Untyped        ;
+; MAXIMUM_DEPTH                      ; 0                    ; Untyped        ;
+; CLOCK_ENABLE_INPUT_A               ; NORMAL               ; Untyped        ;
+; CLOCK_ENABLE_INPUT_B               ; NORMAL               ; Untyped        ;
+; CLOCK_ENABLE_OUTPUT_A              ; NORMAL               ; Untyped        ;
+; CLOCK_ENABLE_OUTPUT_B              ; NORMAL               ; Untyped        ;
+; CLOCK_ENABLE_CORE_A                ; USE_INPUT_CLKEN      ; Untyped        ;
+; CLOCK_ENABLE_CORE_B                ; USE_INPUT_CLKEN      ; Untyped        ;
+; ENABLE_ECC                         ; FALSE                ; Untyped        ;
+; ECC_PIPELINE_STAGE_ENABLED         ; FALSE                ; Untyped        ;
+; WIDTH_ECCSTATUS                    ; 3                    ; Untyped        ;
+; DEVICE_FAMILY                      ; MAX 10               ; Untyped        ;
+; CBXI_PARAMETER                     ; altsyncram_al71      ; Untyped        ;
++------------------------------------+----------------------+----------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++------------------------------------------------------------------+
+; altsyncram Parameter Settings by Entity Instance                 ;
++-------------------------------------------+----------------------+
+; Name                                      ; Value                ;
++-------------------------------------------+----------------------+
+; Number of entity instances                ; 1                    ;
+; Entity Instance                           ; altsyncram:mem_rtl_0 ;
+;     -- OPERATION_MODE                     ; SINGLE_PORT          ;
+;     -- WIDTH_A                            ; 8                    ;
+;     -- NUMWORDS_A                         ; 16                   ;
+;     -- OUTDATA_REG_A                      ; UNREGISTERED         ;
+;     -- WIDTH_B                            ; 1                    ;
+;     -- NUMWORDS_B                         ; 1                    ;
+;     -- ADDRESS_REG_B                      ; CLOCK1               ;
+;     -- OUTDATA_REG_B                      ; UNREGISTERED         ;
+;     -- RAM_BLOCK_TYPE                     ; AUTO                 ;
+;     -- READ_DURING_WRITE_MODE_MIXED_PORTS ; DONT_CARE            ;
++-------------------------------------------+----------------------+
 
 
 +-----------------------------------------------------+
 ; Post-Synthesis Netlist Statistics for Top Partition ;
-+-----------------------+-----------------------------+
-; Type                  ; Count                       ;
-+-----------------------+-----------------------------+
-; boundary_port         ; 7                           ;
-; cycloneiii_ff         ; 4                           ;
-;     ENA               ; 4                           ;
-; cycloneiii_lcell_comb ; 6                           ;
-;     normal            ; 6                           ;
-;         2 data inputs ; 3                           ;
-;         3 data inputs ; 1                           ;
-;         4 data inputs ; 2                           ;
-;                       ;                             ;
-; Max LUT depth         ; 2.00                        ;
-; Average LUT depth     ; 1.23                        ;
-+-----------------------+-----------------------------+
++----------------------+------------------------------+
+; Type                 ; Count                        ;
++----------------------+------------------------------+
+; boundary_port        ; 23                           ;
+; cycloneiii_ff        ; 8                            ;
+;     plain            ; 8                            ;
+; cycloneiii_io_obuf   ; 8                            ;
+; cycloneiii_ram_block ; 8                            ;
+;                      ;                              ;
+; Max LUT depth        ; 0.00                         ;
+; Average LUT depth    ; 0.00                         ;
++----------------------+------------------------------+
 
 
 +-------------------------------+
@@ -275,7 +394,7 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 Info: *******************************************************************
 Info: Running Quartus Prime Analysis & Synthesis
     Info: Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
-    Info: Processing started: Fri Nov 21 11:54:01 2025
+    Info: Processing started: Thu Nov 27 18:46:59 2025
 Info: Command: quartus_map --read_settings_files=on --write_settings_files=off week2 -c week2
 Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
 Info (20030): Parallel compilation is enabled and will use 16 of the 16 processors detected
@@ -283,20 +402,56 @@ Info (12021): Found 2 design units, including 1 entities, in source file Sequent
     Info (12022): Found design unit 1: SequentialCircuitExample-synth File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/SequentialCircuitExample.vhd Line: 8
     Info (12023): Found entity 1: SequentialCircuitExample File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/SequentialCircuitExample.vhd Line: 3
 Info (12021): Found 2 design units, including 1 entities, in source file Counter4Bit.vhd
-    Info (12022): Found design unit 1: Counter4Bit-rtl File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/Counter4Bit.vhd Line: 14
-    Info (12023): Found entity 1: Counter4Bit File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/Counter4Bit.vhd Line: 5
-Info (12127): Elaborating entity "Counter4Bit" for the top level hierarchy
+    Info (12022): Found design unit 1: Counter_4bit-Behavioral File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/Counter4Bit.vhd Line: 14
+    Info (12023): Found entity 1: Counter_4bit File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/Counter4Bit.vhd Line: 5
+Info (12021): Found 2 design units, including 1 entities, in source file rom_array.vhd
+    Info (12022): Found design unit 1: rom_array-synth File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/rom_array.vhd Line: 14
+    Info (12023): Found entity 1: rom_array File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/rom_array.vhd Line: 5
+Info (12021): Found 2 design units, including 1 entities, in source file ram_array.vhd
+    Info (12022): Found design unit 1: ram_array-synth File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/ram_array.vhd Line: 16
+    Info (12023): Found entity 1: ram_array File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/ram_array.vhd Line: 5
+Info (12021): Found 2 design units, including 1 entities, in source file ram_tb.vhd
+    Info (12022): Found design unit 1: ram_tb-sim File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/ram_tb.vhd Line: 9
+    Info (12023): Found entity 1: ram_tb File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/ram_tb.vhd Line: 5
+Info (12127): Elaborating entity "ram_array" for the top level hierarchy
+Info (19000): Inferred 1 megafunctions from design logic
+    Info (276029): Inferred altsyncram megafunction from the following design logic: "mem_rtl_0" 
+        Info (286033): Parameter OPERATION_MODE set to SINGLE_PORT
+        Info (286033): Parameter WIDTH_A set to 8
+        Info (286033): Parameter WIDTHAD_A set to 4
+        Info (286033): Parameter NUMWORDS_A set to 16
+        Info (286033): Parameter OUTDATA_REG_A set to UNREGISTERED
+        Info (286033): Parameter ADDRESS_ACLR_A set to NONE
+        Info (286033): Parameter OUTDATA_ACLR_A set to NONE
+        Info (286033): Parameter READ_DURING_WRITE_MODE_PORT_A set to OLD_DATA
+        Info (286033): Parameter INDATA_ACLR_A set to NONE
+        Info (286033): Parameter WRCONTROL_ACLR_A set to NONE
+Info (12130): Elaborated megafunction instantiation "altsyncram:mem_rtl_0"
+Info (12133): Instantiated megafunction "altsyncram:mem_rtl_0" with the following parameter:
+    Info (12134): Parameter "OPERATION_MODE" = "SINGLE_PORT"
+    Info (12134): Parameter "WIDTH_A" = "8"
+    Info (12134): Parameter "WIDTHAD_A" = "4"
+    Info (12134): Parameter "NUMWORDS_A" = "16"
+    Info (12134): Parameter "OUTDATA_REG_A" = "UNREGISTERED"
+    Info (12134): Parameter "ADDRESS_ACLR_A" = "NONE"
+    Info (12134): Parameter "OUTDATA_ACLR_A" = "NONE"
+    Info (12134): Parameter "READ_DURING_WRITE_MODE_PORT_A" = "OLD_DATA"
+    Info (12134): Parameter "INDATA_ACLR_A" = "NONE"
+    Info (12134): Parameter "WRCONTROL_ACLR_A" = "NONE"
+Info (12021): Found 1 design units, including 1 entities, in source file db/altsyncram_al71.tdf
+    Info (12023): Found entity 1: altsyncram_al71 File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week2/quartus/db/altsyncram_al71.tdf Line: 28
 Info (286030): Timing-Driven Synthesis is running
 Info (16010): Generating hard_block partition "hard_block:auto_generated_inst"
     Info (16011): Adding 0 node(s), including 0 DDIO, 0 PLL, 0 transceiver and 0 LCELL
-Info (21057): Implemented 13 device resources after synthesis - the final resource count might be different
-    Info (21058): Implemented 3 input pins
-    Info (21059): Implemented 4 output pins
-    Info (21061): Implemented 6 logic cells
+Info (21057): Implemented 39 device resources after synthesis - the final resource count might be different
+    Info (21058): Implemented 15 input pins
+    Info (21059): Implemented 8 output pins
+    Info (21061): Implemented 8 logic cells
+    Info (21064): Implemented 8 RAM segments
 Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 1 warning
-    Info: Peak virtual memory: 505 megabytes
-    Info: Processing ended: Fri Nov 21 11:54:05 2025
-    Info: Elapsed time: 00:00:04
-    Info: Total CPU time (on all processors): 00:00:12
+    Info: Peak virtual memory: 445 megabytes
+    Info: Processing ended: Thu Nov 27 18:47:04 2025
+    Info: Elapsed time: 00:00:05
+    Info: Total CPU time (on all processors): 00:00:16
 
 
