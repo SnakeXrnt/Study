@@ -9,9 +9,9 @@ std::string_view system_time_source::timestamp() const {
 
     auto now = std::time(nullptr);
     auto local = std::localtime(&now);
-    char tmp[32]{};
+    static char tmp[32]{};
 
     std::strftime(tmp, sizeof(tmp), "%H:%M:%S", local);
     buffer = tmp;
-    return buffer;
+    return tmp;
 }

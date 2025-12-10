@@ -1,0 +1,38 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity riscv_alu is 
+    port (
+        A       : in STD_LOGIC_VECTOR(31 downto 0);
+        B       : in STD_LOGIC_VECTOR(31 downto 0);
+        ALUOP   : in STD_LOGIC_VECTOR(1 downto 0);
+        Result  : out STD_LOGIC_VECTOR(31 downto 0);
+        Zero    : out STD_LOGIC
+    )
+end entity riscv_alu;
+
+architecture behaviour of riscv_alu is 
+
+    signal ALUR_temp : STD_LOGIC_VECTOR(31 downto 0);
+    constant OP_AND   : STD_LOGIC_VECTOR(1 downto 0) := "00";
+    constant OP_OR   : STD_LOGIC_VECTOR(1 downto 0) := "01";
+    constant OP_ADD   : STD_LOGIC_VECTOR(1 downto 0) := "10";
+    constant OP_SUB   : STD_LOGIC_VECTOR(1 downto 0) := "11";
+
+begin
+    with ALUOP select ALUR_temp <=
+        A and B when OP_AND,
+        A or B when OP_OR,
+        STD_LOGIC_VECTOR(UNSIGNED(A) + UNSIGNED(B)) when OP_ADD,
+        STD_LOGIC_VECTOR(UNSIGNED(A) - UNSIGNED(B)) when OP_SUB,
+        (others => 'X') when others;
+
+    Result <= ALUR_temp;
+
+    Zero <= '1' when ALUR_temp = (others => '0') else '0';
+
+end architecture behaviour;
+
+
+    

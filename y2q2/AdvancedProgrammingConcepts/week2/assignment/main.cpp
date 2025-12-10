@@ -32,13 +32,16 @@ int main() {
 
   sax::RPNCalculator calc(std::move(operations), std::move(parser));
 
-  std::string expression = "3 4 + 2 *";
-  try {
-    double result = calc.calculate(expression);
-    std::cout << expression << " = " << result << std::endl;
-  } catch (const std::exception &e) {
-    std::cerr << "error : " << e.what() << std::endl;
-  }
+  while(true) {
+      std::string expression;
+      std::getline(std::cin, expression);
+      try {
+        double result = calc.calculate(expression);
+        std::cout << expression << " = " << result << std::endl;
+      } catch (const std::exception &e) {
+        std::cerr << "error : " << e.what() << std::endl;
+      }
 
+  }  
   return 0;
 }

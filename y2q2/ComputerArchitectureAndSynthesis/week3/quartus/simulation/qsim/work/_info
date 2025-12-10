@@ -1,0 +1,150 @@
+m255
+K4
+z2
+!s11e vcom 2020.1 2020.02, Feb 28 2020
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 d/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week3/quartus/simulation/qsim
+Ehard_block
+Z1 w1764858689
+Z2 DPx4 ieee 16 vital_primitives 0 22 G>kiXP8Q9dRClKfK1Zn7j1
+Z3 DPx11 fiftyfivenm 21 fiftyfivenm_atom_pack 0 22 OTUTkBjTeYVegmIWhVi3N0
+Z4 DPx4 ieee 12 vital_timing 0 22 J>EBealN09f8GzldA[z2>3
+Z5 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
+Z6 DPx4 ieee 14 std_logic_1164 0 22 cVAk:aDinOX8^VGI1ekP<3
+Z7 DPx11 fiftyfivenm 22 fiftyfivenm_components 0 22 C5K^h=:j[4HI?HO^UkN3:2
+!i122 6
+R0
+Z8 8week3.vho
+Z9 Fweek3.vho
+l0
+L35 1
+Vhj[i;a0dD85B`o1JPT^cg2
+!s100 3A]XnMhF<;9mKUe5mn3aM1
+Z10 OV;C;2020.1;71
+32
+Z11 !s110 1764858689
+!i10b 1
+Z12 !s108 1764858689.000000
+Z13 !s90 -work|work|week3.vho|
+Z14 !s107 week3.vho|
+!i113 1
+Z15 o-work work
+Z16 tExplicit 1 CvgOpt 0
+Astructure
+R2
+R3
+R4
+R5
+R6
+R7
+DEx4 work 10 hard_block 0 22 hj[i;a0dD85B`o1JPT^cg2
+!i122 6
+l76
+L54 28
+Va5ClDYec`9chO`Ne0M1NL2
+!s100 >:Wi^nX[YiN=@>>JC6K_83
+R10
+32
+R11
+!i10b 1
+R12
+R13
+R14
+!i113 1
+R15
+R16
+Eriscv_alu_opt
+R1
+R2
+R3
+R4
+R5
+R6
+R7
+!i122 6
+R0
+R8
+R9
+l0
+L89 1
+V=a8HzbSiflXnLSzCS6[Sg1
+!s100 @KO[?<b8meG>C`=MceGNh3
+R10
+32
+R11
+!i10b 1
+R12
+R13
+R14
+!i113 1
+R15
+R16
+Astructure
+R2
+R3
+R4
+R5
+R6
+R7
+DEx4 work 13 riscv_alu_opt 0 22 =a8HzbSiflXnLSzCS6[Sg1
+!i122 6
+l939
+L202 11690
+V=Icdg;zT5BW=ga]CZlfkC0
+!s100 A9d?6k]eHWTI<>1naOLON3
+R10
+32
+R11
+!i10b 1
+R12
+R13
+R14
+!i113 1
+R15
+R16
+Eriscv_alu_opt_vhd_vec_tst
+Z17 w1764858688
+R5
+R6
+!i122 7
+R0
+Z18 8Waveform.vwf.vht
+Z19 FWaveform.vwf.vht
+l0
+L32 1
+V;YXhfNH>?_kMKd6Da=FFT0
+!s100 2V3i4d^e789P6:b0V8V^I3
+R10
+32
+R11
+!i10b 1
+R12
+Z20 !s90 -work|work|Waveform.vwf.vht|
+Z21 !s107 Waveform.vwf.vht|
+!i113 1
+R15
+R16
+Ariscv_alu_opt_arch
+R5
+R6
+Z22 DEx4 work 25 riscv_alu_opt_vhd_vec_tst 0 22 ;YXhfNH>?_kMKd6Da=FFT0
+!i122 7
+l51
+L34 590
+VddEP]E<];3^RN:IGfkoe:2
+!s100 PEz0194[zGfCXD@X<cnO02
+R10
+32
+R11
+!i10b 1
+R12
+R20
+R21
+!i113 1
+R15
+R16
