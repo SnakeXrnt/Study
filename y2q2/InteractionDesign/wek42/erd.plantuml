@@ -1,0 +1,90 @@
+@startuml
+
+' Hide icons for a cleaner database look
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+entity "organizations" as org {
+  *organization_id : VARCHAR(36) <<PK>>
+  --
+  name : VARCHAR(200)
+  address : VARCHAR(500)
+  city : VARCHAR(100)
+  url : VARCHAR(500)
+  phone : VARCHAR(50)
+  email : VARCHAR(200)
+}
+
+entity "contact_persons" as cp {
+  *id : VARCHAR(36) <<PK>>
+  --
+  organization_id : VARCHAR(36) <<FK>>
+  first_name : VARCHAR(100)
+  last_name : VARCHAR(100)
+  email : VARCHAR(200)
+  job_title : VARCHAR(200)
+  phone : VARCHAR(50)
+  department : VARCHAR(200)
+}
+
+entity "internships" as intern {
+  *id : VARCHAR(36) <<PK>>
+  --
+  organization_id : VARCHAR(36) <<FK>>
+  title : VARCHAR(500)
+  short_description : TEXT
+  long_description : TEXT
+  year : INT
+  semester : INT
+  category : INT
+  is_completed : BIT/INT(1)
+  final_grade : DOUBLE
+}
+
+entity "students" as stu {
+  *student_id : VARCHAR(50) <<PK>>
+  --
+  first_name : VARCHAR(200)
+  last_name : VARCHAR(200)
+}
+
+entity "internship_contacts" as ic {
+  *internship_id : VARCHAR(36) <<PK, FK>>
+  *contact_id : VARCHAR(36) <<PK, FK>>
+}
+
+entity "internship_assignments" as ia {
+  *internship_id : VARCHAR(36) <<PK, FK>>
+  *student_id : VARCHAR(50) <<PK, FK>>
+}
+
+entity "assignments" as assign {
+  *assignment_id : VARCHAR(36) <<PK>>
+  --
+  internship_id : VARCHAR(36) <<FK>>
+  title : VARCHAR(500)
+  assignment_type : VARCHAR(50)
+  minor_module : VARCHAR(200)
+  is_completed : BIT/INT(1)
+}
+
+' Relationships
+
+' One Organization has many Contacts
+org ||..o{ cp : "1 to many"
+
+' One Organization has many Internships
+org ||..o{ intern : "1 to many"
+
+' One Internship has many Assignments (Tasks)
+intern ||..o{ assign : "1 to many"
+
+' Many-to-Many: Internships <-> Contacts
+intern ||..o{ ic
+ic }o..|| cp
+
+' Many-to-Many: Internships <-> Students
+intern ||..o{ ia
+ia }o..|| stu
+
+@enduml

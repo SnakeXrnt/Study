@@ -1,0 +1,106 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+package "Domain" {
+
+    enum InternshipCategory {
+        Research
+        Minor
+        Engineering
+    }
+
+    class Period <<record>> {
+        + Year : int
+        + Semester : int
+        + ToString() : string
+    }
+
+    class Student {
+        + StudentId : string
+        + FirstName : string
+        + LastName : string
+        + ToString() : string
+    }
+
+    class ContactPerson {
+        + Id : string
+        + FirstName : string?
+        + LastName : string?
+        + Email : string?
+        + JobTitle : string?
+        + PhoneNumber : string?
+        + Department : string?
+        + ToString() : string
+    }
+
+    class Organization {
+        + OrganizationId : string
+        + Name : string
+        + Address : string
+        + City : string
+        + Url : string?
+        + PhoneNumber : string?
+        + Email : string?
+        + Contacts : List<ContactPerson>
+        + ToString() : string
+    }
+
+    class Internship {
+        + Id : string
+        + OrganizationId : string
+        + OrganizationName : string
+        + Title : string
+        + ShortDescription : string
+        + LongDescription : string
+        + Period : Period
+        + Category : InternshipCategory
+        + Contacts : List<ContactPerson>
+        + AssignedStudents : List<Student>
+        + Assignments : List<Assignment>
+        + IsCompleted : bool
+        + FinalGrade : double?
+        + MarkCompleted(grade: double) : void
+        + ToString() : string
+    }
+
+    abstract class Assignment {
+        + Title : string
+        + IsCompleted : bool
+        + ValidateSpecifics() : bool
+    }
+
+    class ResearchAssignment {
+        + ResearchAssignment(t: string)
+    }
+
+    class MinorAssignment {
+        + MinorModule : string
+        + MinorAssignment(t: string, module: string)
+        + ValidateSpecifics() : bool
+    }
+
+    class EngineeringAssignment {
+        + EngineeringAssignment(t: string)
+    }
+}
+
+' Relationships
+
+' Assignment Hierarchy
+Assignment <|-- ResearchAssignment
+Assignment <|-- MinorAssignment
+Assignment <|-- EngineeringAssignment
+
+' Internship Composition & Aggregation
+Internship *-- Period
+Internship *-- InternshipCategory
+Internship "1" *-- "0..*" Assignment : contains >
+Internship "1" o-- "0..*" ContactPerson : references >
+Internship "1" o-- "0..*" Student : assigns >
+
+' Organization Composition
+Organization "1" *-- "0..*" ContactPerson : employs >
+
+@enduml

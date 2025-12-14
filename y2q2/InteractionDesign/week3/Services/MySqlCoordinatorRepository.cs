@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS internships (
   year INT,
   semester INT,
   category INT,
-  is_completed TINYINT(1) DEFAULT 0,
+  is_completed INT(1) DEFAULT 0,
   final_grade DOUBLE NULL,
   CONSTRAINT FK_intern_org FOREIGN KEY (organization_id) REFERENCES organizations(organization_id) ON DELETE CASCADE
 );

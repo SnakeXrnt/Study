@@ -1,5 +1,4 @@
-@startuml SIS_App_v3
-' Layout
+@startuml Domain_Classes
 left to right direction
 skinparam classAttributeIconSize 0
 skinparam shadowing false
@@ -31,38 +30,70 @@ class Organization {
   - email : string?
   + Organization(name:string, address:string, city:string)
   + Organization(id:string, name:string, address:string, city:string)
-  + OrganizationId : string {get}
+  + OrganizationId : string {get;set}
   + Name : string {get}
+  + Address : string {get}
+  + City : string {get}
+  + Url : string? {get}
+  + PhoneNumber : string? {get}
+  + Email : string? {get}
   + Contacts : List<ContactPerson> {get}
   + ToString() : string
 }
 
 class ContactPerson {
   - id : string
-  - organizationId : string
   - firstName : string?
   - lastName : string?
   - email : string?
   - jobTitle : string?
   - phoneNumber : string?
   - department : string?
-  + ContactPerson()
-  + Id : string {get}
+  + Id : string {get;set}
   + FirstName : string? {get}
   + LastName : string? {get}
   + Email : string? {get}
   + JobTitle : string? {get}
+  + PhoneNumber : string? {get}
+  + Department : string? {get}
+  + ToString() : string
 }
 
 class Student {
   - studentId : string
   - firstName : string
   - lastName : string
+  - currentAssignment : Assignment?
   + Student(studentId:string, firstName:string, lastName:string)
   + StudentId : string {get}
-  + FirstName : string {get}
-  + LastName : string {get}
+  + FirstName : string {get;set}
+  + LastName : string {get;set}
+  + CurrentAssignment : Assignment? {get;set}
   + ToString() : string
+}
+
+abstract class Assignment {
+  - title : string
+  - isCompleted : bool
+  # Assignment(title:string)
+  + Title : string {get}
+  + IsCompleted : bool {get;set}
+  + ValidateSpecifics() : bool
+}
+
+class ResearchAssignment {
+  + ResearchAssignment(title:string)
+}
+
+class MinorAssignment {
+  - minorModule : string
+  + MinorAssignment(title:string, module:string)
+  + MinorModule : string {get}
+  + ValidateSpecifics() : bool
+}
+
+class EngineeringAssignment {
+  + EngineeringAssignment(title:string)
 }
 
 class Internship {
@@ -77,87 +108,33 @@ class Internship {
   - isCompleted : bool
   - finalGrade : double?
   + Internship(orgId:string, orgName:string, title:string, shortDesc:string, longDesc:string, period:Period, category:InternshipCategory)
-  + Id : string {get}
-  + Title : string {get}
+  + Id : string {get;set}
   + OrganizationId : string {get}
   + OrganizationName : string {get}
+  + Title : string {get}
+  + ShortDescription : string {get}
+  + LongDescription : string {get}
+  + Period : Period {get}
+  + Category : InternshipCategory {get}
+  + IsCompleted : bool {get}
+  + FinalGrade : double? {get;set}
   + Contacts : List<ContactPerson> {get}
   + AssignedStudents : List<Student> {get}
   + MarkCompleted(grade:double) : void
   + ToString() : string
 }
 
-' --- repository / services ---
-interface ICoordinatorRepository {
-  + Organizations : IReadOnlyList<Organization> {get}
-  + Internships : IReadOnlyList<Internship> {get}
-  + Students : IReadOnlyList<Student> {get}
+' --- Relationships ---
+Organization "1" -- "*" ContactPerson : has
+Internship "*" -- "1" Period : uses
+Internship "*" -- "1" InternshipCategory : categorized as
+Internship "*" -- "1" Organization : part of
+Internship "1" -- "*" ContactPerson : contacts
+Internship "1" -- "*" Student : assigns
+Student "0..1" -- "*" Assignment : may have
 
-  + AddOrganization(org:Organization) : bool
-  + GetOrganizationsOverview() : IEnumerable<Organization>
+Assignment <|-- ResearchAssignment
+Assignment <|-- MinorAssignment
+Assignment <|-- EngineeringAssignment
 
-  + AddInternship(internship:Internship) : void
-  + GetInternshipsOverview(period:Period, category:InternshipCategory?) : IEnumerable<Internship>
-
-  + AssignStudentToInternship(student:Student, internshipId:string) : bool
-  + RemoveStudentFromInternship(studentId:string, internshipId:string) : bool
-
-  + WithdrawInternship(internshipId:string) : bool
-  + MarkInternshipCompleted(internshipId:string, finalGrade:double) : bool
-
-  + GetOrganizationById(organizationId:string) : Organization?
-  + GetInternshipsByOrganizationId(organizationId:string) : IEnumerable<Internship>
-  + GetContactPersonsForInternship(internshipId:string) : IEnumerable<ContactPerson>
-
-  + AddStudent(student:Student) : bool
-
-  ' Contact management
-  + AddContactPerson(organizationId:string, contact:ContactPerson) : bool
-  + GetContactPersonsByOrganization(organizationId:string) : IEnumerable<ContactPerson>
-}
-
-class SystemAdminCoordinator {
-  - _organizations : List<Organization>
-  - _internships : List<Internship>
-  - _students : List<Student>
-  + SystemAdminCoordinator()
-  + AddContactPerson(organizationId:string, contact:ContactPerson) : bool
-  + GetContactPersonsByOrganization(organizationId:string) : IEnumerable<ContactPerson>
-  + (implements ICoordinatorRepository)
-}
-
-class MySqlCoordinatorRepository {
-  - _connectionString : string
-  - _conn : MySqlConnection
-  + MySqlCoordinatorRepository(connectionString:string)
-  + EnsureSchema() : void
-  + Dispose() : void
-
-  ' implements ICoordinatorRepository methods including contact methods
-  + AddContactPerson(organizationId:string, contact:ContactPerson) : bool
-  + GetContactPersonsByOrganization(organizationId:string) : IEnumerable<ContactPerson>
-  + (implements ICoordinatorRepository)
-}
-
-' --- relations / cardinality ---
-Organization "1" -- "0..*" ContactPerson : employs
-Organization "1" -- "0..*" Internship : offers
-
-Internship "1" -- "0..*" ContactPerson : contacts
-ContactPerson "0..*" -- "0..*" Internship : linked_via_internship_contacts
-
-Internship "1" -- "0..*" Student : assigned >
-Student "0..*" -- "0..*" Internship : assignments (via internship_assignments)
-
-' implementations
-ICoordinatorRepository <|.. SystemAdminCoordinator
-ICoordinatorRepository <|.. MySqlCoordinatorRepository
-
-' --- notes about CLI behavior ---
-note bottom
-  CLI features reflected in repository:
-  - Coordinator menu: list/add orgs, internships, students, contacts
-  - Student menu: browse internships, view contact details, apply (assignment)
-  - Contacts are stored in contact_persons and linked via internship_contacts
-end note
 @enduml

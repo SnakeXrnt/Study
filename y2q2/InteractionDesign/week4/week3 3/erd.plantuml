@@ -1,0 +1,78 @@
+@startuml SIS_DB_ERD
+
+' --- tables (MySQL-friendly types) ---
+entity "organizations" as org {
+  * organization_id : VARCHAR(36) <<PK>>
+  --
+    name        : VARCHAR(200)    NOT NULL
+    address     : VARCHAR(500)
+    city        : VARCHAR(100)
+    url         : VARCHAR(500)
+    phone       : VARCHAR(50)
+    email       : VARCHAR(200)
+    created_at  : DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP
+}
+
+entity "contact_persons" as cp {
+  * id           : VARCHAR(36) <<PK>>
+  --
+    organization_id : VARCHAR(36) <<FK>>
+    first_name      : VARCHAR(100)
+    last_name       : VARCHAR(100)
+    email           : VARCHAR(200)
+    job_title       : VARCHAR(200)
+    phone           : VARCHAR(50)
+    department      : VARCHAR(200)
+    created_at      : DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP
+}
+
+entity "internships" as intern {
+  * id              : VARCHAR(36) <<PK>>
+  --
+    organization_id : VARCHAR(36) <<FK>>
+    title           : VARCHAR(500)
+    short_description : TEXT
+    long_description  : TEXT
+    year            : INT
+    semester        : INT
+    category        : TINYINT    ' maps to InternshipCategory enum
+    is_completed    : TINYINT(1) DEFAULT 0
+    final_grade     : DOUBLE     NULL
+    created_at      : DATETIME   NOT NULL DEFAULT CURRENT_TIMESTAMP
+}
+
+entity "internship_contacts" as ic {
+  * internship_id : VARCHAR(36) <<PK,FK>>
+  * contact_id    : VARCHAR(36) <<PK,FK>>
+  --
+    linked_at : DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+}
+
+entity "students" as s {
+  * student_id : VARCHAR(50) <<PK>>
+  --
+    first_name : VARCHAR(200)
+    last_name  : VARCHAR(200)
+    created_at : DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+}
+
+entity "internship_assignments" as ia {
+  * internship_id : VARCHAR(36) <<PK,FK>>
+  * student_id    : VARCHAR(50) <<PK,FK>>
+  --
+    applied_at   : DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    status       : VARCHAR(50) DEFAULT 'applied'  ' e.g. applied, accepted, withdrawn
+}
+
+' --- relationships / cardinality ---
+org ||--o{ cp : "1 - 0..* (organization has contacts)"
+org ||--o{ intern : "1 - 0..* (organization offers internships)"
+
+intern ||--o{ ic : "1 - 0..* (internship linked contacts)"
+cp   ||--o{ ic : "1 - 0..* (contact linked to internships)"
+
+intern ||--o{ ia : "1 - 0..* (internship assignments)"
+s    ||--o{ ia : "1 - 0..* (student assignments)"
+
+
+@enduml

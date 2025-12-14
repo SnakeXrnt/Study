@@ -1,0 +1,139 @@
+@startuml Domain_Classes
+left to right direction
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+
+' --- enums / simple types ---
+enum InternshipCategory {
+  Research
+  Minor
+  Engineering
+}
+
+class Period {
+  - year : int
+  - semester : int
+  + Period(year:int, semester:int)
+  + Year : int {get}
+  + Semester : int {get}
+  + ToString() : string
+}
+
+' --- domain entities ---
+class Organization {
+  - organizationId : string
+  - name : string
+  - address : string
+  - city : string
+  - url : string?
+  - phoneNumber : string?
+  - email : string?
+  + Organization(name:string, address:string, city:string)
+  + Organization(id:string, name:string, address:string, city:string)
+  + OrganizationId : string {get;set}
+  + Name : string {get}
+  + Address : string {get}
+  + City : string {get}
+  + Url : string? {get}
+  + PhoneNumber : string? {get}
+  + Email : string? {get}
+  + Contacts : List<ContactPerson> {get}
+  + ToString() : string
+}
+
+class ContactPerson {
+  - id : string
+  - firstName : string?
+  - lastName : string?
+  - email : string?
+  - jobTitle : string?
+  - phoneNumber : string?
+  - department : string?
+  + Id : string {get;set}
+  + FirstName : string? {get}
+  + LastName : string? {get}
+  + Email : string? {get}
+  + JobTitle : string? {get}
+  + PhoneNumber : string? {get}
+  + Department : string? {get}
+  + ToString() : string
+}
+
+class Student {
+  - studentId : string
+  - firstName : string
+  - lastName : string
+  + Student(studentId:string, firstName:string, lastName:string)
+  + StudentId : string {get}
+  + FirstName : string {get;set}
+  + LastName : string {get;set}
+  + ToString() : string
+}
+
+abstract class Assignment {
+  - title : string
+  - isCompleted : bool
+  # Assignment(title:string)
+  + Title : string {get}
+  + IsCompleted : bool {get;set}
+  + ValidateSpecifics() : bool
+}
+
+class ResearchAssignment {
+  + ResearchAssignment(title:string)
+}
+
+class MinorAssignment {
+  - minorModule : string
+  + MinorAssignment(title:string, module:string)
+  + MinorModule : string {get}
+  + ValidateSpecifics() : bool
+}
+
+class EngineeringAssignment {
+  + EngineeringAssignment(title:string)
+}
+
+class Internship {
+  - id : string
+  - organizationId : string
+  - organizationName : string
+  - title : string
+  - shortDescription : string
+  - longDescription : string
+  - period : Period
+  - category : InternshipCategory
+  - isCompleted : bool
+  - finalGrade : double?
+  + Internship(orgId:string, orgName:string, title:string, shortDesc:string, longDesc:string, period:Period, category:InternshipCategory)
+  + Id : string {get;set}
+  + OrganizationId : string {get}
+  + OrganizationName : string {get}
+  + Title : string {get}
+  + ShortDescription : string {get}
+  + LongDescription : string {get}
+  + Period : Period {get}
+  + Category : InternshipCategory {get}
+  + IsCompleted : bool {get}
+  + FinalGrade : double? {get;set}
+  + Contacts : List<ContactPerson> {get}
+  + AssignedStudents : List<Student> {get}
+  + Assignments : List<Assignment> {get}
+  + MarkCompleted(grade:double) : void
+  + ToString() : string
+}
+
+' --- Relationships ---
+Organization "1" -- "*" ContactPerson : has
+Internship "*" -- "1" Period : uses
+Internship "*" -- "1" InternshipCategory : categorized as
+Internship "*" -- "1" Organization : part of
+Internship "1" -- "*" ContactPerson : contacts
+Internship "1" -- "*" Student : assigns
+Internship "1" -- "*" Assignment : owns
+
+Assignment <|-- ResearchAssignment
+Assignment <|-- MinorAssignment
+Assignment <|-- EngineeringAssignment
+
+@enduml

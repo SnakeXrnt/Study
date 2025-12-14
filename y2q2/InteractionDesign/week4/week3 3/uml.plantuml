@@ -1,0 +1,206 @@
+@startuml SIS_App_v4
+left to right direction
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+
+' --- enums / simple types ---
+enum InternshipCategory {
+  Research
+  Minor
+  Engineering
+}
+
+class Period {
+  - year : int
+  - semester : int
+  + Period(year:int, semester:int)
+  + Year : int {get}
+  + Semester : int {get}
+  + ToString() : string
+}
+
+' --- domain entities ---
+class Organization {
+  - organizationId : string
+  - name : string
+  - address : string
+  - city : string
+  - url : string?
+  - phoneNumber : string?
+  - email : string?
+  + Organization(name:string, address:string, city:string)
+  + Organization(id:string, name:string, address:string, city:string)
+  + OrganizationId : string {get}
+  + Name : string {get}
+  + Contacts : List<ContactPerson> {get}
+  + ToString() : string
+}
+
+class ContactPerson {
+  - id : string
+  - organizationId : string
+  - firstName : string?
+  - lastName : string?
+  - email : string?
+  - jobTitle : string?
+  - phoneNumber : string?
+  - department : string?
+  + ContactPerson()
+  + Id : string {get;set}
+  + FirstName : string? {get;set}
+  + LastName : string? {get;set}
+  + Email : string? {get;set}
+}
+
+class Student {
+  - studentId : string
+  - firstName : string
+  - lastName : string
+  + Student(studentId:string, firstName:string, lastName:string)
+  + StudentId : string {get}
+  + FirstName : string {get}
+  + LastName : string {get}
+  + ToString() : string
+}
+
+class Internship {
+  - id : string
+  - organizationId : string
+  - organizationName : string
+  - title : string
+  - shortDescription : string
+  - longDescription : string
+  - period : Period
+  - category : InternshipCategory
+  - isCompleted : bool
+  - finalGrade : double?
+  + Internship(orgId:string, orgName:string, title:string, shortDesc:string, longDesc:string, period:Period, category:InternshipCategory)
+  + Id : string {get;set}
+  + Title : string {get}
+  + OrganizationId : string {get}
+  + OrganizationName : string {get}
+  + Contacts : List<ContactPerson> {get}
+  + AssignedStudents : List<Student> {get}
+  + Assignments : List<Assignment> {get}
+  + MarkCompleted(grade:double) : void
+  + ToString() : string
+}
+
+' --- repository / services interface ---
+interface ICoordinatorRepository {
+  + Organizations : IReadOnlyList<Organization> {get}
+  + Internships : IReadOnlyList<Internship> {get}
+  + Students : IReadOnlyList<Student> {get}
+
+  + AddOrganization(org:Organization) : bool
+  + GetOrganizationsOverview() : IEnumerable<Organization>
+
+  + AddInternship(internship:Internship) : void
+  + GetInternshipsOverview(period:Period, category:InternshipCategory?) : IEnumerable<Internship>
+
+  + AssignStudentToInternship(student:Student, internshipId:string) : bool
+  + RemoveStudentFromInternship(studentId:string, internshipId:string) : bool
+
+  + WithdrawInternship(internshipId:string) : bool
+  + MarkInternshipCompleted(internshipId:string, finalGrade:double) : bool
+
+  + GetOrganizationById(organizationId:string) : Organization?
+  + GetInternshipsByOrganizationId(organizationId:string) : IEnumerable<Internship>
+  + GetContactPersonsForInternship(internshipId:string) : IEnumerable<ContactPerson>
+
+  + AddStudent(student:Student) : bool
+
+  ' contact management
+  + AddContactPerson(organizationId:string, contact:ContactPerson) : bool
+  + GetContactPersonsByOrganization(organizationId:string) : IEnumerable<ContactPerson>
+}
+
+' --- concrete repository implementations ---
+class SystemAdminCoordinator {
+  - _organizations : List<Organization>
+  - _internships : List<Internship>
+  - _students : List<Student>
+  + SystemAdminCoordinator()
+  + AddOrganization(org:Organization) : bool
+  + GetOrganizationsOverview() : IEnumerable<Organization>
+  + AddInternship(internship:Internship) : void
+  + GetInternshipsOverview(period:Period, category:InternshipCategory?) : IEnumerable<Internship>
+  + AssignStudentToInternship(student:Student, internshipId:string) : bool
+  + RemoveStudentFromInternship(studentId:string, internshipId:string) : bool
+  + WithdrawInternship(internshipId:string) : bool
+  + MarkInternshipCompleted(internshipId:string, finalGrade:double) : bool
+  + GetOrganizationById(organizationId:string) : Organization?
+  + GetInternshipsByOrganizationId(organizationId:string) : IEnumerable<Internship>
+  + GetContactPersonsForInternship(internshipId:string) : IEnumerable<ContactPerson>
+  + AddStudent(student:Student) : bool
+  + AddContactPerson(organizationId:string, contact:ContactPerson) : bool
+  + GetContactPersonsByOrganization(organizationId:string) : IEnumerable<ContactPerson>
+  ' implements ICoordinatorRepository
+}
+
+class MySqlCoordinatorRepository {
+  - _connectionString : string
+  - _conn : MySql.Data.MySqlClient.MySqlConnection
+  + MySqlCoordinatorRepository(connectionString:string)
+  - EnsureSchema() : void
+  - GetAllInternships() : IEnumerable<Internship>
+  - GetAllStudents() : IEnumerable<Student>
+  - GetAssignedStudentsForInternship(internshipId:string) : IEnumerable<Student>
+  + AddOrganization(org:Organization) : bool
+  + GetOrganizationsOverview() : IEnumerable<Organization>
+  + AddInternship(internship:Internship) : void
+  + GetInternshipsOverview(period:Period, category:InternshipCategory?) : IEnumerable<Internship>
+  + AssignStudentToInternship(student:Student, internshipId:string) : bool
+  + RemoveStudentFromInternship(studentId:string, internshipId:string) : bool
+  + WithdrawInternship(internshipId:string) : bool
+  + MarkInternshipCompleted(internshipId:string, finalGrade:double) : bool
+  + GetOrganizationById(organizationId:string) : Organization?
+  + GetInternshipsByOrganizationId(organizationId:string) : IEnumerable<Internship>
+  + GetContactPersonsForInternship(internshipId:string) : IEnumerable<ContactPerson>
+  + AddStudent(student:Student) : bool
+  + AddContactPerson(organizationId:string, contact:ContactPerson) : bool
+  + GetContactPersonsByOrganization(organizationId:string) : IEnumerable<ContactPerson>
+  + Dispose() : void
+  ' implements ICoordinatorRepository
+}
+
+' --- small helpers ---
+class ReaderExtensions <<static>> {
+  + IsDBNull(r:MySql.Data.MySqlClient.MySqlDataReader, name:string) : bool
+  + GetString(r:MySql.Data.MySqlClient.MySqlDataReader, name:string) : string?
+  + GetInt32(r:MySql.Data.MySqlClient.MySqlDataReader, name:string) : int
+  + GetDoubleNullable(r:MySql.Data.MySqlClient.MySqlDataReader, name:string) : double?
+  + GetValue(r:MySql.Data.MySqlClient.MySqlDataReader, name:string) : object?
+}
+
+class Program <<static>> {
+  - coordinator : ICoordinatorRepository
+  + Main() : void
+  + CoordinatorMenu() : void
+  + StudentMenu() : void
+  + AddInternshipPrompt() : void
+  + AddStudentPrompt() : void
+  + PromptContactFields() : ContactPerson?
+  + PrintContact(cp:ContactPerson) : void
+}
+
+' --- relationships / cardinality ---
+Organization "1" -- "0..*" ContactPerson : employs
+Organization "1" -- "0..*" Internship : offers
+
+Internship "1" -- "0..*" ContactPerson : contacts
+ContactPerson "0..*" -- "0..*" Internship : linked_via_internship_contacts
+
+Internship "1" -- "0..*" Student : assigned >
+Internship "1" -- "0..*" Assignment : owns
+
+ICoordinatorRepository <|.. SystemAdminCoordinator
+ICoordinatorRepository <|.. MySqlCoordinatorRepository
+
+' notes
+note bottom
+  This diagram reflects:
+  - contact_persons table mirrored by ContactPerson class and repository methods
+  - repository implementations include contact management and student upsert
+  - ReaderExtensions provides convenience reader helpers for MySQL provider
+end note

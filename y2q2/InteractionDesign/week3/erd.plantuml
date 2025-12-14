@@ -1,94 +1,77 @@
 @startuml SIS_DB_ERD
-' layout
-left to right direction
-skinparam linetype ortho
-skinparam shadowing false
 
-' --- tables ---
 entity "organizations" as org {
-  * organization_id : NVARCHAR(36) <<PK>>
+  * organization_id : VARCHAR(36) <<PK>>
   --
-    name : NVARCHAR(200) NOT NULL
-    address : NVARCHAR(500)
-    city : NVARCHAR(100)
-    url : NVARCHAR(500)
-    phone : NVARCHAR(50)
-    email : NVARCHAR(200)
+    name        : VARCHAR(200)    NOT NULL
+    address     : VARCHAR(500)
+    city        : VARCHAR(100)
+    url         : VARCHAR(500)
+    phone       : VARCHAR(50)
+    email       : VARCHAR(200)
+    created_at  : DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP
 }
 
 entity "contact_persons" as cp {
-  * id : NVARCHAR(36) <<PK>>
+  * id           : VARCHAR(36) <<PK>>
   --
-    organization_id : NVARCHAR(36) <<FK>>
-    first_name : NVARCHAR(100)
-    last_name : NVARCHAR(100)
-    email : NVARCHAR(200)
-    job_title : NVARCHAR(200)
-    phone : NVARCHAR(50)
-    department : NVARCHAR(200)
+    organization_id : VARCHAR(36) <<FK>>
+    first_name      : VARCHAR(100)
+    last_name       : VARCHAR(100)
+    email           : VARCHAR(200)
+    job_title       : VARCHAR(200)
+    phone           : VARCHAR(50)
+    department      : VARCHAR(200)
+    created_at      : DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP
 }
 
 entity "internships" as intern {
-  * id : NVARCHAR(36) <<PK>>
+  * id              : VARCHAR(36) <<PK>>
   --
-    organization_id : NVARCHAR(36) <<FK>>
-    title : NVARCHAR(500)
-    short_description : NVARCHAR(MAX)
-    long_description : NVARCHAR(MAX)
-    year : INT
-    semester : INT
-    category : INT
-    is_completed : BIT
-    final_grade : FLOAT
+    organization_id : VARCHAR(36) <<FK>>
+    title           : VARCHAR(500)
+    short_description : TEXT
+    long_description  : TEXT
+    year            : INT
+    semester        : INT
+    category        : INT    ' maps to InternshipCategory enum
+    is_completed    : INT(1) DEFAULT 0
+    final_grade     : DOUBLE     NULL
+    created_at      : DATETIME   NOT NULL DEFAULT CURRENT_TIMESTAMP
 }
 
 entity "internship_contacts" as ic {
-  * internship_id : NVARCHAR(36) <<PK,FK>>
-  * contact_id : NVARCHAR(36) <<PK,FK>>
+  * internship_id : VARCHAR(36) <<PK,FK>>
+  * contact_id    : VARCHAR(36) <<PK,FK>>
+  --
+    linked_at : DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 }
 
 entity "students" as s {
-  * student_id : NVARCHAR(50) <<PK>>
+  * student_id : VARCHAR(50) <<PK>>
   --
-    first_name : NVARCHAR(200)
-    last_name : NVARCHAR(200)
+    first_name : VARCHAR(200)
+    last_name  : VARCHAR(200)
+    created_at : DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 }
 
 entity "internship_assignments" as ia {
-  * internship_id : NVARCHAR(36) <<PK,FK>>
-  * student_id : NVARCHAR(50) <<PK,FK>>
+  * internship_id : VARCHAR(36) <<PK,FK>>
+  * student_id    : VARCHAR(50) <<PK,FK>>
+  --
+    applied_at   : DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    status       : VARCHAR(50) DEFAULT 'applied'  ' e.g. applied, accepted, withdrawn
 }
 
 ' --- relationships / cardinality ---
-org ||--o{ cp : "1 - 0..* (employs)"
-org ||--o{ intern : "1 - 0..* (offers)"
+org ||--o{ cp : "1 - 0..* (organization has contacts)"
+org ||--o{ intern : "1 - 0..* (organization offers internships)"
 
-intern ||--o{ ic : "1 - 0..* (has contact links)"
-cp   ||--o{ ic : "1 - 0..* (linked to internships)"
+intern ||--o{ ic : "1 - 0..* (internship linked contacts)"
+cp   ||--o{ ic : "1 - 0..* (contact linked to internships)"
 
-intern ||--o{ ia : "1 - 0..* (has assignments)"
-s    ||--o{ ia : "1 - 0..* (assignments)"
+intern ||--o{ ia : "1 - 0..* (internship assignments)"
+s    ||--o{ ia : "1 - 0..* (student assignments)"
 
-' --- foreign key / cascade notes ---
-note right of cp
-  FK contact_persons.organization_id -> organizations.organization_id
-  ON DELETE CASCADE
-end note
-
-note right of intern
-  FK internships.organization_id -> organizations.organization_id
-  ON DELETE CASCADE
-end note
-
-note right of ic
-  FK internship_contacts.internship_id -> internships.id   ON DELETE NO ACTION
-  FK internship_contacts.contact_id    -> contact_persons.id ON DELETE NO ACTION
-  (NO CASCADE to avoid multiple cascade paths)
-end note
-
-note right of ia
-  FK internship_assignments.internship_id -> internships.id ON DELETE CASCADE
-  FK internship_assignments.student_id    -> students.student_id ON DELETE CASCADE
-end note
 
 @enduml
