@@ -41,7 +41,7 @@ check_cxx_compiler_flag("-fsanitize=undefined" HAS_UBSAN)
 cmake_pop_check_state()
 
 if(HAS_ASAN)
-    target_compile_options(assignment_4 PRIVATE -fsanitize=address -fno-omit-frame-pointer -Og -fsanitize-address-use-after-return=always)
+    target_compile_options(assignment_4 PRIVATE -fsanitize=address -fno-omit-frame-pointer -Og )
     target_link_options(assignment_4 PRIVATE -fsanitize=address)
 endif()
 

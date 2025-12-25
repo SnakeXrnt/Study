@@ -1,0 +1,97 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+-- Define the Top Level Entity Interface
+entity R_I_Datapath is
+    port (
+        CLK   : in  STD_LOGIC;                         -- Clock signal for sequential logic (RegFile)
+        Instr : in  STD_LOGIC_VECTOR(31 downto 0)      -- The 32-bit instruction word input
+    );
+end entity R_I_Datapath;
+
+architecture structural of R_I_Datapath is
+
+    -- 1. SIGNAL DECLARATIONS (Internal Wires)
+    
+    -- Control Signals from Control Unit
+    signal RegWrite_s : STD_LOGIC;                          -- Register File Write Enable
+    signal ALUOp_s    : STD_LOGIC_VECTOR(1 downto 0);       -- ALU Function Select
+    signal ALUSrc_s   : STD_LOGIC;                          -- MUX Select for ALU Input B
+
+    -- Data Signals for Register File Read/Write
+    signal RS1_Data_s : STD_LOGIC_VECTOR(31 downto 0);      -- Read Data 1 (ALU Input A)
+    signal RS2_Data_s : STD_LOGIC_VECTOR(31 downto 0);      -- Read Data 2 (MUX Input 0)
+    signal ALU_Result_s : STD_LOGIC_VECTOR(31 downto 0);    -- ALU Result (RegFile Write Data)
+    signal ALU_Zero_s : STD_LOGIC;                          -- Zero flag (ignored for current instructions)
+    
+    -- Immediate Extension Signals
+    signal Imm_Extended_s : STD_LOGIC_VECTOR(31 downto 0);  -- Immediate Value (MUX Input 1)
+    
+    -- MUX Output Signal (ALU Input B)
+    signal ALU_B_Input_s : STD_LOGIC_VECTOR(31 downto 0);   -- Final Input B to ALU
+    
+    -- Instruction Field Extraction (needed for Register File Addresses)
+    constant RS1_ADDR   : STD_LOGIC_VECTOR(4 downto 0) := Instr(19 downto 15);
+    constant RS2_ADDR   : STD_LOGIC_VECTOR(4 downto 0) := Instr(24 downto 20);
+    constant RD_ADDR    : STD_LOGIC_VECTOR(4 downto 0) := Instr(11 downto 7);
+
+begin
+
+    -- 2. COMPONENT INSTANTIATION AND WIRING (Structural Connections)
+
+    -- A. Control Unit: Generates control signals from the Instruction
+    CU: entity work.Control_Unit
+        port map (
+            Instr    => Instr,
+            RegWrite => RegWrite_s,
+            ALUOp    => ALUOp_s,
+            ALUSrc   => ALUSrc_s
+        );
+
+    -- B. Register File: Stores 32 registers, provides two read ports, one write port
+    RF: entity work.regfile
+        port map (
+            clk => CLK,
+            we3 => RegWrite_s,          -- Controlled by RegWrite
+            a1  => RS1_ADDR,            -- Read Address 1 (RS1)
+            a2  => RS2_ADDR,            -- Read Address 2 (RS2)
+            a3  => RD_ADDR,             -- Write Address (RD)
+            wd3 => ALU_Result_s,        -- Write Data (ALU Result)
+            rd1 => RS1_Data_s,          -- Read Data 1 (ALU Input A)
+            rd2 => RS2_Data_s           -- Read Data 2 (MUX Input 0)
+        );
+
+    -- C. Immediate Extender: Calculates and sign-extends the 12-bit immediate value
+    IE: entity work.Immediate_Extender
+        port map (
+            Instr_In => Instr,
+            Imm_Out  => Imm_Extended_s   -- MUX Input 1
+        );
+        
+    -- D. ALU Input Multiplexer (2:1 MUX)
+    -- This MUX selects the second operand for the ALU based on ALUSrc
+    -- MUX is an essential Combinational Building Block [4]
+    ALU_MUX: process(RS2_Data_s, Imm_Extended_s, ALUSrc_s)
+    begin
+        if ALUSrc_s = '0' then
+            -- R-Type: Operand B comes from the Register File (rd2)
+            ALU_B_Input_s <= RS2_Data_s;
+        else
+            -- I-Type: Operand B comes from the Immediate Extender
+            ALU_B_Input_s <= Imm_Extended_s;
+        end if;
+    end process ALU_MUX;
+
+    -- E. Arithmetic Logic Unit (ALU)
+    ALU: entity work.riscv_alu
+        port map (
+            A      => RS1_Data_s,        -- Read Data 1 (Register)
+            B      => ALU_B_Input_s,     -- MUX Output (Register or Immediate)
+            ALUOP  => ALUOp_s,           -- Control Signal from Control Unit
+            Result => ALU_Result_s,      -- Connects back to RegFile Write Data (wd3)
+            Zero   => ALU_Zero_s         -- Zero Flag output
+        );
+
+end architecture structural;
+

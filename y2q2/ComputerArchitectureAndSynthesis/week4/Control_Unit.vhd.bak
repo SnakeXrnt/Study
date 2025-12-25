@@ -1,0 +1,65 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity Control_Unit is
+    port (
+        Instr       : in  STD_LOGIC_VECTOR(31 downto 0); -- Instruction to be decoded
+        RegWrite    : out STD_LOGIC;                    -- Enable writing to Register File
+        ALUOp       : out STD_LOGIC_VECTOR(1 downto 0)  -- Control signal for the ALU
+    );
+end entity Control_Unit;
+
+architecture R_Type_Decoder of Control_Unit is
+    -- Instruction Field extraction based on RISC-V standard
+    signal Opcode : STD_LOGIC_VECTOR(6 downto 0) := Instr(6 downto 0);
+    signal Funct3 : STD_LOGIC_VECTOR(2 downto 0) := Instr(14 downto 12);
+    signal Funct7 : STD_LOGIC_VECTOR(6 downto 0) := Instr(31 downto 25);
+    
+    -- Control signal defaults
+    signal RegWrite_internal : STD_LOGIC;
+    signal ALUOp_internal    : STD_LOGIC_VECTOR(1 downto 0);
+    
+begin
+    
+    -- Combinational Logic for Control Signal generation
+    process(Opcode, Funct3, Funct7)
+    begin
+        -- Default to safe/inactive state
+        RegWrite_internal := '0';
+        ALUOp_internal := (others => '0');
+
+        -- Check for R-Type Opcode: 0b0110011
+        if Opcode = "0110011" then 
+            RegWrite_internal := '1'; -- All R-Type operations write back to register file [8]
+
+            -- Decode operation based on Funct3 and Funct7 (R-Type)
+            case Funct3 is
+                when "000" => -- ADD or SUB (distinguished by Funct7)
+                    if Funct7 = "0000000" then
+                        ALUOp_internal := "10"; -- ADD (Mapping based on conversation history)
+                    elsif Funct7 = "0100000" then
+                        ALUOp_internal := "11"; -- SUB (Mapping based on conversation history)
+                    else
+                        ALUOp_internal := (others => '0'); -- Default/Error
+                    end if;
+                
+                when "111" => -- AND
+                    if Funct7 = "0000000" then
+                        ALUOp_internal := "00"; -- AND (Mapping based on conversation history)
+                    end if;
+
+                when "110" => -- OR
+                    if Funct7 = "0000000" then
+                        ALUOp_internal := "01"; -- OR (Mapping based on conversation history)
+                    end if;
+
+                when others =>
+                    ALUOp_internal := (others => '0'); -- Unknown funct3
+            end case;
+        end if;
+    end process;
+
+    RegWrite <= RegWrite_internal;
+    ALUOp <= ALUOp_internal;
+    
+end architecture R_Type_Decoder;

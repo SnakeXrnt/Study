@@ -6,7 +6,6 @@
 static const char* TIME_FMT = "%H:%M:%S";
 
 void extensions::timestamp_decorator::log(std::string_view msg) const {
-
     std::ostringstream oss;
 
     auto time_point = std::time(nullptr);
@@ -15,11 +14,10 @@ void extensions::timestamp_decorator::log(std::string_view msg) const {
     oss << '[' << std::put_time(local_time, TIME_FMT) << "] " << msg;
     auto str = oss.str();
 
-    m_inner->log(str);
+    decorator::log(str);
 }
 
-extensions::timestamp_decorator::timestamp_decorator(std::unique_ptr<logging::ilogger> inner) noexcept:
-    m_inner{ std::move(inner) }
+extensions::timestamp_decorator::timestamp_decorator(std::unique_ptr<logging::ilogger> inner)
+    : extensions::decorator(std::move(inner))
 {
-
 }

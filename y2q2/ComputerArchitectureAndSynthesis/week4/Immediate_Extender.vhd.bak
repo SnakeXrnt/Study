@@ -1,0 +1,26 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity Immediate_Extender is
+    port (
+        Instr_In : in  STD_LOGIC_VECTOR(31 downto 0);
+        Imm_Out  : out STD_LOGIC_VECTOR(31 downto 0)
+    );
+end entity Immediate_Extender;
+
+architecture behavioral of Immediate_Extender is
+    -- The immediate is contained in bits 31 down to 20
+    signal Immediate_12 : STD_LOGIC_VECTOR(11 downto 0) := Instr_In(31 downto 20);
+    signal Sign_Bit     : STD_LOGIC := Instr_In(31); 
+begin
+    process(Immediate_12, Sign_Bit)
+    begin
+        if Sign_Bit = '1' then
+            -- Sign extension for negative immediate (copy '1' to upper 20 bits)
+            Imm_Out <= X"FFF" & Immediate_12; -- Upper 20 bits are 0xFFFFF (20 ones)
+        else
+            -- Sign extension for positive immediate (copy '0' to upper 20 bits)
+            Imm_Out <= X"000" & Immediate_12; -- Upper 20 bits are 0x00000 (20 zeros)
+        end if;
+    end process;
+end architecture behavioral;

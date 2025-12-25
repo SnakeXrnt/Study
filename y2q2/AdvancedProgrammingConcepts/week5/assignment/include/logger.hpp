@@ -1,0 +1,22 @@
+#ifndef INCLUDED_LOGGING_LOGGER_HPP
+#define INCLUDED_LOGGING_LOGGER_HPP
+
+#include <string>
+#include <iostream>
+#include <memory>
+#include "ilogger.hpp"
+#include "itext_writer.hpp"
+
+namespace logging {
+class logger: public logging::ilogger {
+    public:
+        logger(std::unique_ptr<io::itext_writer> out);
+        void set_writer(std::unique_ptr<io::itext_writer> out);
+
+        void log(std::string_view msg) override;
+    private:
+        std::unique_ptr<io::itext_writer> m_out;
+    };
+}
+
+#endif //INCLUDED_LOGGING_LOGGER_HPP
