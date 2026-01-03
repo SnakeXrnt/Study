@@ -1,0 +1,369 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:RPNCalc.ViewModels"
+             x:Class="RPNCalc.MainPage">
+
+    <ContentPage.BindingContext>
+        <viewmodels:CalculatorViewModel />
+    </ContentPage.BindingContext>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!-- Colors that adapt to light/dark mode -->
+            <Color x:Key="PageBackgroundColor">#F0F0F0</Color>
+            <Color x:Key="PageBackgroundColorDark">#1E1E1E</Color>
+            
+            <Color x:Key="RpnBoxBackground">#E8F5E9</Color>
+            <Color x:Key="RpnBoxBackgroundDark">#1B3A1F</Color>
+            <Color x:Key="RpnBoxBorder">#4CAF50</Color>
+            <Color x:Key="RpnBoxBorderDark">#66BB6A</Color>
+            <Color x:Key="RpnTextColor">#2E7D32</Color>
+            <Color x:Key="RpnTextColorDark">#81C784</Color>
+            
+            <Color x:Key="ErrorBoxBackground">#FFEBEE</Color>
+            <Color x:Key="ErrorBoxBackgroundDark">#3A1B1B</Color>
+            <Color x:Key="ErrorBoxBorder">#F44336</Color>
+            <Color x:Key="ErrorBoxBorderDark">#EF5350</Color>
+            <Color x:Key="ErrorTextColor">#C62828</Color>
+            <Color x:Key="ErrorTextColorDark">#EF5350</Color>
+            
+            <Color x:Key="InputBoxBackground">White</Color>
+            <Color x:Key="InputBoxBackgroundDark">#2D2D2D</Color>
+            <Color x:Key="InputBoxBorder">#2196F3</Color>
+            <Color x:Key="InputBoxBorderDark">#42A5F5</Color>
+            <Color x:Key="InputTextColor">#1976D2</Color>
+            <Color x:Key="InputTextColorDark">#64B5F6</Color>
+            
+            <Color x:Key="DisplayBackground">White</Color>
+            <Color x:Key="DisplayBackgroundDark">#2D2D2D</Color>
+            <Color x:Key="DisplayBorder">DarkGray</Color>
+            <Color x:Key="DisplayBorderDark">#555555</Color>
+            <Color x:Key="DisplayTextColor">Black</Color>
+            <Color x:Key="DisplayTextColorDark">White</Color>
+            
+            <Color x:Key="NumberButtonBackground">White</Color>
+            <Color x:Key="NumberButtonBackgroundDark">#3D3D3D</Color>
+            <Color x:Key="NumberButtonText">Black</Color>
+            <Color x:Key="NumberButtonTextDark">White</Color>
+            
+            <Color x:Key="OperatorButtonBackground">#FF9500</Color>
+            <Color x:Key="OperatorButtonBackgroundDark">#FF9F0A</Color>
+            
+            <Color x:Key="ClearButtonBackground">#D4D4D4</Color>
+            <Color x:Key="ClearButtonBackgroundDark">#505050</Color>
+            
+            <Color x:Key="EnterButtonBackground">#4CD964</Color>
+            <Color x:Key="EnterButtonBackgroundDark">#32D74B</Color>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid Padding="20" RowSpacing="10">
+        <Grid.BackgroundColor>
+            <AppThemeBinding Light="{StaticResource PageBackgroundColor}" Dark="{StaticResource PageBackgroundColorDark}" />
+        </Grid.BackgroundColor>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Hidden entry for keyboard input capture -->
+        <Entry x:Name="KeyboardEntry"
+               Grid.Row="0"
+               Grid.RowSpan="5"
+               Opacity="0"
+               IsEnabled="True"
+               TextChanged="OnKeyboardTextChanged"
+               HorizontalOptions="Fill"
+               VerticalOptions="Fill" />
+
+        <!-- RPN Notation Display (Read-only) -->
+        <Frame Grid.Row="0" 
+               CornerRadius="5"
+               Padding="10"
+               Margin="0,0,0,10">
+            <Frame.BackgroundColor>
+                <AppThemeBinding Light="{StaticResource RpnBoxBackground}" Dark="{StaticResource RpnBoxBackgroundDark}" />
+            </Frame.BackgroundColor>
+            <Frame.BorderColor>
+                <AppThemeBinding Light="{StaticResource RpnBoxBorder}" Dark="{StaticResource RpnBoxBorderDark}" />
+            </Frame.BorderColor>
+            <Label Text="{Binding RpnNotation}"
+                   FontSize="14"
+                   FontFamily="Monospace"
+                   VerticalOptions="Start">
+                <Label.TextColor>
+                    <AppThemeBinding Light="{StaticResource RpnTextColor}" Dark="{StaticResource RpnTextColorDark}" />
+                </Label.TextColor>
+            </Label>
+        </Frame>
+
+        <!-- Error Message Box (User-friendly) -->
+        <Frame Grid.Row="1" 
+               CornerRadius="5"
+               Padding="10"
+               Margin="0,0,0,10"
+               IsVisible="{Binding HasError}">
+            <Frame.BackgroundColor>
+                <AppThemeBinding Light="{StaticResource ErrorBoxBackground}" Dark="{StaticResource ErrorBoxBackgroundDark}" />
+            </Frame.BackgroundColor>
+            <Frame.BorderColor>
+                <AppThemeBinding Light="{StaticResource ErrorBoxBorder}" Dark="{StaticResource ErrorBoxBorderDark}" />
+            </Frame.BorderColor>
+            <Label Text="{Binding ErrorMessage}"
+                   FontSize="14"
+                   FontAttributes="Bold"
+                   VerticalOptions="Center">
+                <Label.TextColor>
+                    <AppThemeBinding Light="{StaticResource ErrorTextColor}" Dark="{StaticResource ErrorTextColorDark}" />
+                </Label.TextColor>
+            </Label>
+        </Frame>
+
+        <!-- Expression/Result Box (shows expression while typing, result after calculation) -->
+        <Frame Grid.Row="2" 
+               CornerRadius="5"
+               Padding="15"
+               Margin="0,0,0,10">
+            <Frame.BackgroundColor>
+                <AppThemeBinding Light="{StaticResource DisplayBackground}" Dark="{StaticResource DisplayBackgroundDark}" />
+            </Frame.BackgroundColor>
+            <Frame.BorderColor>
+                <AppThemeBinding Light="{StaticResource DisplayBorder}" Dark="{StaticResource DisplayBorderDark}" />
+            </Frame.BorderColor>
+            <StackLayout Spacing="5">
+                <!-- Expression Input (smaller, shows what user is typing) -->
+                <Label Text="{Binding CurrentExpression}"
+                       FontSize="16"
+                       HorizontalTextAlignment="End"
+                       VerticalTextAlignment="Center"
+                       TextColor="Gray"
+                       IsVisible="{Binding HasExpression}" />
+                
+                <!-- Result Display (larger, prominent) -->
+                <Label Text="{Binding Result}"
+                       FontSize="32"
+                       FontAttributes="Bold"
+                       HorizontalTextAlignment="End"
+                       VerticalTextAlignment="Center">
+                    <Label.TextColor>
+                        <AppThemeBinding Light="{StaticResource DisplayTextColor}" Dark="{StaticResource DisplayTextColorDark}" />
+                    </Label.TextColor>
+                </Label>
+            </StackLayout>
+        </Frame>
+
+        <!-- Calculator Buttons -->
+        <Grid Grid.Row="3" RowSpacing="10" ColumnSpacing="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Row 0: Advanced Functions (sin, cos, tan, log, √) -->
+            <Button Grid.Row="0" Grid.Column="0" Text="sin" Command="{Binding OperatorCommand}" CommandParameter="sin(" TextColor="White" FontSize="18">
+                <Button.BackgroundColor>
+                    <AppThemeBinding Light="#9C27B0" Dark="#BA68C8" />
+                </Button.BackgroundColor>
+            </Button>
+            <Button Grid.Row="0" Grid.Column="1" Text="cos" Command="{Binding OperatorCommand}" CommandParameter="cos(" TextColor="White" FontSize="18">
+                <Button.BackgroundColor>
+                    <AppThemeBinding Light="#9C27B0" Dark="#BA68C8" />
+                </Button.BackgroundColor>
+            </Button>
+            <Button Grid.Row="0" Grid.Column="2" Text="tan" Command="{Binding OperatorCommand}" CommandParameter="tan(" TextColor="White" FontSize="18">
+                <Button.BackgroundColor>
+                    <AppThemeBinding Light="#9C27B0" Dark="#BA68C8" />
+                </Button.BackgroundColor>
+            </Button>
+            <Button Grid.Row="0" Grid.Column="3" Text="log" Command="{Binding OperatorCommand}" CommandParameter="log(" TextColor="White" FontSize="18">
+                <Button.BackgroundColor>
+                    <AppThemeBinding Light="#9C27B0" Dark="#BA68C8" />
+                </Button.BackgroundColor>
+            </Button>
+
+            <!-- Row 1: 7, 8, 9, ÷ -->
+            <Button Grid.Row="1" Grid.Column="0" Text="7" Command="{Binding NumberCommand}" CommandParameter="7" FontSize="24">
+                <Button.BackgroundColor>
+                    <AppThemeBinding Light="{StaticResource NumberButtonBackground}" Dark="{StaticResource NumberButtonBackgroundDark}" />
+                </Button.BackgroundColor>
+                <Button.TextColor>
+                    <AppThemeBinding Light="{StaticResource NumberButtonText}" Dark="{StaticResource NumberButtonTextDark}" />
+                </Button.TextColor>
+            </Button>
+            <Button Grid.Row="1" Grid.Column="1" Text="8" Command="{Binding NumberCommand}" CommandParameter="8" FontSize="24">
+                <Button.BackgroundColor>
+                    <AppThemeBinding Light="{StaticResource NumberButtonBackground}" Dark="{StaticResource NumberButtonBackgroundDark}" />
+                </Button.BackgroundColor>
+                <Button.TextColor>
+                    <AppThemeBinding Light="{StaticResource NumberButtonText}" Dark="{StaticResource NumberButtonTextDark}" />
+                </Button.TextColor>
+            </Button>
+            <Button Grid.Row="1" Grid.Column="2" Text="9" Command="{Binding NumberCommand}" CommandParameter="9" FontSize="24">
+                <Button.BackgroundColor>
+                    <AppThemeBinding Light="{StaticResource NumberButtonBackground}" Dark="{StaticResource NumberButtonBackgroundDark}" />
+                </Button.BackgroundColor>
+                <Button.TextColor>
+                    <AppThemeBinding Light="{StaticResource NumberButtonText}" Dark="{StaticResource NumberButtonTextDark}" />
+                </Button.TextColor>
+            </Button>
+            <Button Grid.Row="1" Grid.Column="3" Text="÷" Command="{Binding OperatorCommand}" CommandParameter="÷" TextColor="White" FontSize="24">
+                <Button.BackgroundColor>
+                    <AppThemeBinding Light="{StaticResource OperatorButtonBackground}" Dark="{StaticResource OperatorButtonBackgroundDark}" />
+                </Button.BackgroundColor>
+            </Button>
+
+            <!-- Row 2: 4, 5, 6, × -->
+            <Button Grid.Row="2" Grid.Column="0" Text="4" Command="{Binding NumberCommand}" CommandParameter="4" FontSize="24">
+                <Button.BackgroundColor>
+                    <AppThemeBinding Light="{StaticResource NumberButtonBackground}" Dark="{StaticResource NumberButtonBackgroundDark}" />
+                </Button.BackgroundColor>
+                <Button.TextColor>
+                    <AppThemeBinding Light="{StaticResource NumberButtonText}" Dark="{StaticResource NumberButtonTextDark}" />
+                </Button.TextColor>
+            </Button>
+            <Button Grid.Row="2" Grid.Column="1" Text="5" Command="{Binding NumberCommand}" CommandParameter="5" FontSize="24">
+                <Button.BackgroundColor>
+                    <AppThemeBinding Light="{StaticResource NumberButtonBackground}" Dark="{StaticResource NumberButtonBackgroundDark}" />
+                </Button.BackgroundColor>
+                <Button.TextColor>
+                    <AppThemeBinding Light="{StaticResource NumberButtonText}" Dark="{StaticResource NumberButtonTextDark}" />
+                </Button.TextColor>
+            </Button>
+            <Button Grid.Row="2" Grid.Column="2" Text="6" Command="{Binding NumberCommand}" CommandParameter="6" FontSize="24">
+                <Button.BackgroundColor>
+                    <AppThemeBinding Light="{StaticResource NumberButtonBackground}" Dark="{StaticResource NumberButtonBackgroundDark}" />
+                </Button.BackgroundColor>
+                <Button.TextColor>
+                    <AppThemeBinding Light="{StaticResource NumberButtonText}" Dark="{StaticResource NumberButtonTextDark}" />
+                </Button.TextColor>
+            </Button>
+            <Button Grid.Row="2" Grid.Column="3" Text="×" Command="{Binding OperatorCommand}" CommandParameter="×" TextColor="White" FontSize="24">
+                <Button.BackgroundColor>
+                    <AppThemeBinding Light="{StaticResource OperatorButtonBackground}" Dark="{StaticResource OperatorButtonBackgroundDark}" />
+                </Button.BackgroundColor>
+            </Button>
+
+            <!-- Row 3: 1, 2, 3, - -->
+            <Button Grid.Row="3" Grid.Column="0" Text="1" Command="{Binding NumberCommand}" CommandParameter="1" FontSize="24">
+                <Button.BackgroundColor>
+                    <AppThemeBinding Light="{StaticResource NumberButtonBackground}" Dark="{StaticResource NumberButtonBackgroundDark}" />
+                </Button.BackgroundColor>
+                <Button.TextColor>
+                    <AppThemeBinding Light="{StaticResource NumberButtonText}" Dark="{StaticResource NumberButtonTextDark}" />
+                </Button.TextColor>
+            </Button>
+            <Button Grid.Row="3" Grid.Column="1" Text="2" Command="{Binding NumberCommand}" CommandParameter="2" FontSize="24">
+                <Button.BackgroundColor>
+                    <AppThemeBinding Light="{StaticResource NumberButtonBackground}" Dark="{StaticResource NumberButtonBackgroundDark}" />
+                </Button.BackgroundColor>
+                <Button.TextColor>
+                    <AppThemeBinding Light="{StaticResource NumberButtonText}" Dark="{StaticResource NumberButtonTextDark}" />
+                </Button.TextColor>
+            </Button>
+            <Button Grid.Row="3" Grid.Column="2" Text="3" Command="{Binding NumberCommand}" CommandParameter="3" FontSize="24">
+                <Button.BackgroundColor>
+                    <AppThemeBinding Light="{StaticResource NumberButtonBackground}" Dark="{StaticResource NumberButtonBackgroundDark}" />
+                </Button.BackgroundColor>
+                <Button.TextColor>
+                    <AppThemeBinding Light="{StaticResource NumberButtonText}" Dark="{StaticResource NumberButtonTextDark}" />
+                </Button.TextColor>
+            </Button>
+            <Button Grid.Row="3" Grid.Column="3" Text="-" Command="{Binding OperatorCommand}" CommandParameter="-" TextColor="White" FontSize="24">
+                <Button.BackgroundColor>
+                    <AppThemeBinding Light="{StaticResource OperatorButtonBackground}" Dark="{StaticResource OperatorButtonBackgroundDark}" />
+                </Button.BackgroundColor>
+            </Button>
+
+            <!-- Row 4: 0, ., ⌫, + -->
+            <Button Grid.Row="4" Grid.Column="0" Text="0" Command="{Binding NumberCommand}" CommandParameter="0" FontSize="24">
+                <Button.BackgroundColor>
+                    <AppThemeBinding Light="{StaticResource NumberButtonBackground}" Dark="{StaticResource NumberButtonBackgroundDark}" />
+                </Button.BackgroundColor>
+                <Button.TextColor>
+                    <AppThemeBinding Light="{StaticResource NumberButtonText}" Dark="{StaticResource NumberButtonTextDark}" />
+                </Button.TextColor>
+            </Button>
+            <Button Grid.Row="4" Grid.Column="1" Text="." Command="{Binding DecimalCommand}" FontSize="24">
+                <Button.BackgroundColor>
+                    <AppThemeBinding Light="{StaticResource NumberButtonBackground}" Dark="{StaticResource NumberButtonBackgroundDark}" />
+                </Button.BackgroundColor>
+                <Button.TextColor>
+                    <AppThemeBinding Light="{StaticResource NumberButtonText}" Dark="{StaticResource NumberButtonTextDark}" />
+                </Button.TextColor>
+            </Button>
+            <Button Grid.Row="4" Grid.Column="2" Text="⌫" Command="{Binding BackspaceCommand}" FontSize="24">
+                <Button.BackgroundColor>
+                    <AppThemeBinding Light="{StaticResource ClearButtonBackground}" Dark="{StaticResource ClearButtonBackgroundDark}" />
+                </Button.BackgroundColor>
+                <Button.TextColor>
+                    <AppThemeBinding Light="Black" Dark="White" />
+                </Button.TextColor>
+            </Button>
+            <Button Grid.Row="4" Grid.Column="3" Text="+" Command="{Binding OperatorCommand}" CommandParameter="+" TextColor="White" FontSize="24">
+                <Button.BackgroundColor>
+                    <AppThemeBinding Light="{StaticResource OperatorButtonBackground}" Dark="{StaticResource OperatorButtonBackgroundDark}" />
+                </Button.BackgroundColor>
+            </Button>
+
+            <!-- Row 5: √, (, ), and space for future operator -->
+            <Button Grid.Row="5" Grid.Column="0" Text="√" Command="{Binding OperatorCommand}" CommandParameter="√(" TextColor="White" FontSize="24">
+                <Button.BackgroundColor>
+                    <AppThemeBinding Light="#9C27B0" Dark="#BA68C8" />
+                </Button.BackgroundColor>
+            </Button>
+            <Button Grid.Row="5" Grid.Column="1" Text="(" Command="{Binding OperatorCommand}" CommandParameter="(" FontSize="24">
+                <Button.BackgroundColor>
+                    <AppThemeBinding Light="{StaticResource NumberButtonBackground}" Dark="{StaticResource NumberButtonBackgroundDark}" />
+                </Button.BackgroundColor>
+                <Button.TextColor>
+                    <AppThemeBinding Light="{StaticResource NumberButtonText}" Dark="{StaticResource NumberButtonTextDark}" />
+                </Button.TextColor>
+            </Button>
+            <Button Grid.Row="5" Grid.Column="2" Text=")" Command="{Binding OperatorCommand}" CommandParameter=")" FontSize="24">
+                <Button.BackgroundColor>
+                    <AppThemeBinding Light="{StaticResource NumberButtonBackground}" Dark="{StaticResource NumberButtonBackgroundDark}" />
+                </Button.BackgroundColor>
+                <Button.TextColor>
+                    <AppThemeBinding Light="{StaticResource NumberButtonText}" Dark="{StaticResource NumberButtonTextDark}" />
+                </Button.TextColor>
+            </Button>
+            <Button Grid.Row="5" Grid.Column="3" Grid.ColumnSpan="1" Text="" IsEnabled="False" Opacity="0"/>
+
+            <!-- Row 6: C, = button (spans 3 columns) -->
+            <Button Grid.Row="6" Grid.Column="0" Text="C" Command="{Binding ClearCommand}" FontSize="24">
+                <Button.BackgroundColor>
+                    <AppThemeBinding Light="{StaticResource ClearButtonBackground}" Dark="{StaticResource ClearButtonBackgroundDark}" />
+                </Button.BackgroundColor>
+                <Button.TextColor>
+                    <AppThemeBinding Light="Black" Dark="White" />
+                </Button.TextColor>
+            </Button>
+            <Button Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="3" 
+                    Text="=" 
+                    Command="{Binding EqualsCommand}" 
+                    TextColor="White" 
+                    FontSize="24"
+                    FontAttributes="Bold">
+                <Button.BackgroundColor>
+                    <AppThemeBinding Light="{StaticResource EnterButtonBackground}" Dark="{StaticResource EnterButtonBackgroundDark}" />
+                </Button.BackgroundColor>
+            </Button>
+        </Grid>
+    </Grid>
+
+</ContentPage>
