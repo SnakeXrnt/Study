@@ -1,0 +1,26 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use ieee.std_logic_unsigned.all;
+use IEEE.NUMERIC_STD.ALL;
+
+entity Instruction_Memory is
+    port (
+        addr        : in  STD_LOGIC_VECTOR(31 downto 0);
+        instruction : out STD_LOGIC_VECTOR(31 downto 0)
+    );
+end entity;
+
+architecture behavioral of Instruction_Memory is
+    -- Example ROM array containing 32-bit instructions [12, 13]
+    type rom_type is array (0 to 63) of STD_LOGIC_VECTOR(31 downto 0);
+    constant ROM : rom_type := (
+        0      => X"006283b3", -- Example: add x7, x5, x6 [14]
+        1      => X"00628393", -- Example: addi x7, x5, 6 [15]
+        others => X"00000000"  -- NOP or empty
+    );
+begin
+    -- The PC address points to the word in memory [7]
+    -- Divide by 4 or use bits [7 downto 2] because memory is word-aligned
+    instruction <= ROM(to_integer(unsigned(addr(7 downto 2))));
+end architecture;
+

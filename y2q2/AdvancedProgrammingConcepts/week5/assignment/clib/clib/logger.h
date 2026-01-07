@@ -2,6 +2,7 @@
 #define INCLUDED_CLIB_LOGGER_H
 
 #include <stdbool.h>
+#include <time.h>
 
 #ifdef __cplusplus
 extern "C" {

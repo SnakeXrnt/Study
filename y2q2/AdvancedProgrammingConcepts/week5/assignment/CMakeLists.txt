@@ -12,6 +12,7 @@ add_executable(assignment_5
     src/console_writer.cpp
     src/file_writer_adapter.cpp
     src/clogger_adapter.cpp
+    src/clogger_as_writer.cpp
     src/decorators/timestamp_decorator.cpp
     src/decorators/runningtime_decorator.cpp
     src/builder/logger_builder.cpp
@@ -46,7 +47,7 @@ check_cxx_compiler_flag("-fsanitize=undefined" HAS_UBSAN)
 cmake_pop_check_state()
 
 if(HAS_ASAN)
-    target_compile_options(assignment_5 PRIVATE -fsanitize=address -fno-omit-frame-pointer -Og -fsanitize-address-use-after-return=always)
+    target_compile_options(assignment_5 PRIVATE -fsanitize=address -fno-omit-frame-pointer -Og)
     target_link_options(assignment_5 PRIVATE -fsanitize=address)
 endif()
 

@@ -3,6 +3,7 @@
 
 #include <string_view>
 #include <memory>
+#include <chrono>
 #include "ilogger.hpp"
 
 /* the easiest way out of unwanted dependency is below, it's also an accepted practice in C++
@@ -17,6 +18,12 @@ namespace io{
     struct itext_writer;
 }
 
+enum class timestamp_type {
+    none,
+    current_time,
+    running_time
+};
+
 namespace builders {
 
     class ilogger_builder {
@@ -26,7 +33,9 @@ namespace builders {
 
         virtual ilogger_builder& with_console_output() = 0;
         virtual ilogger_builder& with_file_output(std::string_view file_name) = 0;
-        virtual ilogger_builder& with_runningtime_timestamp() = 0;
+        virtual ilogger_builder& with_timestamp(timestamp_type type) = 0;
+        virtual ilogger_builder& with_writer(std::unique_ptr<io::itext_writer> writer) = 0;
+        virtual ilogger_builder& with_rolling_log_with_interval(std::chrono::seconds interval) = 0;
 
         virtual std::unique_ptr<logging::ilogger> get() = 0;
 

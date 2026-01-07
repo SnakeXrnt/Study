@@ -1,0 +1,16 @@
+Analysis & Synthesis Status : Successful - Tue Jan  6 05:01:26 2026
+Quartus Prime Version : 20.1.1 Build 720 11/11/2020 SJ Lite Edition
+Revision Name : week5
+Top-level Entity Name : Fetch_Stage
+Family : MAX 10
+Total logic elements : 9
+    Total combinational functions : 9
+    Dedicated logic registers : 6
+Total registers : 6
+Total pins : 34
+Total virtual pins : 0
+Total memory bits : 0
+Embedded Multiplier 9-bit elements : 0
+Total PLLs : 0
+UFM blocks : 0
+ADC blocks : 0

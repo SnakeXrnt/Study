@@ -1,4 +1,5 @@
 #include "global/runningtime_provider.hpp"
+[[maybe_unused]] static const auto& dummy_init = global::runningtime_provider::get_instance();
 
 global::runningtime_provider::time_point global::runningtime_provider::start_time() const noexcept {
     return m_t0;

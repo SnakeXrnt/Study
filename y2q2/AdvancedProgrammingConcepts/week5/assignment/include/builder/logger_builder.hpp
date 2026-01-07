@@ -15,8 +15,10 @@ namespace builders {
         virtual ilogger_builder& reset() override;
         virtual ilogger_builder& with_console_output() override;
         virtual ilogger_builder& with_file_output(std::string_view file_name) override;
-
-        virtual ilogger_builder& with_runningtime_timestamp() override;
+        
+        virtual ilogger_builder& with_timestamp(timestamp_type type) override;
+        virtual ilogger_builder& with_writer(std::unique_ptr<io::itext_writer> writer) override;
+        virtual ilogger_builder& with_rolling_log_with_interval(std::chrono::seconds interval) override;
 
         virtual std::unique_ptr <logging::ilogger> get() override;
         virtual ~logger_builder() override = default;
