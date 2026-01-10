@@ -1,0 +1,341 @@
+{
+	"partitions" : [
+		{
+			"name" : "Top",
+			"pins" : [
+				{
+					"name" : "PC_debug[2]",
+					"strict" : false
+				},
+				{
+					"name" : "PC_debug[3]",
+					"strict" : false
+				},
+				{
+					"name" : "PC_debug[4]",
+					"strict" : false
+				},
+				{
+					"name" : "PC_debug[5]",
+					"strict" : false
+				},
+				{
+					"name" : "PC_debug[6]",
+					"strict" : false
+				},
+				{
+					"name" : "PC_debug[7]",
+					"strict" : false
+				},
+				{
+					"name" : "PC_debug[8]",
+					"strict" : false
+				},
+				{
+					"name" : "PC_debug[9]",
+					"strict" : false
+				},
+				{
+					"name" : "PC_debug[10]",
+					"strict" : false
+				},
+				{
+					"name" : "PC_debug[11]",
+					"strict" : false
+				},
+				{
+					"name" : "PC_debug[12]",
+					"strict" : false
+				},
+				{
+					"name" : "PC_debug[13]",
+					"strict" : false
+				},
+				{
+					"name" : "PC_debug[14]",
+					"strict" : false
+				},
+				{
+					"name" : "PC_debug[15]",
+					"strict" : false
+				},
+				{
+					"name" : "PC_debug[16]",
+					"strict" : false
+				},
+				{
+					"name" : "PC_debug[17]",
+					"strict" : false
+				},
+				{
+					"name" : "PC_debug[18]",
+					"strict" : false
+				},
+				{
+					"name" : "PC_debug[19]",
+					"strict" : false
+				},
+				{
+					"name" : "PC_debug[20]",
+					"strict" : false
+				},
+				{
+					"name" : "PC_debug[21]",
+					"strict" : false
+				},
+				{
+					"name" : "PC_debug[22]",
+					"strict" : false
+				},
+				{
+					"name" : "PC_debug[23]",
+					"strict" : false
+				},
+				{
+					"name" : "PC_debug[24]",
+					"strict" : false
+				},
+				{
+					"name" : "PC_debug[25]",
+					"strict" : false
+				},
+				{
+					"name" : "PC_debug[26]",
+					"strict" : false
+				},
+				{
+					"name" : "PC_debug[27]",
+					"strict" : false
+				},
+				{
+					"name" : "PC_debug[28]",
+					"strict" : false
+				},
+				{
+					"name" : "PC_debug[29]",
+					"strict" : false
+				},
+				{
+					"name" : "PC_debug[30]",
+					"strict" : false
+				},
+				{
+					"name" : "PC_debug[31]",
+					"strict" : false
+				},
+				{
+					"name" : "instr_debug[0]",
+					"strict" : false
+				},
+				{
+					"name" : "instr_debug[1]",
+					"strict" : false
+				},
+				{
+					"name" : "instr_debug[4]",
+					"strict" : false
+				},
+				{
+					"name" : "instr_debug[5]",
+					"strict" : false
+				},
+				{
+					"name" : "instr_debug[7]",
+					"strict" : false
+				},
+				{
+					"name" : "instr_debug[8]",
+					"strict" : false
+				},
+				{
+					"name" : "instr_debug[9]",
+					"strict" : false
+				},
+				{
+					"name" : "instr_debug[10]",
+					"strict" : false
+				},
+				{
+					"name" : "instr_debug[13]",
+					"strict" : false
+				},
+				{
+					"name" : "instr_debug[15]",
+					"strict" : false
+				},
+				{
+					"name" : "instr_debug[16]",
+					"strict" : false
+				},
+				{
+					"name" : "instr_debug[17]",
+					"strict" : false
+				},
+				{
+					"name" : "instr_debug[18]",
+					"strict" : false
+				},
+				{
+					"name" : "instr_debug[20]",
+					"strict" : false
+				},
+				{
+					"name" : "instr_debug[21]",
+					"strict" : false
+				},
+				{
+					"name" : "instr_debug[22]",
+					"strict" : false
+				},
+				{
+					"name" : "instr_debug[23]",
+					"strict" : false
+				},
+				{
+					"name" : "instr_debug[24]",
+					"strict" : false
+				},
+				{
+					"name" : "instr_debug[30]",
+					"strict" : false
+				},
+				{
+					"name" : "ALU_debug[0]",
+					"strict" : false
+				},
+				{
+					"name" : "ALU_debug[1]",
+					"strict" : false
+				},
+				{
+					"name" : "ALU_debug[2]",
+					"strict" : false
+				},
+				{
+					"name" : "ALU_debug[3]",
+					"strict" : false
+				},
+				{
+					"name" : "ALU_debug[4]",
+					"strict" : false
+				},
+				{
+					"name" : "ALU_debug[5]",
+					"strict" : false
+				},
+				{
+					"name" : "ALU_debug[6]",
+					"strict" : false
+				},
+				{
+					"name" : "ALU_debug[7]",
+					"strict" : false
+				},
+				{
+					"name" : "ALU_debug[8]",
+					"strict" : false
+				},
+				{
+					"name" : "ALU_debug[9]",
+					"strict" : false
+				},
+				{
+					"name" : "ALU_debug[10]",
+					"strict" : false
+				},
+				{
+					"name" : "ALU_debug[11]",
+					"strict" : false
+				},
+				{
+					"name" : "ALU_debug[12]",
+					"strict" : false
+				},
+				{
+					"name" : "ALU_debug[13]",
+					"strict" : false
+				},
+				{
+					"name" : "ALU_debug[14]",
+					"strict" : false
+				},
+				{
+					"name" : "ALU_debug[15]",
+					"strict" : false
+				},
+				{
+					"name" : "ALU_debug[16]",
+					"strict" : false
+				},
+				{
+					"name" : "ALU_debug[17]",
+					"strict" : false
+				},
+				{
+					"name" : "ALU_debug[18]",
+					"strict" : false
+				},
+				{
+					"name" : "ALU_debug[19]",
+					"strict" : false
+				},
+				{
+					"name" : "ALU_debug[20]",
+					"strict" : false
+				},
+				{
+					"name" : "ALU_debug[21]",
+					"strict" : false
+				},
+				{
+					"name" : "ALU_debug[22]",
+					"strict" : false
+				},
+				{
+					"name" : "ALU_debug[23]",
+					"strict" : false
+				},
+				{
+					"name" : "ALU_debug[24]",
+					"strict" : false
+				},
+				{
+					"name" : "ALU_debug[25]",
+					"strict" : false
+				},
+				{
+					"name" : "ALU_debug[26]",
+					"strict" : false
+				},
+				{
+					"name" : "ALU_debug[27]",
+					"strict" : false
+				},
+				{
+					"name" : "ALU_debug[28]",
+					"strict" : false
+				},
+				{
+					"name" : "ALU_debug[29]",
+					"strict" : false
+				},
+				{
+					"name" : "ALU_debug[30]",
+					"strict" : false
+				},
+				{
+					"name" : "ALU_debug[31]",
+					"strict" : false
+				},
+				{
+					"name" : "clk",
+					"strict" : false
+				},
+				{
+					"name" : "reset",
+					"strict" : false
+				}
+			]
+		}
+	]
+}

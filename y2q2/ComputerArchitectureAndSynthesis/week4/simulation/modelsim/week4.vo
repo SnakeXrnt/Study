@@ -17,7 +17,7 @@
 // PROGRAM "Quartus Prime"
 // VERSION "Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition"
 
-// DATE "12/17/2025 15:00:12"
+// DATE "01/08/2026 13:54:57"
 
 // 
 // Device: Altera 10M50DAF484C7G Package FBGA484
@@ -29,46 +29,53 @@
 
 `timescale 1 ps/ 1 ps
 
-module R_I_Datapath (
-	CLK,
-	Instr);
-input 	CLK;
+module Control_Unit (
+	Instr,
+	RegWrite,
+	ALUOp,
+	ALUSrc);
 input 	[31:0] Instr;
+output 	RegWrite;
+output 	[1:0] ALUOp;
+output 	ALUSrc;
 
 // Design Ports Information
-// CLK	=>  Location: PIN_L19,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// Instr[0]	=>  Location: PIN_D22,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// Instr[1]	=>  Location: PIN_B8,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// Instr[2]	=>  Location: PIN_AB10,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// Instr[3]	=>  Location: PIN_R1,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// Instr[4]	=>  Location: PIN_W10,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// Instr[5]	=>  Location: PIN_W13,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// Instr[6]	=>  Location: PIN_G1,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// Instr[7]	=>  Location: PIN_B10,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// Instr[8]	=>  Location: PIN_W11,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// Instr[9]	=>  Location: PIN_D12,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// Instr[10]	=>  Location: PIN_W12,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// Instr[11]	=>  Location: PIN_L8,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// Instr[12]	=>  Location: PIN_C10,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// Instr[13]	=>  Location: PIN_N14,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// Instr[14]	=>  Location: PIN_C7,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// Instr[15]	=>  Location: PIN_P12,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// Instr[16]	=>  Location: PIN_P10,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// Instr[17]	=>  Location: PIN_B7,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// Instr[18]	=>  Location: PIN_AB9,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// Instr[19]	=>  Location: PIN_W7,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// Instr[20]	=>  Location: PIN_U15,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Instr[7]	=>  Location: PIN_N21,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Instr[8]	=>  Location: PIN_B10,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Instr[9]	=>  Location: PIN_B3,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Instr[10]	=>  Location: PIN_D12,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Instr[11]	=>  Location: PIN_L2,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Instr[15]	=>  Location: PIN_R11,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Instr[16]	=>  Location: PIN_C19,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Instr[17]	=>  Location: PIN_V8,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Instr[18]	=>  Location: PIN_Y13,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Instr[19]	=>  Location: PIN_N14,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Instr[20]	=>  Location: PIN_A6,	 I/O Standard: 2.5 V,	 Current Strength: Default
 // Instr[21]	=>  Location: PIN_A20,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// Instr[22]	=>  Location: PIN_AA17,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// Instr[23]	=>  Location: PIN_B15,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// Instr[24]	=>  Location: PIN_Y22,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// Instr[25]	=>  Location: PIN_U6,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// Instr[26]	=>  Location: PIN_AB3,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// Instr[27]	=>  Location: PIN_A11,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// Instr[28]	=>  Location: PIN_F18,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// Instr[29]	=>  Location: PIN_AA11,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// Instr[30]	=>  Location: PIN_E4,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// Instr[31]	=>  Location: PIN_AA5,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Instr[22]	=>  Location: PIN_Y17,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Instr[23]	=>  Location: PIN_N9,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Instr[24]	=>  Location: PIN_AA17,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// RegWrite	=>  Location: PIN_AA5,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ALUOp[0]	=>  Location: PIN_AB6,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ALUOp[1]	=>  Location: PIN_AA6,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ALUSrc	=>  Location: PIN_V9,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Instr[0]	=>  Location: PIN_B5,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Instr[1]	=>  Location: PIN_W8,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Instr[2]	=>  Location: PIN_V10,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Instr[3]	=>  Location: PIN_AA7,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Instr[4]	=>  Location: PIN_AB3,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Instr[6]	=>  Location: PIN_AA8,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Instr[5]	=>  Location: PIN_W7,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Instr[13]	=>  Location: PIN_AB5,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Instr[14]	=>  Location: PIN_R10,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Instr[12]	=>  Location: PIN_W10,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Instr[25]	=>  Location: PIN_Y3,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Instr[26]	=>  Location: PIN_AB4,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Instr[27]	=>  Location: PIN_Y4,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Instr[28]	=>  Location: PIN_P10,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Instr[29]	=>  Location: PIN_AA3,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Instr[31]	=>  Location: PIN_AB7,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Instr[30]	=>  Location: PIN_AB8,	 I/O Standard: 2.5 V,	 Current Strength: Default
 
 
 wire gnd;
@@ -82,22 +89,11 @@ assign unknown = 1'bx;
 tri1 devclrn;
 tri1 devpor;
 tri1 devoe;
-wire \CLK~input_o ;
-wire \Instr[0]~input_o ;
-wire \Instr[1]~input_o ;
-wire \Instr[2]~input_o ;
-wire \Instr[3]~input_o ;
-wire \Instr[4]~input_o ;
-wire \Instr[5]~input_o ;
-wire \Instr[6]~input_o ;
 wire \Instr[7]~input_o ;
 wire \Instr[8]~input_o ;
 wire \Instr[9]~input_o ;
 wire \Instr[10]~input_o ;
 wire \Instr[11]~input_o ;
-wire \Instr[12]~input_o ;
-wire \Instr[13]~input_o ;
-wire \Instr[14]~input_o ;
 wire \Instr[15]~input_o ;
 wire \Instr[16]~input_o ;
 wire \Instr[17]~input_o ;
@@ -108,17 +104,42 @@ wire \Instr[21]~input_o ;
 wire \Instr[22]~input_o ;
 wire \Instr[23]~input_o ;
 wire \Instr[24]~input_o ;
-wire \Instr[25]~input_o ;
-wire \Instr[26]~input_o ;
-wire \Instr[27]~input_o ;
-wire \Instr[28]~input_o ;
-wire \Instr[29]~input_o ;
-wire \Instr[30]~input_o ;
-wire \Instr[31]~input_o ;
 wire \~QUARTUS_CREATED_GND~I_combout ;
 wire \~QUARTUS_CREATED_UNVM~~busy ;
 wire \~QUARTUS_CREATED_ADC1~~eoc ;
 wire \~QUARTUS_CREATED_ADC2~~eoc ;
+wire \RegWrite~output_o ;
+wire \ALUOp[0]~output_o ;
+wire \ALUOp[1]~output_o ;
+wire \ALUSrc~output_o ;
+wire \Instr[12]~input_o ;
+wire \Instr[13]~input_o ;
+wire \Instr[14]~input_o ;
+wire \Mux5~2_combout ;
+wire \Instr[5]~input_o ;
+wire \Instr[1]~input_o ;
+wire \Instr[2]~input_o ;
+wire \Instr[3]~input_o ;
+wire \Instr[0]~input_o ;
+wire \Mux5~0_combout ;
+wire \Instr[4]~input_o ;
+wire \Instr[6]~input_o ;
+wire \Mux5~1_combout ;
+wire \Mux2~0_combout ;
+wire \Instr[28]~input_o ;
+wire \Instr[29]~input_o ;
+wire \Instr[31]~input_o ;
+wire \Mux4~1_combout ;
+wire \Instr[25]~input_o ;
+wire \Instr[27]~input_o ;
+wire \Instr[26]~input_o ;
+wire \Mux4~0_combout ;
+wire \Instr[30]~input_o ;
+wire \Mux5~3_combout ;
+wire \Mux5~4_combout ;
+wire \Mux4~2_combout ;
+wire \Mux4~3_combout ;
+wire \Mux3~0_combout ;
 
 
 hard_block auto_generated_inst(
@@ -126,7 +147,7 @@ hard_block auto_generated_inst(
 	.devclrn(devclrn),
 	.devoe(devoe));
 
-// Location: LCCOMB_X44_Y52_N16
+// Location: LCCOMB_X43_Y38_N24
 fiftyfivenm_lcell_comb \~QUARTUS_CREATED_GND~I (
 // Equation(s):
 // \~QUARTUS_CREATED_GND~I_combout  = GND
@@ -143,163 +164,59 @@ defparam \~QUARTUS_CREATED_GND~I .lut_mask = 16'h0000;
 defparam \~QUARTUS_CREATED_GND~I .sum_lutc_input = "datac";
 // synopsys translate_on
 
-// Location: IOIBUF_X78_Y37_N8
-fiftyfivenm_io_ibuf \CLK~input (
-	.i(CLK),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\CLK~input_o ));
+// Location: IOOBUF_X26_Y0_N2
+fiftyfivenm_io_obuf \RegWrite~output (
+	.i(\Mux2~0_combout ),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\RegWrite~output_o ),
+	.obar());
 // synopsys translate_off
-defparam \CLK~input .bus_hold = "false";
-defparam \CLK~input .listen_to_nsleep_signal = "false";
-defparam \CLK~input .simulate_z_as = "z";
+defparam \RegWrite~output .bus_hold = "false";
+defparam \RegWrite~output .open_drain_output = "false";
 // synopsys translate_on
 
-// Location: IOIBUF_X78_Y35_N8
-fiftyfivenm_io_ibuf \Instr[0]~input (
-	.i(Instr[0]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\Instr[0]~input_o ));
+// Location: IOOBUF_X29_Y0_N9
+fiftyfivenm_io_obuf \ALUOp[0]~output (
+	.i(\Mux5~4_combout ),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ALUOp[0]~output_o ),
+	.obar());
 // synopsys translate_off
-defparam \Instr[0]~input .bus_hold = "false";
-defparam \Instr[0]~input .listen_to_nsleep_signal = "false";
-defparam \Instr[0]~input .simulate_z_as = "z";
+defparam \ALUOp[0]~output .bus_hold = "false";
+defparam \ALUOp[0]~output .open_drain_output = "false";
 // synopsys translate_on
 
-// Location: IOIBUF_X46_Y54_N29
-fiftyfivenm_io_ibuf \Instr[1]~input (
-	.i(Instr[1]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\Instr[1]~input_o ));
+// Location: IOOBUF_X29_Y0_N23
+fiftyfivenm_io_obuf \ALUOp[1]~output (
+	.i(\Mux4~3_combout ),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ALUOp[1]~output_o ),
+	.obar());
 // synopsys translate_off
-defparam \Instr[1]~input .bus_hold = "false";
-defparam \Instr[1]~input .listen_to_nsleep_signal = "false";
-defparam \Instr[1]~input .simulate_z_as = "z";
+defparam \ALUOp[1]~output .bus_hold = "false";
+defparam \ALUOp[1]~output .open_drain_output = "false";
 // synopsys translate_on
 
-// Location: IOIBUF_X38_Y0_N15
-fiftyfivenm_io_ibuf \Instr[2]~input (
-	.i(Instr[2]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\Instr[2]~input_o ));
+// Location: IOOBUF_X31_Y0_N30
+fiftyfivenm_io_obuf \ALUSrc~output (
+	.i(\Mux3~0_combout ),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ALUSrc~output_o ),
+	.obar());
 // synopsys translate_off
-defparam \Instr[2]~input .bus_hold = "false";
-defparam \Instr[2]~input .listen_to_nsleep_signal = "false";
-defparam \Instr[2]~input .simulate_z_as = "z";
-// synopsys translate_on
-
-// Location: IOIBUF_X0_Y3_N1
-fiftyfivenm_io_ibuf \Instr[3]~input (
-	.i(Instr[3]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\Instr[3]~input_o ));
-// synopsys translate_off
-defparam \Instr[3]~input .bus_hold = "false";
-defparam \Instr[3]~input .listen_to_nsleep_signal = "false";
-defparam \Instr[3]~input .simulate_z_as = "z";
+defparam \ALUSrc~output .bus_hold = "false";
+defparam \ALUSrc~output .open_drain_output = "false";
 // synopsys translate_on
 
 // Location: IOIBUF_X24_Y0_N29
-fiftyfivenm_io_ibuf \Instr[4]~input (
-	.i(Instr[4]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\Instr[4]~input_o ));
-// synopsys translate_off
-defparam \Instr[4]~input .bus_hold = "false";
-defparam \Instr[4]~input .listen_to_nsleep_signal = "false";
-defparam \Instr[4]~input .simulate_z_as = "z";
-// synopsys translate_on
-
-// Location: IOIBUF_X46_Y0_N1
-fiftyfivenm_io_ibuf \Instr[5]~input (
-	.i(Instr[5]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\Instr[5]~input_o ));
-// synopsys translate_off
-defparam \Instr[5]~input .bus_hold = "false";
-defparam \Instr[5]~input .listen_to_nsleep_signal = "false";
-defparam \Instr[5]~input .simulate_z_as = "z";
-// synopsys translate_on
-
-// Location: IOIBUF_X0_Y26_N1
-fiftyfivenm_io_ibuf \Instr[6]~input (
-	.i(Instr[6]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\Instr[6]~input_o ));
-// synopsys translate_off
-defparam \Instr[6]~input .bus_hold = "false";
-defparam \Instr[6]~input .listen_to_nsleep_signal = "false";
-defparam \Instr[6]~input .simulate_z_as = "z";
-// synopsys translate_on
-
-// Location: IOIBUF_X46_Y54_N8
-fiftyfivenm_io_ibuf \Instr[7]~input (
-	.i(Instr[7]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\Instr[7]~input_o ));
-// synopsys translate_off
-defparam \Instr[7]~input .bus_hold = "false";
-defparam \Instr[7]~input .listen_to_nsleep_signal = "false";
-defparam \Instr[7]~input .simulate_z_as = "z";
-// synopsys translate_on
-
-// Location: IOIBUF_X36_Y0_N8
-fiftyfivenm_io_ibuf \Instr[8]~input (
-	.i(Instr[8]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\Instr[8]~input_o ));
-// synopsys translate_off
-defparam \Instr[8]~input .bus_hold = "false";
-defparam \Instr[8]~input .listen_to_nsleep_signal = "false";
-defparam \Instr[8]~input .simulate_z_as = "z";
-// synopsys translate_on
-
-// Location: IOIBUF_X51_Y54_N1
-fiftyfivenm_io_ibuf \Instr[9]~input (
-	.i(Instr[9]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\Instr[9]~input_o ));
-// synopsys translate_off
-defparam \Instr[9]~input .bus_hold = "false";
-defparam \Instr[9]~input .listen_to_nsleep_signal = "false";
-defparam \Instr[9]~input .simulate_z_as = "z";
-// synopsys translate_on
-
-// Location: IOIBUF_X46_Y0_N8
-fiftyfivenm_io_ibuf \Instr[10]~input (
-	.i(Instr[10]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\Instr[10]~input_o ));
-// synopsys translate_off
-defparam \Instr[10]~input .bus_hold = "false";
-defparam \Instr[10]~input .listen_to_nsleep_signal = "false";
-defparam \Instr[10]~input .simulate_z_as = "z";
-// synopsys translate_on
-
-// Location: IOIBUF_X0_Y27_N15
-fiftyfivenm_io_ibuf \Instr[11]~input (
-	.i(Instr[11]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\Instr[11]~input_o ));
-// synopsys translate_off
-defparam \Instr[11]~input .bus_hold = "false";
-defparam \Instr[11]~input .listen_to_nsleep_signal = "false";
-defparam \Instr[11]~input .simulate_z_as = "z";
-// synopsys translate_on
-
-// Location: IOIBUF_X51_Y54_N29
 fiftyfivenm_io_ibuf \Instr[12]~input (
 	.i(Instr[12]),
 	.ibar(gnd),
@@ -311,7 +228,7 @@ defparam \Instr[12]~input .listen_to_nsleep_signal = "false";
 defparam \Instr[12]~input .simulate_z_as = "z";
 // synopsys translate_on
 
-// Location: IOIBUF_X78_Y29_N22
+// Location: IOIBUF_X29_Y0_N29
 fiftyfivenm_io_ibuf \Instr[13]~input (
 	.i(Instr[13]),
 	.ibar(gnd),
@@ -323,7 +240,7 @@ defparam \Instr[13]~input .listen_to_nsleep_signal = "false";
 defparam \Instr[13]~input .simulate_z_as = "z";
 // synopsys translate_on
 
-// Location: IOIBUF_X34_Y39_N1
+// Location: IOIBUF_X26_Y0_N15
 fiftyfivenm_io_ibuf \Instr[14]~input (
 	.i(Instr[14]),
 	.ibar(gnd),
@@ -335,7 +252,422 @@ defparam \Instr[14]~input .listen_to_nsleep_signal = "false";
 defparam \Instr[14]~input .simulate_z_as = "z";
 // synopsys translate_on
 
-// Location: IOIBUF_X40_Y0_N29
+// Location: LCCOMB_X27_Y4_N20
+fiftyfivenm_lcell_comb \Mux5~2 (
+// Equation(s):
+// \Mux5~2_combout  = (!\Instr[13]~input_o  & !\Instr[14]~input_o )
+
+	.dataa(gnd),
+	.datab(gnd),
+	.datac(\Instr[13]~input_o ),
+	.datad(\Instr[14]~input_o ),
+	.cin(gnd),
+	.combout(\Mux5~2_combout ),
+	.cout());
+// synopsys translate_off
+defparam \Mux5~2 .lut_mask = 16'h000F;
+defparam \Mux5~2 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+// Location: IOIBUF_X24_Y0_N8
+fiftyfivenm_io_ibuf \Instr[5]~input (
+	.i(Instr[5]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Instr[5]~input_o ));
+// synopsys translate_off
+defparam \Instr[5]~input .bus_hold = "false";
+defparam \Instr[5]~input .listen_to_nsleep_signal = "false";
+defparam \Instr[5]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X24_Y0_N1
+fiftyfivenm_io_ibuf \Instr[1]~input (
+	.i(Instr[1]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Instr[1]~input_o ));
+// synopsys translate_off
+defparam \Instr[1]~input .bus_hold = "false";
+defparam \Instr[1]~input .listen_to_nsleep_signal = "false";
+defparam \Instr[1]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X31_Y0_N22
+fiftyfivenm_io_ibuf \Instr[2]~input (
+	.i(Instr[2]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Instr[2]~input_o ));
+// synopsys translate_off
+defparam \Instr[2]~input .bus_hold = "false";
+defparam \Instr[2]~input .listen_to_nsleep_signal = "false";
+defparam \Instr[2]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X29_Y0_N15
+fiftyfivenm_io_ibuf \Instr[3]~input (
+	.i(Instr[3]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Instr[3]~input_o ));
+// synopsys translate_off
+defparam \Instr[3]~input .bus_hold = "false";
+defparam \Instr[3]~input .listen_to_nsleep_signal = "false";
+defparam \Instr[3]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X26_Y39_N29
+fiftyfivenm_io_ibuf \Instr[0]~input (
+	.i(Instr[0]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Instr[0]~input_o ));
+// synopsys translate_off
+defparam \Instr[0]~input .bus_hold = "false";
+defparam \Instr[0]~input .listen_to_nsleep_signal = "false";
+defparam \Instr[0]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: LCCOMB_X27_Y4_N24
+fiftyfivenm_lcell_comb \Mux5~0 (
+// Equation(s):
+// \Mux5~0_combout  = (\Instr[1]~input_o  & (!\Instr[2]~input_o  & (!\Instr[3]~input_o  & \Instr[0]~input_o )))
+
+	.dataa(\Instr[1]~input_o ),
+	.datab(\Instr[2]~input_o ),
+	.datac(\Instr[3]~input_o ),
+	.datad(\Instr[0]~input_o ),
+	.cin(gnd),
+	.combout(\Mux5~0_combout ),
+	.cout());
+// synopsys translate_off
+defparam \Mux5~0 .lut_mask = 16'h0200;
+defparam \Mux5~0 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+// Location: IOIBUF_X22_Y0_N8
+fiftyfivenm_io_ibuf \Instr[4]~input (
+	.i(Instr[4]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Instr[4]~input_o ));
+// synopsys translate_off
+defparam \Instr[4]~input .bus_hold = "false";
+defparam \Instr[4]~input .listen_to_nsleep_signal = "false";
+defparam \Instr[4]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X31_Y0_N15
+fiftyfivenm_io_ibuf \Instr[6]~input (
+	.i(Instr[6]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Instr[6]~input_o ));
+// synopsys translate_off
+defparam \Instr[6]~input .bus_hold = "false";
+defparam \Instr[6]~input .listen_to_nsleep_signal = "false";
+defparam \Instr[6]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: LCCOMB_X27_Y4_N18
+fiftyfivenm_lcell_comb \Mux5~1 (
+// Equation(s):
+// \Mux5~1_combout  = (\Mux5~0_combout  & (\Instr[4]~input_o  & !\Instr[6]~input_o ))
+
+	.dataa(gnd),
+	.datab(\Mux5~0_combout ),
+	.datac(\Instr[4]~input_o ),
+	.datad(\Instr[6]~input_o ),
+	.cin(gnd),
+	.combout(\Mux5~1_combout ),
+	.cout());
+// synopsys translate_off
+defparam \Mux5~1 .lut_mask = 16'h00C0;
+defparam \Mux5~1 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+// Location: LCCOMB_X27_Y4_N6
+fiftyfivenm_lcell_comb \Mux2~0 (
+// Equation(s):
+// \Mux2~0_combout  = (\Mux5~1_combout  & ((\Instr[5]~input_o ) # ((!\Instr[12]~input_o  & \Mux5~2_combout ))))
+
+	.dataa(\Instr[12]~input_o ),
+	.datab(\Mux5~2_combout ),
+	.datac(\Instr[5]~input_o ),
+	.datad(\Mux5~1_combout ),
+	.cin(gnd),
+	.combout(\Mux2~0_combout ),
+	.cout());
+// synopsys translate_off
+defparam \Mux2~0 .lut_mask = 16'hF400;
+defparam \Mux2~0 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+// Location: IOIBUF_X26_Y0_N8
+fiftyfivenm_io_ibuf \Instr[28]~input (
+	.i(Instr[28]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Instr[28]~input_o ));
+// synopsys translate_off
+defparam \Instr[28]~input .bus_hold = "false";
+defparam \Instr[28]~input .listen_to_nsleep_signal = "false";
+defparam \Instr[28]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X26_Y0_N29
+fiftyfivenm_io_ibuf \Instr[29]~input (
+	.i(Instr[29]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Instr[29]~input_o ));
+// synopsys translate_off
+defparam \Instr[29]~input .bus_hold = "false";
+defparam \Instr[29]~input .listen_to_nsleep_signal = "false";
+defparam \Instr[29]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X29_Y0_N1
+fiftyfivenm_io_ibuf \Instr[31]~input (
+	.i(Instr[31]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Instr[31]~input_o ));
+// synopsys translate_off
+defparam \Instr[31]~input .bus_hold = "false";
+defparam \Instr[31]~input .listen_to_nsleep_signal = "false";
+defparam \Instr[31]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: LCCOMB_X27_Y4_N26
+fiftyfivenm_lcell_comb \Mux4~1 (
+// Equation(s):
+// \Mux4~1_combout  = (!\Instr[28]~input_o  & (!\Instr[29]~input_o  & !\Instr[31]~input_o ))
+
+	.dataa(\Instr[28]~input_o ),
+	.datab(gnd),
+	.datac(\Instr[29]~input_o ),
+	.datad(\Instr[31]~input_o ),
+	.cin(gnd),
+	.combout(\Mux4~1_combout ),
+	.cout());
+// synopsys translate_off
+defparam \Mux4~1 .lut_mask = 16'h0005;
+defparam \Mux4~1 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+// Location: IOIBUF_X24_Y0_N22
+fiftyfivenm_io_ibuf \Instr[25]~input (
+	.i(Instr[25]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Instr[25]~input_o ));
+// synopsys translate_off
+defparam \Instr[25]~input .bus_hold = "false";
+defparam \Instr[25]~input .listen_to_nsleep_signal = "false";
+defparam \Instr[25]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X24_Y0_N15
+fiftyfivenm_io_ibuf \Instr[27]~input (
+	.i(Instr[27]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Instr[27]~input_o ));
+// synopsys translate_off
+defparam \Instr[27]~input .bus_hold = "false";
+defparam \Instr[27]~input .listen_to_nsleep_signal = "false";
+defparam \Instr[27]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X26_Y0_N22
+fiftyfivenm_io_ibuf \Instr[26]~input (
+	.i(Instr[26]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Instr[26]~input_o ));
+// synopsys translate_off
+defparam \Instr[26]~input .bus_hold = "false";
+defparam \Instr[26]~input .listen_to_nsleep_signal = "false";
+defparam \Instr[26]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: LCCOMB_X27_Y4_N16
+fiftyfivenm_lcell_comb \Mux4~0 (
+// Equation(s):
+// \Mux4~0_combout  = (!\Instr[25]~input_o  & (\Instr[5]~input_o  & (!\Instr[27]~input_o  & !\Instr[26]~input_o )))
+
+	.dataa(\Instr[25]~input_o ),
+	.datab(\Instr[5]~input_o ),
+	.datac(\Instr[27]~input_o ),
+	.datad(\Instr[26]~input_o ),
+	.cin(gnd),
+	.combout(\Mux4~0_combout ),
+	.cout());
+// synopsys translate_off
+defparam \Mux4~0 .lut_mask = 16'h0004;
+defparam \Mux4~0 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+// Location: IOIBUF_X31_Y0_N8
+fiftyfivenm_io_ibuf \Instr[30]~input (
+	.i(Instr[30]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Instr[30]~input_o ));
+// synopsys translate_off
+defparam \Instr[30]~input .bus_hold = "false";
+defparam \Instr[30]~input .listen_to_nsleep_signal = "false";
+defparam \Instr[30]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: LCCOMB_X27_Y4_N4
+fiftyfivenm_lcell_comb \Mux5~3 (
+// Equation(s):
+// \Mux5~3_combout  = (!\Instr[12]~input_o  & ((\Instr[14]~input_o  & (\Instr[13]~input_o  & !\Instr[30]~input_o )) # (!\Instr[14]~input_o  & (!\Instr[13]~input_o  & \Instr[30]~input_o ))))
+
+	.dataa(\Instr[12]~input_o ),
+	.datab(\Instr[14]~input_o ),
+	.datac(\Instr[13]~input_o ),
+	.datad(\Instr[30]~input_o ),
+	.cin(gnd),
+	.combout(\Mux5~3_combout ),
+	.cout());
+// synopsys translate_off
+defparam \Mux5~3 .lut_mask = 16'h0140;
+defparam \Mux5~3 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+// Location: LCCOMB_X27_Y4_N14
+fiftyfivenm_lcell_comb \Mux5~4 (
+// Equation(s):
+// \Mux5~4_combout  = (\Mux4~1_combout  & (\Mux4~0_combout  & (\Mux5~3_combout  & \Mux5~1_combout )))
+
+	.dataa(\Mux4~1_combout ),
+	.datab(\Mux4~0_combout ),
+	.datac(\Mux5~3_combout ),
+	.datad(\Mux5~1_combout ),
+	.cin(gnd),
+	.combout(\Mux5~4_combout ),
+	.cout());
+// synopsys translate_off
+defparam \Mux5~4 .lut_mask = 16'h8000;
+defparam \Mux5~4 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+// Location: LCCOMB_X27_Y4_N8
+fiftyfivenm_lcell_comb \Mux4~2 (
+// Equation(s):
+// \Mux4~2_combout  = (\Instr[14]~input_o  & (\Instr[13]~input_o  & !\Instr[30]~input_o ))
+
+	.dataa(gnd),
+	.datab(\Instr[14]~input_o ),
+	.datac(\Instr[13]~input_o ),
+	.datad(\Instr[30]~input_o ),
+	.cin(gnd),
+	.combout(\Mux4~2_combout ),
+	.cout());
+// synopsys translate_off
+defparam \Mux4~2 .lut_mask = 16'h00C0;
+defparam \Mux4~2 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+// Location: LCCOMB_X27_Y4_N10
+fiftyfivenm_lcell_comb \Mux4~3 (
+// Equation(s):
+// \Mux4~3_combout  = (\Mux4~1_combout  & (\Mux4~0_combout  & (\Mux4~2_combout  & \Mux5~1_combout )))
+
+	.dataa(\Mux4~1_combout ),
+	.datab(\Mux4~0_combout ),
+	.datac(\Mux4~2_combout ),
+	.datad(\Mux5~1_combout ),
+	.cin(gnd),
+	.combout(\Mux4~3_combout ),
+	.cout());
+// synopsys translate_off
+defparam \Mux4~3 .lut_mask = 16'h8000;
+defparam \Mux4~3 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+// Location: LCCOMB_X27_Y4_N28
+fiftyfivenm_lcell_comb \Mux3~0 (
+// Equation(s):
+// \Mux3~0_combout  = (!\Instr[12]~input_o  & (\Mux5~2_combout  & (!\Instr[5]~input_o  & \Mux5~1_combout )))
+
+	.dataa(\Instr[12]~input_o ),
+	.datab(\Mux5~2_combout ),
+	.datac(\Instr[5]~input_o ),
+	.datad(\Mux5~1_combout ),
+	.cin(gnd),
+	.combout(\Mux3~0_combout ),
+	.cout());
+// synopsys translate_off
+defparam \Mux3~0 .lut_mask = 16'h0400;
+defparam \Mux3~0 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+// Location: IOIBUF_X78_Y25_N8
+fiftyfivenm_io_ibuf \Instr[7]~input (
+	.i(Instr[7]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Instr[7]~input_o ));
+// synopsys translate_off
+defparam \Instr[7]~input .bus_hold = "false";
+defparam \Instr[7]~input .listen_to_nsleep_signal = "false";
+defparam \Instr[7]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X46_Y54_N8
+fiftyfivenm_io_ibuf \Instr[8]~input (
+	.i(Instr[8]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Instr[8]~input_o ));
+// synopsys translate_off
+defparam \Instr[8]~input .bus_hold = "false";
+defparam \Instr[8]~input .listen_to_nsleep_signal = "false";
+defparam \Instr[8]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X26_Y39_N15
+fiftyfivenm_io_ibuf \Instr[9]~input (
+	.i(Instr[9]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Instr[9]~input_o ));
+// synopsys translate_off
+defparam \Instr[9]~input .bus_hold = "false";
+defparam \Instr[9]~input .listen_to_nsleep_signal = "false";
+defparam \Instr[9]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X51_Y54_N1
+fiftyfivenm_io_ibuf \Instr[10]~input (
+	.i(Instr[10]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Instr[10]~input_o ));
+// synopsys translate_off
+defparam \Instr[10]~input .bus_hold = "false";
+defparam \Instr[10]~input .listen_to_nsleep_signal = "false";
+defparam \Instr[10]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X0_Y28_N8
+fiftyfivenm_io_ibuf \Instr[11]~input (
+	.i(Instr[11]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Instr[11]~input_o ));
+// synopsys translate_off
+defparam \Instr[11]~input .bus_hold = "false";
+defparam \Instr[11]~input .listen_to_nsleep_signal = "false";
+defparam \Instr[11]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X31_Y0_N1
 fiftyfivenm_io_ibuf \Instr[15]~input (
 	.i(Instr[15]),
 	.ibar(gnd),
@@ -347,7 +679,7 @@ defparam \Instr[15]~input .listen_to_nsleep_signal = "false";
 defparam \Instr[15]~input .simulate_z_as = "z";
 // synopsys translate_on
 
-// Location: IOIBUF_X26_Y0_N8
+// Location: IOIBUF_X69_Y54_N8
 fiftyfivenm_io_ibuf \Instr[16]~input (
 	.i(Instr[16]),
 	.ibar(gnd),
@@ -359,7 +691,7 @@ defparam \Instr[16]~input .listen_to_nsleep_signal = "false";
 defparam \Instr[16]~input .simulate_z_as = "z";
 // synopsys translate_on
 
-// Location: IOIBUF_X34_Y39_N22
+// Location: IOIBUF_X20_Y0_N15
 fiftyfivenm_io_ibuf \Instr[17]~input (
 	.i(Instr[17]),
 	.ibar(gnd),
@@ -371,7 +703,7 @@ defparam \Instr[17]~input .listen_to_nsleep_signal = "false";
 defparam \Instr[17]~input .simulate_z_as = "z";
 // synopsys translate_on
 
-// Location: IOIBUF_X34_Y0_N15
+// Location: IOIBUF_X51_Y0_N8
 fiftyfivenm_io_ibuf \Instr[18]~input (
 	.i(Instr[18]),
 	.ibar(gnd),
@@ -383,7 +715,7 @@ defparam \Instr[18]~input .listen_to_nsleep_signal = "false";
 defparam \Instr[18]~input .simulate_z_as = "z";
 // synopsys translate_on
 
-// Location: IOIBUF_X24_Y0_N8
+// Location: IOIBUF_X78_Y29_N22
 fiftyfivenm_io_ibuf \Instr[19]~input (
 	.i(Instr[19]),
 	.ibar(gnd),
@@ -395,7 +727,7 @@ defparam \Instr[19]~input .listen_to_nsleep_signal = "false";
 defparam \Instr[19]~input .simulate_z_as = "z";
 // synopsys translate_on
 
-// Location: IOIBUF_X56_Y0_N22
+// Location: IOIBUF_X34_Y39_N29
 fiftyfivenm_io_ibuf \Instr[20]~input (
 	.i(Instr[20]),
 	.ibar(gnd),
@@ -419,7 +751,7 @@ defparam \Instr[21]~input .listen_to_nsleep_signal = "false";
 defparam \Instr[21]~input .simulate_z_as = "z";
 // synopsys translate_on
 
-// Location: IOIBUF_X58_Y0_N29
+// Location: IOIBUF_X58_Y0_N22
 fiftyfivenm_io_ibuf \Instr[22]~input (
 	.i(Instr[22]),
 	.ibar(gnd),
@@ -431,7 +763,7 @@ defparam \Instr[22]~input .listen_to_nsleep_signal = "false";
 defparam \Instr[22]~input .simulate_z_as = "z";
 // synopsys translate_on
 
-// Location: IOIBUF_X58_Y54_N8
+// Location: IOIBUF_X0_Y13_N22
 fiftyfivenm_io_ibuf \Instr[23]~input (
 	.i(Instr[23]),
 	.ibar(gnd),
@@ -443,7 +775,7 @@ defparam \Instr[23]~input .listen_to_nsleep_signal = "false";
 defparam \Instr[23]~input .simulate_z_as = "z";
 // synopsys translate_on
 
-// Location: IOIBUF_X78_Y15_N8
+// Location: IOIBUF_X58_Y0_N29
 fiftyfivenm_io_ibuf \Instr[24]~input (
 	.i(Instr[24]),
 	.ibar(gnd),
@@ -453,90 +785,6 @@ fiftyfivenm_io_ibuf \Instr[24]~input (
 defparam \Instr[24]~input .bus_hold = "false";
 defparam \Instr[24]~input .listen_to_nsleep_signal = "false";
 defparam \Instr[24]~input .simulate_z_as = "z";
-// synopsys translate_on
-
-// Location: IOIBUF_X16_Y0_N8
-fiftyfivenm_io_ibuf \Instr[25]~input (
-	.i(Instr[25]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\Instr[25]~input_o ));
-// synopsys translate_off
-defparam \Instr[25]~input .bus_hold = "false";
-defparam \Instr[25]~input .listen_to_nsleep_signal = "false";
-defparam \Instr[25]~input .simulate_z_as = "z";
-// synopsys translate_on
-
-// Location: IOIBUF_X22_Y0_N8
-fiftyfivenm_io_ibuf \Instr[26]~input (
-	.i(Instr[26]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\Instr[26]~input_o ));
-// synopsys translate_off
-defparam \Instr[26]~input .bus_hold = "false";
-defparam \Instr[26]~input .listen_to_nsleep_signal = "false";
-defparam \Instr[26]~input .simulate_z_as = "z";
-// synopsys translate_on
-
-// Location: IOIBUF_X51_Y54_N8
-fiftyfivenm_io_ibuf \Instr[27]~input (
-	.i(Instr[27]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\Instr[27]~input_o ));
-// synopsys translate_off
-defparam \Instr[27]~input .bus_hold = "false";
-defparam \Instr[27]~input .listen_to_nsleep_signal = "false";
-defparam \Instr[27]~input .simulate_z_as = "z";
-// synopsys translate_on
-
-// Location: IOIBUF_X78_Y40_N15
-fiftyfivenm_io_ibuf \Instr[28]~input (
-	.i(Instr[28]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\Instr[28]~input_o ));
-// synopsys translate_off
-defparam \Instr[28]~input .bus_hold = "false";
-defparam \Instr[28]~input .listen_to_nsleep_signal = "false";
-defparam \Instr[28]~input .simulate_z_as = "z";
-// synopsys translate_on
-
-// Location: IOIBUF_X40_Y0_N8
-fiftyfivenm_io_ibuf \Instr[29]~input (
-	.i(Instr[29]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\Instr[29]~input_o ));
-// synopsys translate_off
-defparam \Instr[29]~input .bus_hold = "false";
-defparam \Instr[29]~input .listen_to_nsleep_signal = "false";
-defparam \Instr[29]~input .simulate_z_as = "z";
-// synopsys translate_on
-
-// Location: IOIBUF_X0_Y37_N1
-fiftyfivenm_io_ibuf \Instr[30]~input (
-	.i(Instr[30]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\Instr[30]~input_o ));
-// synopsys translate_off
-defparam \Instr[30]~input .bus_hold = "false";
-defparam \Instr[30]~input .listen_to_nsleep_signal = "false";
-defparam \Instr[30]~input .simulate_z_as = "z";
-// synopsys translate_on
-
-// Location: IOIBUF_X26_Y0_N1
-fiftyfivenm_io_ibuf \Instr[31]~input (
-	.i(Instr[31]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\Instr[31]~input_o ));
-// synopsys translate_off
-defparam \Instr[31]~input .bus_hold = "false";
-defparam \Instr[31]~input .listen_to_nsleep_signal = "false";
-defparam \Instr[31]~input .simulate_z_as = "z";
 // synopsys translate_on
 
 // Location: UNVM_X0_Y40_N40
@@ -621,6 +869,14 @@ defparam \~QUARTUS_CREATED_ADC2~ .testbits = 66;
 defparam \~QUARTUS_CREATED_ADC2~ .tsclkdiv = 1;
 defparam \~QUARTUS_CREATED_ADC2~ .tsclksel = 0;
 // synopsys translate_on
+
+assign RegWrite = \RegWrite~output_o ;
+
+assign ALUOp[0] = \ALUOp[0]~output_o ;
+
+assign ALUOp[1] = \ALUOp[1]~output_o ;
+
+assign ALUSrc = \ALUSrc~output_o ;
 
 endmodule
 

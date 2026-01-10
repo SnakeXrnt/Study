@@ -1,0 +1,16 @@
+Analysis & Synthesis Status : Successful - Fri Jan  9 00:47:25 2026
+Quartus Prime Version : 20.1.1 Build 720 11/11/2020 SJ Lite Edition
+Revision Name : week5
+Top-level Entity Name : week5_top
+Family : MAX 10
+Total logic elements : 4,948
+    Total combinational functions : 2,452
+    Dedicated logic registers : 2,590
+Total registers : 2590
+Total pins : 98
+Total virtual pins : 0
+Total memory bits : 0
+Embedded Multiplier 9-bit elements : 0
+Total PLLs : 0
+UFM blocks : 0
+ADC blocks : 0

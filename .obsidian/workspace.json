@@ -34,9 +34,21 @@
               "icon": "lucide-file",
               "title": "week2 codes"
             }
+          },
+          {
+            "id": "30c3043dc6454e05",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.10.6"
+              },
+              "icon": "lucide-book-up",
+              "title": "Release Notes 1.10.6"
+            }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -184,7 +196,7 @@
       "bases:Create new base": false
     }
   },
-  "active": "54463c418c45dc39",
+  "active": "30c3043dc6454e05",
   "lastOpenFiles": [
     "y2q2/AdvancedProgrammingConcepts/week1/assignment_01/uniqueptr.hpp.md",
     "y2q2/InteractionDesign/week2/week2 codes.md",

@@ -1,15 +1,15 @@
-Fitter Status : Successful - Tue Jan  6 05:01:32 2026
+Fitter Status : Successful - Thu Jan  8 15:25:15 2026
 Quartus Prime Version : 20.1.1 Build 720 11/11/2020 SJ Lite Edition
 Revision Name : week5
-Top-level Entity Name : Fetch_Stage
+Top-level Entity Name : week5_top
 Family : MAX 10
 Device : 10M50DAF484C7G
 Timing Models : Final
-Total logic elements : 10 / 49,760 ( < 1 % )
-    Total combinational functions : 10 / 49,760 ( < 1 % )
-    Dedicated logic registers : 6 / 49,760 ( < 1 % )
-Total registers : 6
-Total pins : 34 / 360 ( 9 % )
+Total logic elements : 455 / 49,760 ( < 1 % )
+    Total combinational functions : 424 / 49,760 ( < 1 % )
+    Dedicated logic registers : 191 / 49,760 ( < 1 % )
+Total registers : 191
+Total pins : 98 / 360 ( 27 % )
 Total virtual pins : 0
 Total memory bits : 0 / 1,677,312 ( 0 % )
 Embedded Multiplier 9-bit elements : 0 / 288 ( 0 % )

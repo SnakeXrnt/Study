@@ -1,5 +1,5 @@
 EDA Netlist Writer report for week5
-Tue Jan  6 05:01:38 2026
+Thu Jan  8 15:25:20 2026
 Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
 
 
@@ -37,9 +37,9 @@ https://fpgasoftware.intel.com/eula.
 +-------------------------------------------------------------------+
 ; EDA Netlist Writer Summary                                        ;
 +---------------------------+---------------------------------------+
-; EDA Netlist Writer Status ; Successful - Tue Jan  6 05:01:38 2026 ;
+; EDA Netlist Writer Status ; Successful - Thu Jan  8 15:25:20 2026 ;
 ; Revision Name             ; week5                                 ;
-; Top-level Entity Name     ; Fetch_Stage                           ;
+; Top-level Entity Name     ; week5_top                             ;
 ; Family                    ; MAX 10                                ;
 ; Simulation Files Creation ; Successful                            ;
 +---------------------------+---------------------------------------+
@@ -81,14 +81,14 @@ https://fpgasoftware.intel.com/eula.
 Info: *******************************************************************
 Info: Running Quartus Prime EDA Netlist Writer
     Info: Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
-    Info: Processing started: Tue Jan  6 05:01:38 2026
+    Info: Processing started: Thu Jan  8 15:25:19 2026
 Info: Command: quartus_eda --read_settings_files=off --write_settings_files=off week5 -c week5
 Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
 Info (204019): Generated file week5.vo in folder "/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/simulation/modelsim/" for EDA simulation tool
 Info: Quartus Prime EDA Netlist Writer was successful. 0 errors, 1 warning
-    Info: Peak virtual memory: 598 megabytes
-    Info: Processing ended: Tue Jan  6 05:01:38 2026
-    Info: Elapsed time: 00:00:00
+    Info: Peak virtual memory: 601 megabytes
+    Info: Processing ended: Thu Jan  8 15:25:20 2026
+    Info: Elapsed time: 00:00:01
     Info: Total CPU time (on all processors): 00:00:00
 
 

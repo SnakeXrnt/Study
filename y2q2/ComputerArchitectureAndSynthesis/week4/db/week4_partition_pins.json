@@ -2,7 +2,92 @@
 	"partitions" : [
 		{
 			"name" : "Top",
-			"pins" : []
+			"pins" : [
+				{
+					"name" : "RegWrite",
+					"strict" : false
+				},
+				{
+					"name" : "ALUOp[0]",
+					"strict" : false
+				},
+				{
+					"name" : "ALUOp[1]",
+					"strict" : false
+				},
+				{
+					"name" : "ALUSrc",
+					"strict" : false
+				},
+				{
+					"name" : "Instr[0]",
+					"strict" : false
+				},
+				{
+					"name" : "Instr[1]",
+					"strict" : false
+				},
+				{
+					"name" : "Instr[2]",
+					"strict" : false
+				},
+				{
+					"name" : "Instr[3]",
+					"strict" : false
+				},
+				{
+					"name" : "Instr[4]",
+					"strict" : false
+				},
+				{
+					"name" : "Instr[6]",
+					"strict" : false
+				},
+				{
+					"name" : "Instr[5]",
+					"strict" : false
+				},
+				{
+					"name" : "Instr[13]",
+					"strict" : false
+				},
+				{
+					"name" : "Instr[14]",
+					"strict" : false
+				},
+				{
+					"name" : "Instr[12]",
+					"strict" : false
+				},
+				{
+					"name" : "Instr[25]",
+					"strict" : false
+				},
+				{
+					"name" : "Instr[26]",
+					"strict" : false
+				},
+				{
+					"name" : "Instr[27]",
+					"strict" : false
+				},
+				{
+					"name" : "Instr[28]",
+					"strict" : false
+				},
+				{
+					"name" : "Instr[29]",
+					"strict" : false
+				},
+				{
+					"name" : "Instr[31]",
+					"strict" : false
+				},
+				{
+					"name" : "Instr[30]",
+					"strict" : false
+				}
+			]
 		}
 	]
 }

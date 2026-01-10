@@ -1,5 +1,5 @@
 Analysis & Synthesis report for week4
-Wed Dec 17 15:00:04 2025
+Thu Jan  8 13:54:47 2026
 Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
 
 
@@ -14,10 +14,9 @@ Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
   6. Analysis & Synthesis Resource Usage Summary
   7. Analysis & Synthesis Resource Utilization by Entity
   8. General Register Statistics
-  9. Port Connectivity Checks: "riscv_alu:ALU"
- 10. Post-Synthesis Netlist Statistics for Top Partition
- 11. Elapsed Time Per Partition
- 12. Analysis & Synthesis Messages
+  9. Post-Synthesis Netlist Statistics for Top Partition
+ 10. Elapsed Time Per Partition
+ 11. Analysis & Synthesis Messages
 
 
 
@@ -44,16 +43,16 @@ https://fpgasoftware.intel.com/eula.
 +----------------------------------------------------------------------------------+
 ; Analysis & Synthesis Summary                                                     ;
 +------------------------------------+---------------------------------------------+
-; Analysis & Synthesis Status        ; Successful - Wed Dec 17 15:00:04 2025       ;
+; Analysis & Synthesis Status        ; Successful - Thu Jan  8 13:54:47 2026       ;
 ; Quartus Prime Version              ; 20.1.1 Build 720 11/11/2020 SJ Lite Edition ;
 ; Revision Name                      ; week4                                       ;
-; Top-level Entity Name              ; R_I_Datapath                                ;
+; Top-level Entity Name              ; Control_Unit                                ;
 ; Family                             ; MAX 10                                      ;
-; Total logic elements               ; 0                                           ;
-;     Total combinational functions  ; 0                                           ;
+; Total logic elements               ; 11                                          ;
+;     Total combinational functions  ; 11                                          ;
 ;     Dedicated logic registers      ; 0                                           ;
 ; Total registers                    ; 0                                           ;
-; Total pins                         ; 33                                          ;
+; Total pins                         ; 36                                          ;
 ; Total virtual pins                 ; 0                                           ;
 ; Total memory bits                  ; 0                                           ;
 ; Embedded Multiplier 9-bit elements ; 0                                           ;
@@ -69,7 +68,7 @@ https://fpgasoftware.intel.com/eula.
 ; Option                                                           ; Setting            ; Default Value      ;
 +------------------------------------------------------------------+--------------------+--------------------+
 ; Device                                                           ; 10M50DAF484C7G     ;                    ;
-; Top-level entity name                                            ; R_I_Datapath       ; week4              ;
+; Top-level entity name                                            ; Control_Unit       ; week4              ;
 ; Family name                                                      ; MAX 10             ; Cyclone V          ;
 ; Use smart compilation                                            ; Off                ; Off                ;
 ; Enable parallel Assembler and Timing Analyzer during compilation ; On                 ; On                 ;
@@ -165,48 +164,45 @@ https://fpgasoftware.intel.com/eula.
 +----------------------------+-------------+
 
 
-+------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Analysis & Synthesis Source Files Read                                                                                                                                 ;
-+----------------------------------+-----------------+-----------------+---------------------------------------------------------------------------------------+---------+
-; File Name with User-Entered Path ; Used in Netlist ; File Type       ; File Name with Absolute Path                                                          ; Library ;
-+----------------------------------+-----------------+-----------------+---------------------------------------------------------------------------------------+---------+
-; regfile.vhd                      ; yes             ; User VHDL File  ; /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/regfile.vhd            ;         ;
-; riscv_alu.vhd                    ; yes             ; User VHDL File  ; /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/riscv_alu.vhd          ;         ;
-; Control_Unit.vhd                 ; yes             ; User VHDL File  ; /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/Control_Unit.vhd       ;         ;
-; Immediate_Extender.vhd           ; yes             ; User VHDL File  ; /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/Immediate_Extender.vhd ;         ;
-; R_I_Datapath.vhd                 ; yes             ; User VHDL File  ; /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd       ;         ;
-+----------------------------------+-----------------+-----------------+---------------------------------------------------------------------------------------+---------+
++------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Source Files Read                                                                                                                           ;
++----------------------------------+-----------------+-----------------+---------------------------------------------------------------------------------+---------+
+; File Name with User-Entered Path ; Used in Netlist ; File Type       ; File Name with Absolute Path                                                    ; Library ;
++----------------------------------+-----------------+-----------------+---------------------------------------------------------------------------------+---------+
+; Control_Unit.vhd                 ; yes             ; User VHDL File  ; /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/Control_Unit.vhd ;         ;
++----------------------------------+-----------------+-----------------+---------------------------------------------------------------------------------+---------+
 
 
-+-----------------------------------------------------+
-; Analysis & Synthesis Resource Usage Summary         ;
-+---------------------------------------------+-------+
-; Resource                                    ; Usage ;
-+---------------------------------------------+-------+
-;                                             ;       ;
-; Total combinational functions               ; 0     ;
-; Logic element usage by number of LUT inputs ;       ;
-;     -- 4 input functions                    ; 0     ;
-;     -- 3 input functions                    ; 0     ;
-;     -- <=2 input functions                  ; 0     ;
-;                                             ;       ;
-; Logic elements by mode                      ;       ;
-;     -- normal mode                          ; 0     ;
-;     -- arithmetic mode                      ; 0     ;
-;                                             ;       ;
-; Total registers                             ; 0     ;
-;     -- Dedicated logic registers            ; 0     ;
-;     -- I/O registers                        ; 0     ;
-;                                             ;       ;
-; I/O pins                                    ; 33    ;
-;                                             ;       ;
-; Embedded Multiplier 9-bit elements          ; 0     ;
-;                                             ;       ;
-; Maximum fan-out node                        ; CLK   ;
-; Maximum fan-out                             ; 1     ;
-; Total fan-out                               ; 33    ;
-; Average fan-out                             ; 0.50  ;
-+---------------------------------------------+-------+
++------------------------------------------------------+
+; Analysis & Synthesis Resource Usage Summary          ;
++---------------------------------------------+--------+
+; Resource                                    ; Usage  ;
++---------------------------------------------+--------+
+; Estimated Total logic elements              ; 11     ;
+;                                             ;        ;
+; Total combinational functions               ; 11     ;
+; Logic element usage by number of LUT inputs ;        ;
+;     -- 4 input functions                    ; 7      ;
+;     -- 3 input functions                    ; 3      ;
+;     -- <=2 input functions                  ; 1      ;
+;                                             ;        ;
+; Logic elements by mode                      ;        ;
+;     -- normal mode                          ; 11     ;
+;     -- arithmetic mode                      ; 0      ;
+;                                             ;        ;
+; Total registers                             ; 0      ;
+;     -- Dedicated logic registers            ; 0      ;
+;     -- I/O registers                        ; 0      ;
+;                                             ;        ;
+; I/O pins                                    ; 36     ;
+;                                             ;        ;
+; Embedded Multiplier 9-bit elements          ; 0      ;
+;                                             ;        ;
+; Maximum fan-out node                        ; Mux5~1 ;
+; Maximum fan-out                             ; 4      ;
+; Total fan-out                               ; 79     ;
+; Average fan-out                             ; 0.95   ;
++---------------------------------------------+--------+
 
 
 +-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -214,7 +210,7 @@ https://fpgasoftware.intel.com/eula.
 +----------------------------+---------------------+---------------------------+-------------+------------+--------------+---------+-----------+------+--------------+------------+---------------------+--------------+--------------+
 ; Compilation Hierarchy Node ; Combinational ALUTs ; Dedicated Logic Registers ; Memory Bits ; UFM Blocks ; DSP Elements ; DSP 9x9 ; DSP 18x18 ; Pins ; Virtual Pins ; ADC blocks ; Full Hierarchy Name ; Entity Name  ; Library Name ;
 +----------------------------+---------------------+---------------------------+-------------+------------+--------------+---------+-----------+------+--------------+------------+---------------------+--------------+--------------+
-; |R_I_Datapath              ; 0 (0)               ; 0 (0)                     ; 0           ; 0          ; 0            ; 0       ; 0         ; 33   ; 0            ; 0          ; |R_I_Datapath       ; R_I_Datapath ; work         ;
+; |Control_Unit              ; 11 (11)             ; 0 (0)                     ; 0           ; 0          ; 0            ; 0       ; 0         ; 36   ; 0            ; 0          ; |Control_Unit       ; Control_Unit ; work         ;
 +----------------------------+---------------------+---------------------------+-------------+------------+--------------+---------+-----------+------+--------------+------------+---------------------+--------------+--------------+
 Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
 
@@ -234,25 +230,21 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 +----------------------------------------------+-------+
 
 
-+----------------------------------------------------------------------------------------------------------------+
-; Port Connectivity Checks: "riscv_alu:ALU"                                                                      ;
-+------+--------+----------+-------------------------------------------------------------------------------------+
-; Port ; Type   ; Severity ; Details                                                                             ;
-+------+--------+----------+-------------------------------------------------------------------------------------+
-; zero ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
-+------+--------+----------+-------------------------------------------------------------------------------------+
-
-
 +-----------------------------------------------------+
 ; Post-Synthesis Netlist Statistics for Top Partition ;
-+-------------------+---------------------------------+
-; Type              ; Count                           ;
-+-------------------+---------------------------------+
-; boundary_port     ; 33                              ;
-;                   ;                                 ;
-; Max LUT depth     ; 0.00                            ;
-; Average LUT depth ; 0.00                            ;
-+-------------------+---------------------------------+
++-----------------------+-----------------------------+
+; Type                  ; Count                       ;
++-----------------------+-----------------------------+
+; boundary_port         ; 36                          ;
+; cycloneiii_lcell_comb ; 11                          ;
+;     normal            ; 11                          ;
+;         2 data inputs ; 1                           ;
+;         3 data inputs ; 3                           ;
+;         4 data inputs ; 7                           ;
+;                       ;                             ;
+; Max LUT depth         ; 3.00                        ;
+; Average LUT depth     ; 2.36                        ;
++-----------------------+-----------------------------+
 
 
 +-------------------------------+
@@ -270,7 +262,7 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 Info: *******************************************************************
 Info: Running Quartus Prime Analysis & Synthesis
     Info: Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
-    Info: Processing started: Wed Dec 17 15:00:00 2025
+    Info: Processing started: Thu Jan  8 13:54:36 2026
 Info: Command: quartus_map --read_settings_files=on --write_settings_files=off week4 -c week4
 Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
 Info (20030): Parallel compilation is enabled and will use 16 of the 16 processors detected
@@ -289,59 +281,34 @@ Info (12021): Found 2 design units, including 1 entities, in source file Immedia
 Info (12021): Found 2 design units, including 1 entities, in source file R_I_Datapath.vhd
     Info (12022): Found design unit 1: R_I_Datapath-structural File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 12
     Info (12023): Found entity 1: R_I_Datapath File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 5
-Info (12127): Elaborating entity "R_I_Datapath" for the top level hierarchy
-Warning (10036): Verilog HDL or VHDL warning at R_I_Datapath.vhd(78): object "ALU_Zero_s" assigned a value but never read File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 78
-Info (12128): Elaborating entity "Control_Unit" for hierarchy "Control_Unit:CU" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 92
-Info (12128): Elaborating entity "Immediate_Extender" for hierarchy "Immediate_Extender:IE" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 101
-Warning (10540): VHDL Signal Declaration warning at Immediate_Extender.vhd(13): used explicit default value for signal "Immediate_12" because signal was never assigned a value File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/Immediate_Extender.vhd Line: 13
-Warning (10540): VHDL Signal Declaration warning at Immediate_Extender.vhd(14): used explicit default value for signal "Sign_Bit" because signal was never assigned a value File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/Immediate_Extender.vhd Line: 14
-Info (12128): Elaborating entity "regfile" for hierarchy "regfile:RF" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 117
-Warning (10492): VHDL Process Statement warning at regfile.vhd(34): signal "mem" is read inside the Process Statement but isn't in the Process Statement's sensitivity list File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/regfile.vhd Line: 34
-Warning (10492): VHDL Process Statement warning at regfile.vhd(38): signal "mem" is read inside the Process Statement but isn't in the Process Statement's sensitivity list File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/regfile.vhd Line: 38
-Info (12128): Elaborating entity "riscv_alu" for hierarchy "riscv_alu:ALU" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 130
+Info (12127): Elaborating entity "Control_Unit" for the top level hierarchy
+Info (286030): Timing-Driven Synthesis is running
 Info (16010): Generating hard_block partition "hard_block:auto_generated_inst"
     Info (16011): Adding 0 node(s), including 0 DDIO, 0 PLL, 0 transceiver and 0 LCELL
-Warning (21074): Design contains 33 input pin(s) that do not drive logic
-    Warning (15610): No output dependent on input pin "CLK" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 7
-    Warning (15610): No output dependent on input pin "Instr[0]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 8
-    Warning (15610): No output dependent on input pin "Instr[1]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 8
-    Warning (15610): No output dependent on input pin "Instr[2]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 8
-    Warning (15610): No output dependent on input pin "Instr[3]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 8
-    Warning (15610): No output dependent on input pin "Instr[4]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 8
-    Warning (15610): No output dependent on input pin "Instr[5]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 8
-    Warning (15610): No output dependent on input pin "Instr[6]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 8
-    Warning (15610): No output dependent on input pin "Instr[7]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 8
-    Warning (15610): No output dependent on input pin "Instr[8]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 8
-    Warning (15610): No output dependent on input pin "Instr[9]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 8
-    Warning (15610): No output dependent on input pin "Instr[10]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 8
-    Warning (15610): No output dependent on input pin "Instr[11]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 8
-    Warning (15610): No output dependent on input pin "Instr[12]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 8
-    Warning (15610): No output dependent on input pin "Instr[13]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 8
-    Warning (15610): No output dependent on input pin "Instr[14]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 8
-    Warning (15610): No output dependent on input pin "Instr[15]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 8
-    Warning (15610): No output dependent on input pin "Instr[16]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 8
-    Warning (15610): No output dependent on input pin "Instr[17]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 8
-    Warning (15610): No output dependent on input pin "Instr[18]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 8
-    Warning (15610): No output dependent on input pin "Instr[19]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 8
-    Warning (15610): No output dependent on input pin "Instr[20]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 8
-    Warning (15610): No output dependent on input pin "Instr[21]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 8
-    Warning (15610): No output dependent on input pin "Instr[22]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 8
-    Warning (15610): No output dependent on input pin "Instr[23]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 8
-    Warning (15610): No output dependent on input pin "Instr[24]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 8
-    Warning (15610): No output dependent on input pin "Instr[25]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 8
-    Warning (15610): No output dependent on input pin "Instr[26]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 8
-    Warning (15610): No output dependent on input pin "Instr[27]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 8
-    Warning (15610): No output dependent on input pin "Instr[28]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 8
-    Warning (15610): No output dependent on input pin "Instr[29]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 8
-    Warning (15610): No output dependent on input pin "Instr[30]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 8
-    Warning (15610): No output dependent on input pin "Instr[31]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/R_I_Datapath.vhd Line: 8
-Info (21057): Implemented 33 device resources after synthesis - the final resource count might be different
-    Info (21058): Implemented 33 input pins
-    Info (21059): Implemented 0 output pins
-Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 40 warnings
-    Info: Peak virtual memory: 421 megabytes
-    Info: Processing ended: Wed Dec 17 15:00:04 2025
-    Info: Elapsed time: 00:00:04
-    Info: Total CPU time (on all processors): 00:00:13
+Warning (21074): Design contains 15 input pin(s) that do not drive logic
+    Warning (15610): No output dependent on input pin "Instr[7]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/Control_Unit.vhd Line: 6
+    Warning (15610): No output dependent on input pin "Instr[8]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/Control_Unit.vhd Line: 6
+    Warning (15610): No output dependent on input pin "Instr[9]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/Control_Unit.vhd Line: 6
+    Warning (15610): No output dependent on input pin "Instr[10]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/Control_Unit.vhd Line: 6
+    Warning (15610): No output dependent on input pin "Instr[11]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/Control_Unit.vhd Line: 6
+    Warning (15610): No output dependent on input pin "Instr[15]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/Control_Unit.vhd Line: 6
+    Warning (15610): No output dependent on input pin "Instr[16]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/Control_Unit.vhd Line: 6
+    Warning (15610): No output dependent on input pin "Instr[17]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/Control_Unit.vhd Line: 6
+    Warning (15610): No output dependent on input pin "Instr[18]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/Control_Unit.vhd Line: 6
+    Warning (15610): No output dependent on input pin "Instr[19]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/Control_Unit.vhd Line: 6
+    Warning (15610): No output dependent on input pin "Instr[20]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/Control_Unit.vhd Line: 6
+    Warning (15610): No output dependent on input pin "Instr[21]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/Control_Unit.vhd Line: 6
+    Warning (15610): No output dependent on input pin "Instr[22]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/Control_Unit.vhd Line: 6
+    Warning (15610): No output dependent on input pin "Instr[23]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/Control_Unit.vhd Line: 6
+    Warning (15610): No output dependent on input pin "Instr[24]" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week4/Control_Unit.vhd Line: 6
+Info (21057): Implemented 47 device resources after synthesis - the final resource count might be different
+    Info (21058): Implemented 32 input pins
+    Info (21059): Implemented 4 output pins
+    Info (21061): Implemented 11 logic cells
+Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 17 warnings
+    Info: Peak virtual memory: 439 megabytes
+    Info: Processing ended: Thu Jan  8 13:54:47 2026
+    Info: Elapsed time: 00:00:11
+    Info: Total CPU time (on all processors): 00:00:34
 
 

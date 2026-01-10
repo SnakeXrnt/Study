@@ -1,0 +1,409 @@
+m255
+K4
+z2
+!s11e vcom 2020.1 2020.02, Feb 28 2020
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 d/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/simulation/modelsim
+Ealu
+Z1 w1767673197
+Z2 DPx4 ieee 11 numeric_std 0 22 aU^R8eGcicLcUFIaBQSL>3
+Z3 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
+Z4 DPx4 ieee 14 std_logic_1164 0 22 cVAk:aDinOX8^VGI1ekP<3
+!i122 3
+R0
+Z5 8/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/ALU.vhd
+Z6 F/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/ALU.vhd
+l0
+L5 1
+VMe5DE6;8JDJG>OL0e?MX`0
+!s100 ]3B:90AX`l9WmdU^KjMzj1
+Z7 OV;C;2020.1;71
+33
+Z8 !s110 1767882326
+!i10b 1
+Z9 !s108 1767882326.000000
+Z10 !s90 -reportprogress|300|-2008|-work|work|/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/ALU.vhd|
+Z11 !s107 /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/ALU.vhd|
+!i113 1
+Z12 o-2008 -work work
+Z13 tExplicit 1 CvgOpt 0
+Abehavioral
+R2
+R3
+R4
+Z14 DEx4 work 3 alu 0 22 Me5DE6;8JDJG>OL0e?MX`0
+!i122 3
+l16
+L15 35
+VFWcFAbNL^h8hIfcjlk`nD1
+!s100 NWJ^Va0YzX5;mA9Dco@Ae0
+R7
+33
+R8
+!i10b 1
+R9
+R10
+R11
+!i113 1
+R12
+R13
+Econtrol_unit
+Z15 w1767673071
+R3
+R4
+!i122 5
+R0
+Z16 8/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Control_Unit.vhd
+Z17 F/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Control_Unit.vhd
+l0
+L4 1
+VcRl=kiTPjhL>PR[MHi[HA0
+!s100 i8KmU7J=?Ee`<S7gf70zN0
+R7
+33
+R8
+!i10b 1
+R9
+Z18 !s90 -reportprogress|300|-2008|-work|work|/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Control_Unit.vhd|
+Z19 !s107 /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Control_Unit.vhd|
+!i113 1
+R12
+R13
+Abehavioral
+R3
+R4
+Z20 DEx4 work 12 control_unit 0 22 cRl=kiTPjhL>PR[MHi[HA0
+!i122 5
+l17
+L16 44
+VUW1Oiofk[9;<cWU>3<<f>1
+!s100 N=WGZR[LMA8@6OjI_6GBW0
+R7
+33
+R8
+!i10b 1
+R9
+R18
+R19
+!i113 1
+R12
+R13
+Eimm_ext
+Z21 w1767877880
+R2
+R3
+R4
+!i122 6
+R0
+Z22 8/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Imm_Ext.vhd
+Z23 F/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Imm_Ext.vhd
+l0
+L5 1
+V1AQ7Y[DkYlH8D=BmC]izZ1
+!s100 mQLFLgaa6?gH[oVhSi_oS0
+R7
+33
+R8
+!i10b 1
+R9
+Z24 !s90 -reportprogress|300|-2008|-work|work|/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Imm_Ext.vhd|
+Z25 !s107 /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Imm_Ext.vhd|
+!i113 1
+R12
+R13
+Abehavioral
+R2
+R3
+R4
+Z26 DEx4 work 7 imm_ext 0 22 1AQ7Y[DkYlH8D=BmC]izZ1
+!i122 6
+l13
+L12 17
+VLBlPnU2hWVlV9?7_nC0Hm1
+!s100 M4;cLJ<l[XQKCX=S`OjoJ3
+R7
+33
+R8
+!i10b 1
+R9
+R24
+R25
+!i113 1
+R12
+R13
+Einstruction_memory
+Z27 w1767879696
+R2
+Z28 DPx4 ieee 15 std_logic_arith 0 22 [G314=:2zXJ`VORJe1J@Z1
+Z29 DPx4 ieee 18 std_logic_unsigned 0 22 ;eZjO2D4ZDz<]0>8AL<ne1
+R3
+R4
+!i122 2
+R0
+Z30 8/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Instruction_Memory.vhd
+Z31 F/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Instruction_Memory.vhd
+l0
+L6 1
+VVbFd7P1ZkKM:TAL;N=HY63
+!s100 MNZ`G=DLX7IFJfS:CO0:a2
+R7
+33
+R8
+!i10b 1
+R9
+Z32 !s90 -reportprogress|300|-2008|-work|work|/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Instruction_Memory.vhd|
+Z33 !s107 /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Instruction_Memory.vhd|
+!i113 1
+R12
+R13
+Abehavioral
+R2
+R28
+R29
+R3
+R4
+Z34 DEx4 work 18 instruction_memory 0 22 VbFd7P1ZkKM:TAL;N=HY63
+!i122 2
+l27
+L13 19
+V]NWiMkX3QoKNNgGg`EMS;2
+!s100 jkZJRFM^I@>7dZnZ2:SPZ0
+R7
+33
+R8
+!i10b 1
+R9
+R32
+R33
+!i113 1
+R12
+R13
+Epc_adder
+Z35 w1767671952
+R28
+R29
+R3
+R4
+!i122 1
+R0
+Z36 8/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/PC_Adder.vhd
+Z37 F/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/PC_Adder.vhd
+l0
+L5 1
+Vd5Z>?ZT6]Zhl:kcGRbdRJ1
+!s100 @mLOfT]=IlGAOIQ];Edn[1
+R7
+33
+R8
+!i10b 1
+R9
+Z38 !s90 -reportprogress|300|-2008|-work|work|/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/PC_Adder.vhd|
+Z39 !s107 /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/PC_Adder.vhd|
+!i113 1
+R12
+R13
+Abehavioral
+R28
+R29
+R3
+R4
+Z40 DEx4 work 8 pc_adder 0 22 d5Z>?ZT6]Zhl:kcGRbdRJ1
+!i122 1
+l13
+L12 5
+VfbN1h=O[zbDnbbF:c=TM>3
+!s100 ;c3E>XzI>iQA;fnfF84_h1
+R7
+33
+R8
+!i10b 1
+R9
+R38
+R39
+!i113 1
+R12
+R13
+Eprogram_counter
+Z41 w1767671428
+R3
+R4
+!i122 0
+R0
+Z42 8/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Program_Counter.vhd
+Z43 F/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Program_Counter.vhd
+l0
+L4 1
+VzW1D9e@<S3j5_G][U44`:3
+!s100 RT1Go=<KVR]Kjmz[U8cWL1
+R7
+33
+R8
+!i10b 1
+R9
+Z44 !s90 -reportprogress|300|-2008|-work|work|/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Program_Counter.vhd|
+Z45 !s107 /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Program_Counter.vhd|
+!i113 1
+R12
+R13
+Abehavioral
+R3
+R4
+Z46 DEx4 work 15 program_counter 0 22 zW1D9e@<S3j5_G][U44`:3
+!i122 0
+l14
+L13 12
+V`0@HhUM;:i7FNR:JLY<L@1
+!s100 X2NVB_hXN_PAj1zBNFYVn2
+R7
+33
+R8
+!i10b 1
+R9
+R44
+R45
+!i113 1
+R12
+R13
+Eregister_file
+Z47 w1767672950
+R2
+R3
+R4
+!i122 4
+R0
+Z48 8/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Register_File.vhd
+Z49 F/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Register_File.vhd
+l0
+L5 1
+VjGo6>gAi0U?iAb3IKSPOV2
+!s100 CT4OJ?6SDdZ5A6o7:dZ>c1
+R7
+33
+R8
+!i10b 1
+R9
+Z50 !s90 -reportprogress|300|-2008|-work|work|/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Register_File.vhd|
+Z51 !s107 /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Register_File.vhd|
+!i113 1
+R12
+R13
+Abehavioral
+R2
+R3
+R4
+Z52 DEx4 work 13 register_file 0 22 jGo6>gAi0U?iAb3IKSPOV2
+!i122 4
+l17
+L14 14
+V>[V[U<_beoR:S[=dUQA?`3
+!s100 B3>MjNJWZ0mTIoaTXRc@j1
+R7
+33
+R8
+!i10b 1
+R9
+R50
+R51
+!i113 1
+R12
+R13
+Eweek5_top
+Z53 w1767878548
+R2
+R3
+R4
+!i122 7
+R0
+Z54 8/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top.vhd
+Z55 F/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top.vhd
+l0
+L5 1
+VWVL;i5LMoBS6N>dbTJf0d3
+!s100 NN36WgdVZKHLC6f5eQHaZ1
+R7
+33
+R8
+!i10b 1
+R9
+Z56 !s90 -reportprogress|300|-2008|-work|work|/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top.vhd|
+Z57 !s107 /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top.vhd|
+!i113 1
+R12
+R13
+Astructural
+R14
+R26
+R52
+R20
+R34
+R28
+R29
+R40
+R46
+R2
+R3
+R4
+Z58 DEx4 work 9 week5_top 0 22 WVL;i5LMoBS6N>dbTJf0d3
+!i122 7
+l24
+L16 39
+VhB[:>[AVX2fZRMln3^3NZ2
+!s100 6T3[nThz?;<JX;UI0;`W<3
+R7
+33
+R8
+!i10b 1
+R9
+R56
+R57
+!i113 1
+R12
+R13
+Eweek5_top_tb
+Z59 w1767882048
+R3
+R4
+!i122 8
+R0
+Z60 8/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top_tb.vhd
+Z61 F/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top_tb.vhd
+l0
+L4 1
+VQe=e_Szam8bKB30Y=936k1
+!s100 0eOcek:=nCbz]j2X3j89R3
+R7
+33
+Z62 !s110 1767882327
+!i10b 1
+R9
+Z63 !s90 -reportprogress|300|-2008|-work|work|/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top_tb.vhd|
+!s107 /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top_tb.vhd|
+!i113 1
+R12
+R13
+Atestbench
+R2
+R58
+R3
+R4
+DEx4 work 12 week5_top_tb 0 22 Qe=e_Szam8bKB30Y=936k1
+!i122 8
+l15
+L7 44
+V2<Rb2PYe<<_DOEl9@>6dO1
+!s100 lQ_n?84TPJRdgH37R1_2R2
+R7
+33
+R62
+!i10b 1
+R9
+R63
+Z64 !s107 /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top_tb.vhd|
+!i113 1
+R12
+R13

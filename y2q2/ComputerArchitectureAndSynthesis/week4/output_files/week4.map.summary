@@ -1,13 +1,13 @@
-Analysis & Synthesis Status : Successful - Wed Dec 17 15:00:04 2025
+Analysis & Synthesis Status : Successful - Thu Jan  8 13:54:47 2026
 Quartus Prime Version : 20.1.1 Build 720 11/11/2020 SJ Lite Edition
 Revision Name : week4
-Top-level Entity Name : R_I_Datapath
+Top-level Entity Name : Control_Unit
 Family : MAX 10
-Total logic elements : 0
-    Total combinational functions : 0
+Total logic elements : 11
+    Total combinational functions : 11
     Dedicated logic registers : 0
 Total registers : 0
-Total pins : 33
+Total pins : 36
 Total virtual pins : 0
 Total memory bits : 0
 Embedded Multiplier 9-bit elements : 0

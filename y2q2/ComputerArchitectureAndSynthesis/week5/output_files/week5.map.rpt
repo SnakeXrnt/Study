@@ -1,5 +1,5 @@
 Analysis & Synthesis report for week5
-Tue Jan  6 05:01:26 2026
+Thu Jan  8 15:25:05 2026
 Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
 
 
@@ -14,10 +14,12 @@ Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
   6. Analysis & Synthesis Resource Usage Summary
   7. Analysis & Synthesis Resource Utilization by Entity
   8. Registers Removed During Synthesis
-  9. General Register Statistics
- 10. Post-Synthesis Netlist Statistics for Top Partition
- 11. Elapsed Time Per Partition
- 12. Analysis & Synthesis Messages
+  9. Removed Registers Triggering Further Register Optimizations
+ 10. General Register Statistics
+ 11. Multiplexer Restructuring Statistics (Restructuring Performed)
+ 12. Post-Synthesis Netlist Statistics for Top Partition
+ 13. Elapsed Time Per Partition
+ 14. Analysis & Synthesis Messages
 
 
 
@@ -44,16 +46,16 @@ https://fpgasoftware.intel.com/eula.
 +----------------------------------------------------------------------------------+
 ; Analysis & Synthesis Summary                                                     ;
 +------------------------------------+---------------------------------------------+
-; Analysis & Synthesis Status        ; Successful - Tue Jan  6 05:01:26 2026       ;
+; Analysis & Synthesis Status        ; Successful - Thu Jan  8 15:25:05 2026       ;
 ; Quartus Prime Version              ; 20.1.1 Build 720 11/11/2020 SJ Lite Edition ;
 ; Revision Name                      ; week5                                       ;
-; Top-level Entity Name              ; Fetch_Stage                                 ;
+; Top-level Entity Name              ; week5_top                                   ;
 ; Family                             ; MAX 10                                      ;
-; Total logic elements               ; 9                                           ;
-;     Total combinational functions  ; 9                                           ;
-;     Dedicated logic registers      ; 6                                           ;
-; Total registers                    ; 6                                           ;
-; Total pins                         ; 34                                          ;
+; Total logic elements               ; 550                                         ;
+;     Total combinational functions  ; 423                                         ;
+;     Dedicated logic registers      ; 191                                         ;
+; Total registers                    ; 191                                         ;
+; Total pins                         ; 98                                          ;
 ; Total virtual pins                 ; 0                                           ;
 ; Total memory bits                  ; 0                                           ;
 ; Embedded Multiplier 9-bit elements ; 0                                           ;
@@ -69,7 +71,7 @@ https://fpgasoftware.intel.com/eula.
 ; Option                                                           ; Setting            ; Default Value      ;
 +------------------------------------------------------------------+--------------------+--------------------+
 ; Device                                                           ; 10M50DAF484C7G     ;                    ;
-; Top-level entity name                                            ; Fetch_Stage        ; week5              ;
+; Top-level entity name                                            ; week5_top          ; week5              ;
 ; Family name                                                      ; MAX 10             ; Cyclone V          ;
 ; VHDL Show LMF Mapping Messages                                   ; Off                ;                    ;
 ; VHDL Version                                                     ; VHDL_2008          ; VHDL_1993          ;
@@ -164,7 +166,13 @@ https://fpgasoftware.intel.com/eula.
 ; Usage by Processor         ; % Time Used ;
 ;     Processor 1            ; 100.0%      ;
 ;     Processor 2            ;   0.0%      ;
-;     Processors 3-16        ;   0.0%      ;
+;     Processor 3            ;   0.0%      ;
+;     Processor 4            ;   0.0%      ;
+;     Processor 5            ;   0.0%      ;
+;     Processor 6            ;   0.0%      ;
+;     Processor 7            ;   0.0%      ;
+;     Processor 8            ;   0.0%      ;
+;     Processors 9-16        ;   0.0%      ;
 +----------------------------+-------------+
 
 
@@ -176,62 +184,955 @@ https://fpgasoftware.intel.com/eula.
 ; Program_Counter.vhd              ; yes             ; User VHDL File  ; /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Program_Counter.vhd    ;         ;
 ; PC_Adder.vhd                     ; yes             ; User VHDL File  ; /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/PC_Adder.vhd           ;         ;
 ; Instruction_Memory.vhd           ; yes             ; User VHDL File  ; /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Instruction_Memory.vhd ;         ;
-; Fetch_Stage.vhd                  ; yes             ; User VHDL File  ; /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Fetch_Stage.vhd        ;         ;
+; ALU.vhd                          ; yes             ; User VHDL File  ; /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/ALU.vhd                ;         ;
+; Register_File.vhd                ; yes             ; User VHDL File  ; /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Register_File.vhd      ;         ;
+; Control_Unit.vhd                 ; yes             ; User VHDL File  ; /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Control_Unit.vhd       ;         ;
+; Imm_Ext.vhd                      ; yes             ; User VHDL File  ; /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Imm_Ext.vhd            ;         ;
+; week5_top.vhd                    ; yes             ; User VHDL File  ; /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top.vhd          ;         ;
 +----------------------------------+-----------------+-----------------+---------------------------------------------------------------------------------------+---------+
 
 
-+-----------------------------------------------------------------------------------+
-; Analysis & Synthesis Resource Usage Summary                                       ;
-+---------------------------------------------+-------------------------------------+
-; Resource                                    ; Usage                               ;
-+---------------------------------------------+-------------------------------------+
-; Estimated Total logic elements              ; 9                                   ;
-;                                             ;                                     ;
-; Total combinational functions               ; 9                                   ;
-; Logic element usage by number of LUT inputs ;                                     ;
-;     -- 4 input functions                    ; 1                                   ;
-;     -- 3 input functions                    ; 2                                   ;
-;     -- <=2 input functions                  ; 6                                   ;
-;                                             ;                                     ;
-; Logic elements by mode                      ;                                     ;
-;     -- normal mode                          ; 5                                   ;
-;     -- arithmetic mode                      ; 4                                   ;
-;                                             ;                                     ;
-; Total registers                             ; 6                                   ;
-;     -- Dedicated logic registers            ; 6                                   ;
-;     -- I/O registers                        ; 0                                   ;
-;                                             ;                                     ;
-; I/O pins                                    ; 34                                  ;
-;                                             ;                                     ;
-; Embedded Multiplier 9-bit elements          ; 0                                   ;
-;                                             ;                                     ;
-; Maximum fan-out node                        ; Instruction_Memory:INST_MEM|Mux10~1 ;
-; Maximum fan-out                             ; 10                                  ;
-; Total fan-out                               ; 83                                  ;
-; Average fan-out                             ; 1.00                                ;
-+---------------------------------------------+-------------------------------------+
++---------------------------------------------------------+
+; Analysis & Synthesis Resource Usage Summary             ;
++---------------------------------------------+-----------+
+; Resource                                    ; Usage     ;
++---------------------------------------------+-----------+
+; Estimated Total logic elements              ; 550       ;
+;                                             ;           ;
+; Total combinational functions               ; 423       ;
+; Logic element usage by number of LUT inputs ;           ;
+;     -- 4 input functions                    ; 259       ;
+;     -- 3 input functions                    ; 103       ;
+;     -- <=2 input functions                  ; 61        ;
+;                                             ;           ;
+; Logic elements by mode                      ;           ;
+;     -- normal mode                          ; 301       ;
+;     -- arithmetic mode                      ; 122       ;
+;                                             ;           ;
+; Total registers                             ; 191       ;
+;     -- Dedicated logic registers            ; 191       ;
+;     -- I/O registers                        ; 0         ;
+;                                             ;           ;
+; I/O pins                                    ; 98        ;
+;                                             ;           ;
+; Embedded Multiplier 9-bit elements          ; 0         ;
+;                                             ;           ;
+; Maximum fan-out node                        ; clk~input ;
+; Maximum fan-out                             ; 191       ;
+; Total fan-out                               ; 2280      ;
+; Average fan-out                             ; 2.81      ;
++---------------------------------------------+-----------+
 
 
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Analysis & Synthesis Resource Utilization by Entity                                                                                                                                                                                                                  ;
-+----------------------------------+---------------------+---------------------------+-------------+------------+--------------+---------+-----------+------+--------------+------------+------------------------------------------+--------------------+--------------+
-; Compilation Hierarchy Node       ; Combinational ALUTs ; Dedicated Logic Registers ; Memory Bits ; UFM Blocks ; DSP Elements ; DSP 9x9 ; DSP 18x18 ; Pins ; Virtual Pins ; ADC blocks ; Full Hierarchy Name                      ; Entity Name        ; Library Name ;
-+----------------------------------+---------------------+---------------------------+-------------+------------+--------------+---------+-----------+------+--------------+------------+------------------------------------------+--------------------+--------------+
-; |Fetch_Stage                     ; 9 (0)               ; 6 (0)                     ; 0           ; 0          ; 0            ; 0       ; 0         ; 34   ; 0            ; 0          ; |Fetch_Stage                             ; Fetch_Stage        ; work         ;
-;    |Instruction_Memory:INST_MEM| ; 3 (3)               ; 0 (0)                     ; 0           ; 0          ; 0            ; 0       ; 0         ; 0    ; 0            ; 0          ; |Fetch_Stage|Instruction_Memory:INST_MEM ; Instruction_Memory ; work         ;
-;    |Program_Counter:PC_REG|      ; 6 (6)               ; 6 (6)                     ; 0           ; 0          ; 0            ; 0       ; 0         ; 0    ; 0            ; 0          ; |Fetch_Stage|Program_Counter:PC_REG      ; Program_Counter    ; work         ;
-+----------------------------------+---------------------+---------------------------+-------------+------------+--------------+---------+-----------+------+--------------+------------+------------------------------------------+--------------------+--------------+
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Resource Utilization by Entity                                                                                                                                                                                                              ;
++---------------------------------+---------------------+---------------------------+-------------+------------+--------------+---------+-----------+------+--------------+------------+---------------------------------------+--------------------+--------------+
+; Compilation Hierarchy Node      ; Combinational ALUTs ; Dedicated Logic Registers ; Memory Bits ; UFM Blocks ; DSP Elements ; DSP 9x9 ; DSP 18x18 ; Pins ; Virtual Pins ; ADC blocks ; Full Hierarchy Name                   ; Entity Name        ; Library Name ;
++---------------------------------+---------------------+---------------------------+-------------+------------+--------------+---------+-----------+------+--------------+------------+---------------------------------------+--------------------+--------------+
+; |week5_top                      ; 423 (90)            ; 191 (0)                   ; 0           ; 0          ; 0            ; 0       ; 0         ; 98   ; 0            ; 0          ; |week5_top                            ; week5_top          ; work         ;
+;    |ALU:CoreALU|                ; 163 (163)           ; 0 (0)                     ; 0           ; 0          ; 0            ; 0       ; 0         ; 0    ; 0            ; 0          ; |week5_top|ALU:CoreALU                ; ALU                ; work         ;
+;    |Control_Unit:Control|       ; 7 (7)               ; 0 (0)                     ; 0           ; 0          ; 0            ; 0       ; 0         ; 0    ; 0            ; 0          ; |week5_top|Control_Unit:Control       ; Control_Unit       ; work         ;
+;    |Imm_Ext:ExtUnit|            ; 11 (11)             ; 0 (0)                     ; 0           ; 0          ; 0            ; 0       ; 0         ; 0    ; 0            ; 0          ; |week5_top|Imm_Ext:ExtUnit            ; Imm_Ext            ; work         ;
+;    |Instruction_Memory:InstMem| ; 20 (20)             ; 0 (0)                     ; 0           ; 0          ; 0            ; 0       ; 0         ; 0    ; 0            ; 0          ; |week5_top|Instruction_Memory:InstMem ; Instruction_Memory ; work         ;
+;    |Program_Counter:PC_Reg|     ; 30 (30)             ; 32 (32)                   ; 0           ; 0          ; 0            ; 0       ; 0         ; 0    ; 0            ; 0          ; |week5_top|Program_Counter:PC_Reg     ; Program_Counter    ; work         ;
+;    |Register_File:RegFile|      ; 102 (102)           ; 159 (159)                 ; 0           ; 0          ; 0            ; 0       ; 0         ; 0    ; 0            ; 0          ; |week5_top|Register_File:RegFile      ; Register_File      ; work         ;
++---------------------------------+---------------------+---------------------------+-------------+------------+--------------+---------+-----------+------+--------------+------------+---------------------------------------+--------------------+--------------+
 Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
 
 
-+-------------------------------------------------------------+
-; Registers Removed During Synthesis                          ;
-+----------------------------------------+--------------------+
-; Register name                          ; Reason for Removal ;
-+----------------------------------------+--------------------+
-; Program_Counter:PC_REG|PC_out[8..31]   ; Lost fanout        ;
-; Total Number of Removed Registers = 24 ;                    ;
-+----------------------------------------+--------------------+
++---------------------------------------------------------------------------------------+
+; Registers Removed During Synthesis                                                    ;
++-----------------------------------------+---------------------------------------------+
+; Register name                           ; Reason for Removal                          ;
++-----------------------------------------+---------------------------------------------+
+; Register_File:RegFile|mem~550           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~551           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~552           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~553           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~554           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~555           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~556           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~557           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~558           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~559           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~560           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~561           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~562           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~563           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~564           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~565           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~566           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~567           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~568           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~569           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~570           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~571           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~572           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~573           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~574           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~575           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~576           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~577           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~578           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~579           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~580           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~581           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~582           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~583           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~584           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~585           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~586           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~587           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~588           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~589           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~590           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~591           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~592           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~593           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~594           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~595           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~596           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~597           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~598           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~599           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~600           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~601           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~602           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~603           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~604           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~605           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~606           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~607           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~608           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~609           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~610           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~611           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~612           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~613           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~614           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~615           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~616           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~617           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~618           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~619           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~620           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~621           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~622           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~623           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~624           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~625           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~626           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~627           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~628           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~629           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~630           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~631           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~632           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~633           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~634           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~635           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~636           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~637           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~638           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~639           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~640           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~641           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~642           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~643           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~644           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~645           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~646           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~647           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~648           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~649           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~650           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~651           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~652           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~653           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~654           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~655           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~656           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~657           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~658           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~659           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~660           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~661           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~662           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~663           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~664           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~665           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~666           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~667           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~668           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~669           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~670           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~671           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~672           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~673           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~674           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~675           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~676           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~677           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~678           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~679           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~680           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~681           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~682           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~683           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~684           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~685           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~686           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~687           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~688           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~689           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~690           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~691           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~692           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~693           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~694           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~695           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~696           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~697           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~698           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~699           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~700           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~701           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~702           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~703           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~704           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~705           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~706           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~707           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~708           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~709           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~710           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~711           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~712           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~713           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~714           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~715           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~716           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~717           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~718           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~719           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~720           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~721           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~722           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~723           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~724           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~725           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~726           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~727           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~728           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~729           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~730           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~731           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~732           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~733           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~734           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~735           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~736           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~737           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~738           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~739           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~740           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~741           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~742           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~743           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~744           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~745           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~746           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~747           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~748           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~749           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~750           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~751           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~752           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~753           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~754           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~755           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~756           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~757           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~758           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~759           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~760           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~761           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~762           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~763           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~764           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~765           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~766           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~767           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~768           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~769           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~770           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~771           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~772           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~773           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~774           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~775           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~776           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~777           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~778           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~779           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~780           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~781           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~782           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~783           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~784           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~785           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~786           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~787           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~788           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~789           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~790           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~791           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~792           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~793           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~794           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~795           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~796           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~797           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~798           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~799           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~800           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~801           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~802           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~803           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~804           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~805           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~806           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~807           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~808           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~809           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~810           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~811           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~812           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~813           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~814           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~815           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~816           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~817           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~818           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~819           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~820           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~821           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~822           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~823           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~824           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~825           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~826           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~827           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~828           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~829           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~830           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~831           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~832           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~833           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~834           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~835           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~836           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~837           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~838           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~839           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~840           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~841           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~842           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~843           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~844           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~845           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~846           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~847           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~848           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~849           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~850           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~851           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~852           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~853           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~854           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~855           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~856           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~857           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~858           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~859           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~860           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~861           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~862           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~863           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~864           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~865           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~866           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~867           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~868           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~869           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~870           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~871           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~872           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~873           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~874           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~875           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~876           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~877           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~878           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~879           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~880           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~881           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~882           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~883           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~884           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~885           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~886           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~887           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~888           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~889           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~890           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~891           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~892           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~893           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~894           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~895           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~896           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~897           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~898           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~899           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~900           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~901           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~902           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~903           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~904           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~905           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~906           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~907           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~908           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~909           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~910           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~911           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~912           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~913           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~914           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~915           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~916           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~917           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~918           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~919           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~920           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~921           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~922           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~923           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~924           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~925           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~926           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~927           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~928           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~929           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~930           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~931           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~932           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~933           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~934           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~935           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~936           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~937           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~938           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~939           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~940           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~941           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~942           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~943           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~944           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~945           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~946           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~947           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~948           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~949           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~950           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~951           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~952           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~953           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~954           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~955           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~956           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~957           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~958           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~959           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~960           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~961           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~962           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~963           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~964           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~965           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~966           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~967           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~968           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~969           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~970           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~971           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~972           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~973           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~974           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~975           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~976           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~977           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~978           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~979           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~980           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~981           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~982           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~983           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~984           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~985           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~986           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~987           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~988           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~989           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~990           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~991           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~992           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~993           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~994           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~995           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~996           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~997           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~998           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~999           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1000          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1001          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1002          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1003          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1004          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1005          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1006          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1007          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1008          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1009          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1010          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1011          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1012          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1013          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1014          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1015          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1016          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1017          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1018          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1019          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1020          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1021          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1022          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1023          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1024          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1025          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1026          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1027          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1028          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1029          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1030          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1031          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1032          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1033          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1034          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1035          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1036          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1037          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1038          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1039          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1040          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1041          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1042          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1043          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1044          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1045          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1046          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1047          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1048          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1049          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1050          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1051          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1052          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1053          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1054          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1055          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1056          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1057          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1058          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1059          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1060          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~1061          ; Lost fanout                                 ;
+; Register_File:RegFile|mem~134           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~166           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~230           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~326           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~390           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~422           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~486           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~165           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~197           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~261           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~357           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~421           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~453           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~517           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~164           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~196           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~260           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~356           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~420           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~452           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~516           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~163           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~195           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~259           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~355           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~419           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~451           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~515           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~162           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~194           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~258           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~354           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~418           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~450           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~514           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~161           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~193           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~257           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~353           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~417           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~449           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~513           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~160           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~192           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~256           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~352           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~416           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~448           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~512           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~159           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~191           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~255           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~351           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~415           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~447           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~511           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~158           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~190           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~254           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~350           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~414           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~446           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~510           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~157           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~189           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~253           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~349           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~413           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~445           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~509           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~156           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~188           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~252           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~348           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~412           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~444           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~508           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~155           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~187           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~251           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~347           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~411           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~443           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~507           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~154           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~186           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~250           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~346           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~410           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~442           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~506           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~153           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~185           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~249           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~345           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~409           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~441           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~505           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~152           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~184           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~248           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~344           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~408           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~440           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~504           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~151           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~183           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~247           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~343           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~407           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~439           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~503           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~150           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~182           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~246           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~342           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~406           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~438           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~502           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~149           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~181           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~245           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~341           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~405           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~437           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~501           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~147           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~179           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~243           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~339           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~403           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~435           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~499           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~145           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~177           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~241           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~337           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~401           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~433           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~497           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~143           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~175           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~239           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~335           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~399           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~431           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~495           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~142           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~174           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~238           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~334           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~398           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~430           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~494           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~141           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~173           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~237           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~333           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~397           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~429           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~493           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~140           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~172           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~236           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~332           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~396           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~428           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~492           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~139           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~171           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~235           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~331           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~395           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~427           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~491           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~138           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~170           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~234           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~330           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~394           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~426           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~490           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~136           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~168           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~232           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~328           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~392           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~424           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~488           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~294           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~358           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~454           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~518           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~325           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~389           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~485           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~549           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~324           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~388           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~484           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~548           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~323           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~387           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~483           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~547           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~322           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~386           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~482           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~546           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~321           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~385           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~481           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~545           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~320           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~384           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~480           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~544           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~319           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~383           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~479           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~543           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~318           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~382           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~478           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~542           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~317           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~381           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~477           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~541           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~316           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~380           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~476           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~540           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~315           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~379           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~475           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~539           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~314           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~378           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~474           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~538           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~313           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~377           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~473           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~537           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~312           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~376           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~472           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~536           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~311           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~375           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~471           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~535           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~310           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~374           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~470           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~534           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~309           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~373           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~469           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~533           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~340           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~372           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~308           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~404           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~468           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~500           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~436           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~532           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~307           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~371           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~467           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~531           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~338           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~466           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~370           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~498           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~306           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~434           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~402           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~530           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~305           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~369           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~465           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~529           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~336           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~368           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~304           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~400           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~464           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~496           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~432           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~528           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~303           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~367           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~463           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~527           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~302           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~366           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~462           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~526           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~301           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~461           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~365           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~525           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~300           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~364           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~460           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~524           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~299           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~363           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~459           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~523           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~298           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~362           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~458           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~522           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~329           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~457           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~361           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~489           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~297           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~425           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~393           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~521           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~296           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~360           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~456           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~520           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~327           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~359           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~295           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~391           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~455           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~487           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~423           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~519           ; Stuck at GND due to stuck port clock_enable ;
+; Register_File:RegFile|mem~38            ; Lost fanout                                 ;
+; Register_File:RegFile|mem~135           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~231           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~167           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~233           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~169           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~137           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~144           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~242           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~178           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~146           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~148           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~240           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~176           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~244           ; Lost fanout                                 ;
+; Register_File:RegFile|mem~180           ; Lost fanout                                 ;
+; Total Number of Removed Registers = 865 ;                                             ;
++-----------------------------------------+---------------------------------------------+
+
+
++-------------------------------------------------------------------------------------------------------------------------------+
+; Removed Registers Triggering Further Register Optimizations                                                                   ;
++-------------------------------+--------------------------------+--------------------------------------------------------------+
+; Register name                 ; Reason for Removal             ; Registers Removed due to This Register                       ;
++-------------------------------+--------------------------------+--------------------------------------------------------------+
+; Register_File:RegFile|mem~361 ; Stuck at GND                   ; Register_File:RegFile|mem~233, Register_File:RegFile|mem~169 ;
+;                               ; due to stuck port clock_enable ;                                                              ;
+; Register_File:RegFile|mem~134 ; Lost Fanouts                   ; Register_File:RegFile|mem~38                                 ;
+; Register_File:RegFile|mem~306 ; Stuck at GND                   ; Register_File:RegFile|mem~178                                ;
+;                               ; due to stuck port clock_enable ;                                                              ;
+; Register_File:RegFile|mem~402 ; Stuck at GND                   ; Register_File:RegFile|mem~146                                ;
+;                               ; due to stuck port clock_enable ;                                                              ;
+; Register_File:RegFile|mem~336 ; Stuck at GND                   ; Register_File:RegFile|mem~144                                ;
+;                               ; due to stuck port clock_enable ;                                                              ;
+; Register_File:RegFile|mem~393 ; Stuck at GND                   ; Register_File:RegFile|mem~137                                ;
+;                               ; due to stuck port clock_enable ;                                                              ;
+; Register_File:RegFile|mem~327 ; Stuck at GND                   ; Register_File:RegFile|mem~135                                ;
+;                               ; due to stuck port clock_enable ;                                                              ;
++-------------------------------+--------------------------------+--------------------------------------------------------------+
 
 
 +------------------------------------------------------+
@@ -239,14 +1140,26 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 +----------------------------------------------+-------+
 ; Statistic                                    ; Value ;
 +----------------------------------------------+-------+
-; Total registers                              ; 6     ;
+; Total registers                              ; 191   ;
 ; Number of registers using Synchronous Clear  ; 0     ;
-; Number of registers using Synchronous Load   ; 0     ;
-; Number of registers using Asynchronous Clear ; 6     ;
+; Number of registers using Synchronous Load   ; 30    ;
+; Number of registers using Asynchronous Clear ; 32    ;
 ; Number of registers using Asynchronous Load  ; 0     ;
-; Number of registers using Clock Enable       ; 0     ;
+; Number of registers using Clock Enable       ; 161   ;
 ; Number of registers using Preset             ; 0     ;
 +----------------------------------------------+-------+
+
+
++------------------------------------------------------------------------------------------------------------------------------------------------+
+; Multiplexer Restructuring Statistics (Restructuring Performed)                                                                                 ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+----------------------------------+
+; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered ; Example Multiplexer Output       ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+----------------------------------+
+; 3:1                ; 26 bits   ; 52 LEs        ; 26 LEs               ; 26 LEs                 ; No         ; |week5_top|SrcB[30]              ;
+; 3:1                ; 6 bits    ; 12 LEs        ; 12 LEs               ; 0 LEs                  ; No         ; |week5_top|SrcB[0]               ;
+; 8:1                ; 31 bits   ; 155 LEs       ; 93 LEs               ; 62 LEs                 ; No         ; |week5_top|ALU:CoreALU|Mux20     ;
+; 16:1               ; 2 bits    ; 20 LEs        ; 4 LEs                ; 16 LEs                 ; No         ; |week5_top|Imm_Ext:ExtUnit|Mux29 ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+----------------------------------+
 
 
 +-----------------------------------------------------+
@@ -254,22 +1167,24 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 +-----------------------+-----------------------------+
 ; Type                  ; Count                       ;
 +-----------------------+-----------------------------+
-; boundary_port         ; 34                          ;
-; cycloneiii_ff         ; 6                           ;
-;     CLR               ; 6                           ;
-; cycloneiii_lcell_comb ; 10                          ;
-;     arith             ; 4                           ;
-;         2 data inputs ; 3                           ;
-;         3 data inputs ; 1                           ;
-;     normal            ; 6                           ;
+; boundary_port         ; 98                          ;
+; cycloneiii_ff         ; 191                         ;
+;     CLR SLD           ; 30                          ;
+;     ENA               ; 159                         ;
+;     ENA CLR           ; 2                           ;
+; cycloneiii_lcell_comb ; 427                         ;
+;     arith             ; 122                         ;
+;         2 data inputs ; 54                          ;
+;         3 data inputs ; 68                          ;
+;     normal            ; 305                         ;
 ;         0 data inputs ; 1                           ;
-;         1 data inputs ; 2                           ;
-;         2 data inputs ; 1                           ;
-;         3 data inputs ; 1                           ;
-;         4 data inputs ; 1                           ;
+;         1 data inputs ; 5                           ;
+;         2 data inputs ; 5                           ;
+;         3 data inputs ; 35                          ;
+;         4 data inputs ; 259                         ;
 ;                       ;                             ;
-; Max LUT depth         ; 2.00                        ;
-; Average LUT depth     ; 1.32                        ;
+; Max LUT depth         ; 16.50                       ;
+; Average LUT depth     ; 11.17                       ;
 +-----------------------+-----------------------------+
 
 
@@ -288,7 +1203,7 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 Info: *******************************************************************
 Info: Running Quartus Prime Analysis & Synthesis
     Info: Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
-    Info: Processing started: Tue Jan  6 05:01:21 2026
+    Info: Processing started: Thu Jan  8 15:25:00 2026
 Info: Command: quartus_map --read_settings_files=on --write_settings_files=off week5 -c week5
 Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
 Info (20030): Parallel compilation is enabled and will use 16 of the 16 processors detected
@@ -304,43 +1219,60 @@ Info (12021): Found 2 design units, including 1 entities, in source file Instruc
 Info (12021): Found 2 design units, including 1 entities, in source file Fetch_Stage.vhd
     Info (12022): Found design unit 1: Fetch_Stage-structural File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Fetch_Stage.vhd Line: 12
     Info (12023): Found entity 1: Fetch_Stage File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Fetch_Stage.vhd Line: 4
-Info (12127): Elaborating entity "Fetch_Stage" for the top level hierarchy
-Info (12128): Elaborating entity "Program_Counter" for hierarchy "Program_Counter:PC_REG" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Fetch_Stage.vhd Line: 16
-Info (12128): Elaborating entity "PC_Adder" for hierarchy "PC_Adder:ADDER" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Fetch_Stage.vhd Line: 19
-Info (12128): Elaborating entity "Instruction_Memory" for hierarchy "Instruction_Memory:INST_MEM" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Fetch_Stage.vhd Line: 22
+Info (12021): Found 2 design units, including 1 entities, in source file ALU.vhd
+    Info (12022): Found design unit 1: ALU-behavioral File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/ALU.vhd Line: 15
+    Info (12023): Found entity 1: ALU File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/ALU.vhd Line: 5
+Info (12021): Found 2 design units, including 1 entities, in source file Register_File.vhd
+    Info (12022): Found design unit 1: Register_File-behavioral File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Register_File.vhd Line: 14
+    Info (12023): Found entity 1: Register_File File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Register_File.vhd Line: 5
+Info (12021): Found 2 design units, including 1 entities, in source file Control_Unit.vhd
+    Info (12022): Found design unit 1: Control_Unit-behavioral File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Control_Unit.vhd Line: 16
+    Info (12023): Found entity 1: Control_Unit File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Control_Unit.vhd Line: 4
+Info (12021): Found 2 design units, including 1 entities, in source file Imm_Ext.vhd
+    Info (12022): Found design unit 1: Imm_Ext-behavioral File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Imm_Ext.vhd Line: 12
+    Info (12023): Found entity 1: Imm_Ext File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Imm_Ext.vhd Line: 5
+Info (12021): Found 2 design units, including 1 entities, in source file week5_top.vhd
+    Info (12022): Found design unit 1: week5_top-structural File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top.vhd Line: 16
+    Info (12023): Found entity 1: week5_top File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top.vhd Line: 5
+Info (12021): Found 2 design units, including 1 entities, in source file week5_top_tb.vhd
+    Info (12022): Found design unit 1: week5_top_tb-testbench File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top_tb.vhd Line: 7
+    Info (12023): Found entity 1: week5_top_tb File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top_tb.vhd Line: 4
+Info (12127): Elaborating entity "week5_top" for the top level hierarchy
+Info (12128): Elaborating entity "Program_Counter" for hierarchy "Program_Counter:PC_Reg" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top.vhd Line: 26
+Info (12128): Elaborating entity "PC_Adder" for hierarchy "PC_Adder:PC_Add" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top.vhd Line: 27
+Info (12128): Elaborating entity "Instruction_Memory" for hierarchy "Instruction_Memory:InstMem" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top.vhd Line: 28
+Info (12128): Elaborating entity "Control_Unit" for hierarchy "Control_Unit:Control" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top.vhd Line: 31
+Info (12128): Elaborating entity "Register_File" for hierarchy "Register_File:RegFile" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top.vhd Line: 32
+Info (12128): Elaborating entity "Imm_Ext" for hierarchy "Imm_Ext:ExtUnit" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top.vhd Line: 33
+Info (12128): Elaborating entity "ALU" for hierarchy "ALU:CoreALU" File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top.vhd Line: 39
+Info (276014): Found 1 instances of uninferred RAM logic
+    Info (276007): RAM logic "Register_File:RegFile|mem" is uninferred due to asynchronous read logic File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Register_File.vhd Line: 16
 Warning (13024): Output pins are stuck at VCC or GND
-    Warning (13410): Pin "Instr[2]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Fetch_Stage.vhd Line: 8
-    Warning (13410): Pin "Instr[3]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Fetch_Stage.vhd Line: 8
-    Warning (13410): Pin "Instr[6]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Fetch_Stage.vhd Line: 8
-    Warning (13410): Pin "Instr[10]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Fetch_Stage.vhd Line: 8
-    Warning (13410): Pin "Instr[11]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Fetch_Stage.vhd Line: 8
-    Warning (13410): Pin "Instr[12]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Fetch_Stage.vhd Line: 8
-    Warning (13410): Pin "Instr[13]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Fetch_Stage.vhd Line: 8
-    Warning (13410): Pin "Instr[14]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Fetch_Stage.vhd Line: 8
-    Warning (13410): Pin "Instr[16]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Fetch_Stage.vhd Line: 8
-    Warning (13410): Pin "Instr[18]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Fetch_Stage.vhd Line: 8
-    Warning (13410): Pin "Instr[19]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Fetch_Stage.vhd Line: 8
-    Warning (13410): Pin "Instr[20]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Fetch_Stage.vhd Line: 8
-    Warning (13410): Pin "Instr[23]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Fetch_Stage.vhd Line: 8
-    Warning (13410): Pin "Instr[24]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Fetch_Stage.vhd Line: 8
-    Warning (13410): Pin "Instr[25]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Fetch_Stage.vhd Line: 8
-    Warning (13410): Pin "Instr[26]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Fetch_Stage.vhd Line: 8
-    Warning (13410): Pin "Instr[27]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Fetch_Stage.vhd Line: 8
-    Warning (13410): Pin "Instr[28]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Fetch_Stage.vhd Line: 8
-    Warning (13410): Pin "Instr[29]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Fetch_Stage.vhd Line: 8
-    Warning (13410): Pin "Instr[30]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Fetch_Stage.vhd Line: 8
-    Warning (13410): Pin "Instr[31]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/Fetch_Stage.vhd Line: 8
+    Warning (13410): Pin "instr_debug[2]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top.vhd Line: 11
+    Warning (13410): Pin "instr_debug[3]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top.vhd Line: 11
+    Warning (13410): Pin "instr_debug[11]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top.vhd Line: 11
+    Warning (13410): Pin "instr_debug[16]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top.vhd Line: 11
+    Warning (13410): Pin "instr_debug[17]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top.vhd Line: 11
+    Warning (13410): Pin "instr_debug[18]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top.vhd Line: 11
+    Warning (13410): Pin "instr_debug[19]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top.vhd Line: 11
+    Warning (13410): Pin "instr_debug[24]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top.vhd Line: 11
+    Warning (13410): Pin "instr_debug[25]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top.vhd Line: 11
+    Warning (13410): Pin "instr_debug[26]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top.vhd Line: 11
+    Warning (13410): Pin "instr_debug[27]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top.vhd Line: 11
+    Warning (13410): Pin "instr_debug[28]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top.vhd Line: 11
+    Warning (13410): Pin "instr_debug[29]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top.vhd Line: 11
+    Warning (13410): Pin "instr_debug[31]" is stuck at GND File: /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week5/week5_top.vhd Line: 11
 Info (286030): Timing-Driven Synthesis is running
-Info (17049): 24 registers lost all their fanouts during netlist optimizations.
+Info (17049): 717 registers lost all their fanouts during netlist optimizations.
 Info (16010): Generating hard_block partition "hard_block:auto_generated_inst"
     Info (16011): Adding 0 node(s), including 0 DDIO, 0 PLL, 0 transceiver and 0 LCELL
-Info (21057): Implemented 43 device resources after synthesis - the final resource count might be different
+Info (21057): Implemented 680 device resources after synthesis - the final resource count might be different
     Info (21058): Implemented 2 input pins
-    Info (21059): Implemented 32 output pins
-    Info (21061): Implemented 9 logic cells
-Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 23 warnings
-    Info: Peak virtual memory: 494 megabytes
-    Info: Processing ended: Tue Jan  6 05:01:26 2026
+    Info (21059): Implemented 96 output pins
+    Info (21061): Implemented 582 logic cells
+Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 16 warnings
+    Info: Peak virtual memory: 500 megabytes
+    Info: Processing ended: Thu Jan  8 15:25:05 2026
     Info: Elapsed time: 00:00:05
     Info: Total CPU time (on all processors): 00:00:13
 
