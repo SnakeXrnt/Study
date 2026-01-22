@@ -2,22 +2,55 @@
 #include <unordered_map>
 #include "utils.h"
 
+struct DSU {
+    std::unordered_map<char, char> boss;
+
+    char find(char person) {
+        if (boss.find(person) == boss.end()) {
+            boss[person] = person;
+        }
+
+        if (boss[person] == person) {
+            return person;
+        }
+
+        boss[person] = find(boss[person]);
+        return boss[person];
+    }
+
+    void unite(char persona, char personb) {
+        char leadera = find(persona);
+        char leaderb = find(personb);
+
+        if (leadera != leaderb) {
+            boss[leadera] = leaderb;
+        }
+    }
+};
+
 int main() {
-    /* TODO:
-        Write a program that reads a list of edges representing an *undirected* graph from its standard
-        input (given as a comma-separated list between square brackets, e.g. `[(A, B),(B, C),(C, D)]`).
 
-        The program must add these edges, one by one, to an initially empty graph, and before adding each
-        edge, it must determine whether that edge would introduce a cycle into the graph.
+    std::vector<sax::edge<char>> edges;
+    std::cin >> edges;
+    DSU networkmanager;
+    
 
-        In case the edge would introduce a cycle, the edge must not be added to the graph and the program
-        should stop processing further edges. Otherwise, the edge is added to the graph and the program
-        continues with the next edge.
+    int safe_merge_count = 0;
 
-        The program must then print how many edges were added before the first cycle was created.
+    for (const auto &[nodeb, nodea, weights] : edges) {
+        char leadera = networkmanager.find(nodea);
+        char leaderb = networkmanager.find(nodeb);
 
-        Your program must run in `O(m log(n))` time, where `n` is the number of nodes and `m` is the number of
-        edges.
-    */
+        if (leadera == leaderb ) {
+            break;
+        } else {
+            networkmanager.unite(leadera, leaderb);
+            safe_merge_count++;
+        }
+
+    }
+
+    std::cout << safe_merge_count << std::endl;
+    
     return 0;
 }

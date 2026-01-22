@@ -1,5 +1,32 @@
 #include <iostream>
 #include "utils.h"   // for reading vectors
+#include "edge.h" 
+#include <bits/stdc++.h>
+
+
+int dijkstra(std::unordered_map<char, std::unordered_map<char, int>> &graph, char start) {
+
+    std::unordered_map<char,int> dists;
+    
+    std::priority_queue<std::pair<int,char>, std::vector<std::pair<int,char>>,std::greater<std::pair<int,char>>> pq;
+
+    for (const auto & [nodes, weight] : graph) {
+        dists[nodes] = INT_MAX;
+    }
+
+    dists[start] = 0;
+    pq.push(std::make_pair(0, start));
+
+    while (!pq.size()) {
+        const auto [dists, nodes] = pq.top();
+
+        pq.pop();
+
+        if(visited)
+    }
+
+
+}
 
 int main() {
     /* TODO:
@@ -19,5 +46,36 @@ int main() {
         The time complexity of your solution must be `O(n m log n)`, where `n` is the number of nodes and `m` is the number
         of edges in the graph.
     */
+
+    std::vector<sax::edge<char>> edges;
+
+    try {
+        std::cin >> edges;
+    } catch (const std::exception &e) {
+        std::cerr << e.what() << std::endl;
+    }
+
+    std::unordered_map<char, std::unordered_map<char, int>> graph;
+
+    for (const auto & edge : edges) {
+        graph [edge.src][edge.dest] = edge.weight;
+        graph [edge.dest][edge.src] = edge.weight;
+    }
+
+    int min_sum = INT_MAX;
+    char min_node;
+
+    for(const auto &[node, _] : graph) {
+        int sum = dijkstra(graph, node);
+
+        if (sum < min_sum) {
+            min_node = node;
+            min_sum = sum;
+        }
+    }
+
+    std::cout << min_node << ", " << min_sum << std::endl;
+
+
     return 0;
 }

@@ -1,0 +1,16 @@
+# MicroPython
+*.pyc
+__pycache__/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Credentials (important!)
+config.py
+
+# OS
+.DS_Store
+Thumbs.db

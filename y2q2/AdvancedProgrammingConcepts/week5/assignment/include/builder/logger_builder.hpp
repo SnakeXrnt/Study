@@ -26,6 +26,7 @@ namespace builders {
     private:
         io::writers::multi_writer* m_writer;
         std::unique_ptr<logging::ilogger> m_logger;
+        bool m_is_decorated;
     };
 
     logger_builder default_builder();

@@ -1,0 +1,217 @@
+# JAL/JALR Datapath Diagram
+
+## Control Signals Flow
+
+```
+                           ┌─────────────────┐
+                           │  Instruction    │
+                           │    Memory       │
+                           └────────┬────────┘
+                                    │
+                              instr[31:0]
+                                    │
+                    ┌───────────────┼───────────────┐
+                    │               │               │
+              [6:0] opcode    [14:12] f3    [31:25] f7
+                    │               │               │
+                    └───────────────┴───────────────┘
+                                    │
+                          ┌─────────▼────────┐
+                          │  Control Unit    │
+                          │                  │
+                          │  Added: Jump     │
+                          │  2-bit ResultSrc │
+                          └─────────┬────────┘
+                                    │
+        ┌───────────────────────────┼────────────────────────┐
+        │                           │                        │
+    Jump (NEW)                  ResultSrc[1:0]          ALUControl
+        │                      (00/01/10)                    │
+        ▼                           │                        ▼
+    [PC Logic]              [Result Mux]                  [ALU]
+```
+
+## Datapath Changes
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                          FETCH STAGE                              │
+│                                                                   │
+│  ┌────┐    PC     ┌──────────┐   instr   ┌──────────────┐       │
+│  │ PC ├──────────►│ Inst Mem ├──────────►│ Control Unit │       │
+│  └─▲──┘           └──────────┘           └───────┬──────┘       │
+│    │                                              │              │
+│    │PC_next                              ┌────────┴────────┐     │
+│    │                                     │ Jump, ResultSrc │     │
+└────┼─────────────────────────────────────┴─────────────────┴─────┘
+     │
+┌────┼─────────────────────────────────────────────────────────────┐
+│    │                     DECODE STAGE                            │
+│    │                                                              │
+│    │              ┌────────────┐        ┌──────────┐             │
+│    │              │  Imm_Ext   │        │ Register │             │
+│    │              │            │        │   File   │             │
+│    │              │ Added:     │        └────┬─────┘             │
+│    │              │ - J-type   │             │                   │
+│    │              │ - JALR     │         RD1, RD2                │
+│    │              └─────┬──────┘             │                   │
+│    │                    │                    │                   │
+│    │                ImmExt                   │                   │
+└────┼────────────────────┼────────────────────┼───────────────────┘
+     │                    │                    │
+┌────┼────────────────────┼────────────────────┼───────────────────┐
+│    │               EXECUTE STAGE             │                   │
+│    │                    │                    │                   │
+│    │                    ▼                    ▼                   │
+│    │              ┌─────────┐          ┌─────────┐               │
+│    │              │   Mux   │          │   ALU   │               │
+│    │              │ (ALUSrc)│          │         │               │
+│    │              └────┬────┘          └────┬────┘               │
+│    │                   │                    │                    │
+│    │                   └────────►SrcB───────┘                    │
+│    │                                         │                   │
+│    │                                    ALUResult                │
+└────┼─────────────────────────────────────────┼───────────────────┘
+     │                                         │
+┌────┼─────────────────────────────────────────┼───────────────────┐
+│    │                 MEMORY STAGE            │                   │
+│    │                                         │                   │
+│    │                                    ┌────▼────┐              │
+│    │                                    │  Data   │              │
+│    │                                    │  Memory │              │
+│    │                                    └────┬────┘              │
+│    │                                         │                   │
+│    │                                    ReadData                 │
+└────┼─────────────────────────────────────────┼───────────────────┘
+     │                                         │
+┌────┼─────────────────────────────────────────┼───────────────────┐
+│    │              WRITEBACK STAGE            │                   │
+│    │                                         │                   │
+│    │         PC_plus4                   ALUResult                │
+│    │             │                           │                   │
+│    │             │    ┌──────────────────────┤                   │
+│    │             │    │  ReadData            │                   │
+│    │             │    │      │               │                   │
+│    │             │    │      │               │                   │
+│    │             ▼    ▼      ▼               │                   │
+│    │         ┌─────────────────┐             │                   │
+│    │         │   Result Mux    │◄────────────┤                   │
+│    │         │   (ResultSrc)   │         ResultSrc               │
+│    │         │                 │         [1:0]                   │
+│    │         │ 00: ALUResult   │             │                   │
+│    │         │ 01: ReadData    │             │                   │
+│    │         │ 10: PC+4 (NEW)  │◄────────────┘                   │
+│    │         └────────┬────────┘                                 │
+│    │                  │                                           │
+│    │               Result ──────► Register File (WD3)            │
+└────┼──────────────────────────────────────────────────────────────┘
+     │
+┌────┼──────────────────────────────────────────────────────────────┐
+│    │              PC UPDATE LOGIC (NEW/MODIFIED)                  │
+│    │                                                               │
+│    │   BranchTarget = PC + ImmExt                                 │
+│    │   JumpTarget = (ALUResult) & 0xFFFFFFFE                      │
+│    │                                                               │
+│    │   ┌──────────────────────────────────┐                       │
+│    │   │  PC Selection Logic (Priority):  │                       │
+│    │   │                                   │                       │
+│    │   │  1. JALR? → JumpTarget            │                       │
+│    │   │  2. JAL?  → BranchTarget          │                       │
+│    │   │  3. BEQ taken? → BranchTarget     │                       │
+│    │   │  4. Default → PC_plus4            │                       │
+│    │   └──────────────┬───────────────────┘                       │
+│    │                  │                                            │
+│    └──────────────────┘                                            │
+│                   PC_next                                          │
+└───────────────────────────────────────────────────────────────────┘
+```
+
+## Key Signal Changes
+
+### 1. Control Unit Outputs (NEW/MODIFIED)
+- **Jump** (NEW): High for JAL/JALR instructions
+- **ResultSrc[1:0]** (MODIFIED): 
+  - Was 1-bit, now 2-bits
+  - "10" enables PC+4 writeback for return address
+
+### 2. PC Selection Logic (MODIFIED)
+```vhdl
+-- Old (Week 5):
+PC_next <= BranchTarget when PCSrc='1' else PC_plus4
+
+-- New (with JAL/JALR):
+PC_next <= JumpTarget when (Jump='1' and opcode="1100111") else  -- JALR
+           BranchTarget when (Jump='1' or PCSrc='1') else         -- JAL/BEQ
+           PC_plus4                                                -- Normal
+```
+
+### 3. Result Multiplexer (MODIFIED)
+```vhdl
+-- Old (Week 5):
+Result <= ReadData when ResultSrc='1' else ALUResult
+
+-- New (with JAL/JALR):
+Result <= ReadData when ResultSrc="01" else    -- Load
+          PC_plus4 when ResultSrc="10" else     -- JAL/JALR return address
+          ALUResult                             -- Default
+```
+
+## Instruction Flow Examples
+
+### JAL Execution:
+```
+Cycle 1: PC=0x08, Instruction: jal x1, +20
+  ├─ Control: Jump='1', ResultSrc="10"
+  ├─ ImmExt outputs: 0x00000014 (20)
+  ├─ BranchTarget = 0x08 + 0x14 = 0x1C
+  ├─ Result = PC_plus4 = 0x0C
+  └─ PC_next = BranchTarget = 0x1C
+
+Cycle 2: PC=0x1C (function entry)
+  └─ x1 = 0x0C (return address saved)
+```
+
+### JALR Execution:
+```
+Cycle 1: PC=0x20, Instruction: jalr x0, x1, 0
+  ├─ Control: Jump='1', ResultSrc="10", ALUSrc='1'
+  ├─ ALU: x1 + 0 = 0x0C
+  ├─ JumpTarget = 0x0C & 0xFFFFFFFE = 0x0C
+  ├─ Result = PC_plus4 = 0x24 (but x0 ignores writes)
+  └─ PC_next = JumpTarget = 0x0C
+
+Cycle 2: PC=0x0C (returned to caller)
+```
+
+## Timing Diagram (Simplified)
+
+```
+Clock:    __|‾‾|__|‾‾|__|‾‾|__|‾‾|__|‾‾|__|‾‾|__|‾‾|__|‾‾|__
+
+PC:       00    04    08    1C    20    0C    10    14    18
+
+Instr:    addi  addi  jal   add   jalr  addi  addi  jal   beq
+          x10   x11   →1C   x12   →0C   x13   x10   →24   loop
+
+x10:      5     5     5     5     5     5     18    18    18
+
+x11:      -     3     3     3     3     3     3     3     3
+
+x12:      -     -     -     8     8     8     8     8     8
+
+x1 (ra):  -     -     0C    0C    0C    0C    0C    18    18
+
+Jump:     0     0     1     0     1     0     0     1     0
+
+Actions:                   CALL       RETURN              CALL
+```
+
+## Summary
+
+The JAL/JALR implementation adds minimal hardware:
+- 1 new control signal (Jump)
+- 1 wider control signal (ResultSrc: 1→2 bits)
+- 1 new multiplexer input (PC+4 to Result)
+- Enhanced PC selection logic
+
+This enables full function call/return capability! 🎉

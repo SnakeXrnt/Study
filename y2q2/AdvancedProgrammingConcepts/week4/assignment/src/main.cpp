@@ -11,6 +11,7 @@
 #include <vector>
 #include <thread>
 #include <cstdbool>
+#include "clogger_adapter.cpp"
 
 
 #include "clib/logger.h"
@@ -63,5 +64,7 @@ void demo_rolling()
 int main(){
 
     demo_logging();
+
+    auto a  = logging::clogger_adapter(2)
 
 }

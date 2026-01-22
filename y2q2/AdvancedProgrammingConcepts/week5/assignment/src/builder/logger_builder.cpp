@@ -13,6 +13,7 @@
 builders::logger_builder::logger_builder()
     : m_writer{nullptr}
     , m_logger{nullptr}
+    , m_is_decorated{false}
 {
     reset();
 }
@@ -23,6 +24,7 @@ builders::ilogger_builder& builders::logger_builder::reset() {
     m_writer = multi_writer.get();
 
     m_logger = std::make_unique<logging::logger>( std::move(multi_writer) );
+    m_is_decorated = false;
 
     return *this;
 }
@@ -39,15 +41,17 @@ builders::ilogger_builder& builders::logger_builder::with_writer(std::unique_ptr
 }
 
 builders::ilogger_builder& builders::logger_builder::with_timestamp(timestamp_type type) {
-    if (m_logger) {
+    if (m_logger && !m_is_decorated) {
         switch (type) {
             case timestamp_type::none:
                 break;
             case timestamp_type::current_time:
                 m_logger = std::make_unique<extensions::timestamp_decorator>(std::move(m_logger));
+                m_is_decorated = true;
                 break;
             case timestamp_type::running_time:
                 m_logger = std::make_unique<extensions::runningtime_decorator>(std::move(m_logger));
+                m_is_decorated = true;
                 break;
         }
     }

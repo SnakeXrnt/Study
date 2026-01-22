@@ -1,0 +1,5 @@
+# This directory is a Syncthing folder marker.
+# Do not delete.
+
+folderID: fktk4-qdwww
+created: 2026-01-13T17:41:26+01:00

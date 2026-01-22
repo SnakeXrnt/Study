@@ -1,0 +1,219 @@
+# do week5_run_msim_rtl_vhdl.do
+# if {[file exists rtl_work]} {
+# 	vdel -lib rtl_work -all
+# }
+# vlib rtl_work
+# vmap work rtl_work
+# Model Technology ModelSim - Intel FPGA Edition vmap 2020.1 Lib Mapping Utility 2020.02 Feb 28 2020
+# vmap work rtl_work 
+# Copying /home/nw1728/intelFPGA_lite/20.1/modelsim_ase/linuxaloem/../modelsim.ini to modelsim.ini
+# Modifying modelsim.ini
+# 
+# vcom -2008 -work work {/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week7/Program_Counter.vhd}
+# Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 01:05:51 on Jan 14,2026
+# vcom -reportprogress 300 -2008 -work work /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week7/Program_Counter.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Compiling entity Program_Counter
+# -- Compiling architecture behavioral of Program_Counter
+# End time: 01:05:51 on Jan 14,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vcom -2008 -work work {/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week7/PC_Adder.vhd}
+# Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 01:05:51 on Jan 14,2026
+# vcom -reportprogress 300 -2008 -work work /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week7/PC_Adder.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package std_logic_arith
+# -- Loading package STD_LOGIC_UNSIGNED
+# -- Compiling entity PC_Adder
+# -- Compiling architecture behavioral of PC_Adder
+# End time: 01:05:51 on Jan 14,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vcom -2008 -work work {/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week7/Instruction_Memory.vhd}
+# Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 01:05:51 on Jan 14,2026
+# vcom -reportprogress 300 -2008 -work work /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week7/Instruction_Memory.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package std_logic_arith
+# -- Loading package STD_LOGIC_UNSIGNED
+# -- Loading package NUMERIC_STD
+# -- Compiling entity Instruction_Memory
+# -- Compiling architecture behavioral of Instruction_Memory
+# End time: 01:05:51 on Jan 14,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vcom -2008 -work work {/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week7/ALU.vhd}
+# Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 01:05:51 on Jan 14,2026
+# vcom -reportprogress 300 -2008 -work work /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week7/ALU.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Compiling entity ALU
+# -- Compiling architecture behavioral of ALU
+# End time: 01:05:51 on Jan 14,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vcom -2008 -work work {/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week7/Register_File.vhd}
+# Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 01:05:51 on Jan 14,2026
+# vcom -reportprogress 300 -2008 -work work /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week7/Register_File.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Compiling entity Register_File
+# -- Compiling architecture behavioral of Register_File
+# End time: 01:05:52 on Jan 14,2026, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0
+# vcom -2008 -work work {/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week7/Control_Unit.vhd}
+# Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 01:05:52 on Jan 14,2026
+# vcom -reportprogress 300 -2008 -work work /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week7/Control_Unit.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Compiling entity Control_Unit
+# -- Compiling architecture behavioral of Control_Unit
+# End time: 01:05:52 on Jan 14,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vcom -2008 -work work {/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week7/Imm_Ext.vhd}
+# Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 01:05:52 on Jan 14,2026
+# vcom -reportprogress 300 -2008 -work work /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week7/Imm_Ext.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Compiling entity Imm_Ext
+# -- Compiling architecture behavioral of Imm_Ext
+# End time: 01:05:52 on Jan 14,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vcom -2008 -work work {/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week7/Data_Memory.vhd}
+# Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 01:05:52 on Jan 14,2026
+# vcom -reportprogress 300 -2008 -work work /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week7/Data_Memory.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Compiling entity Data_Memory
+# -- Compiling architecture behavioral of Data_Memory
+# End time: 01:05:52 on Jan 14,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vcom -2008 -work work {/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week7/week5_top.vhd}
+# Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 01:05:52 on Jan 14,2026
+# vcom -reportprogress 300 -2008 -work work /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week7/week5_top.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Compiling entity week5_top
+# -- Compiling architecture structural of week5_top
+# -- Loading entity Program_Counter
+# -- Loading package std_logic_arith
+# -- Loading package STD_LOGIC_UNSIGNED
+# -- Loading entity PC_Adder
+# -- Loading entity Instruction_Memory
+# -- Loading entity Control_Unit
+# -- Loading entity Register_File
+# -- Loading entity Imm_Ext
+# -- Loading entity ALU
+# -- Loading entity Data_Memory
+# End time: 01:05:52 on Jan 14,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# 
+# vcom -2008 -work work {/home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week7/week5_top_tb.vhd}
+# Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 01:05:52 on Jan 14,2026
+# vcom -reportprogress 300 -2008 -work work /home/nw1728/study/y2q2/ComputerArchitectureAndSynthesis/week7/week5_top_tb.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Compiling entity week5_top_tb
+# -- Compiling architecture testbench of week5_top_tb
+# -- Loading package NUMERIC_STD
+# -- Loading entity week5_top
+# End time: 01:05:52 on Jan 14,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# 
+# vsim -t 1ps -L altera -L lpm -L sgate -L altera_mf -L altera_lnsim -L fiftyfivenm -L rtl_work -L work -voptargs="+acc"  week5_top_tb
+# vsim -t 1ps -L altera -L lpm -L sgate -L altera_mf -L altera_lnsim -L fiftyfivenm -L rtl_work -L work -voptargs=""+acc"" week5_top_tb 
+# Start time: 01:05:52 on Jan 14,2026
+# Loading std.standard
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.numeric_std(body)
+# Loading work.week5_top_tb(testbench)
+# Loading ieee.std_logic_arith(body)
+# Loading ieee.std_logic_unsigned(body)
+# Loading work.week5_top(structural)
+# Loading work.program_counter(behavioral)
+# Loading work.pc_adder(behavioral)
+# Loading work.instruction_memory(behavioral)
+# Loading work.control_unit(behavioral)
+# Loading work.register_file(behavioral)
+# Loading work.imm_ext(behavioral)
+# Loading work.alu(behavioral)
+# Loading work.data_memory(behavioral)
+# 
+# add wave *
+# view structure
+# .main_pane.structure.interior.cs.body.struct
+# view signals
+# .main_pane.objects.interior.cs.body.tree
+# run -all
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ps  Iteration: 0  Instance: /week5_top_tb/UUT/DataMem
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ps  Iteration: 0  Instance: /week5_top_tb/UUT/RegFile
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ps  Iteration: 0  Instance: /week5_top_tb/UUT/RegFile
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ps  Iteration: 0  Instance: /week5_top_tb/UUT/InstMem
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 0 ps  Iteration: 0  Instance: /week5_top_tb/UUT/PC_Add
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 0 ps  Iteration: 0  Instance: /week5_top_tb/UUT/PC_Add
+# ** Note: Simulation completed successfully
+#    Time: 325 ns  Iteration: 0  Instance: /week5_top_tb
+# 
+# stdin: <EOF>
+restart
+# ** Note: (vsim-12125) Error and warning message counts have been reset to '0' because of 'restart'.
+run 250ns
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ps  Iteration: 0  Instance: /week5_top_tb/UUT/DataMem
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ps  Iteration: 0  Instance: /week5_top_tb/UUT/RegFile
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ps  Iteration: 0  Instance: /week5_top_tb/UUT/RegFile
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ps  Iteration: 0  Instance: /week5_top_tb/UUT/InstMem
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 0 ps  Iteration: 0  Instance: /week5_top_tb/UUT/PC_Add
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 0 ps  Iteration: 0  Instance: /week5_top_tb/UUT/PC_Add
+restart
+# ** Note: (vsim-12125) Error and warning message counts have been reset to '0' because of 'restart'.
+run 85ns
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ps  Iteration: 0  Instance: /week5_top_tb/UUT/DataMem
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ps  Iteration: 0  Instance: /week5_top_tb/UUT/RegFile
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ps  Iteration: 0  Instance: /week5_top_tb/UUT/RegFile
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ps  Iteration: 0  Instance: /week5_top_tb/UUT/InstMem
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 0 ps  Iteration: 0  Instance: /week5_top_tb/UUT/PC_Add
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 0 ps  Iteration: 0  Instance: /week5_top_tb/UUT/PC_Add
+# End time: 14:00:12 on Jan 14,2026, Elapsed time: 12:54:20
+# Errors: 0, Warnings: 6

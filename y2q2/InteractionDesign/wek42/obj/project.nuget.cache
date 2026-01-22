@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "XGGhuBnWlnU=",
+  "dgSpecHash": "l/RBCgG6bOQ=",
   "success": true,
   "projectFilePath": "/home/nw1728/study/y2q2/InteractionDesign/wek42/wek42.csproj",
   "expectedPackageFiles": [
@@ -46,7 +46,7 @@
     "/home/nw1728/.nuget/packages/system.text.json/9.0.5/system.text.json.9.0.5.nupkg.sha512",
     "/home/nw1728/.nuget/packages/system.windows.extensions/8.0.0/system.windows.extensions.8.0.0.nupkg.sha512",
     "/home/nw1728/.nuget/packages/zstdsharp.port/0.8.6/zstdsharp.port.0.8.6.nupkg.sha512",
-    "/home/nw1728/.nuget/packages/microsoft.aspnetcore.app.ref/9.0.9/microsoft.aspnetcore.app.ref.9.0.9.nupkg.sha512"
+    "/home/nw1728/.nuget/packages/microsoft.aspnetcore.app.ref/9.0.11/microsoft.aspnetcore.app.ref.9.0.11.nupkg.sha512"
   ],
   "logs": []
 }

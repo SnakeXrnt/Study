@@ -1,0 +1,82 @@
+// Machine code for JAL/JALR test program
+// Generated from jal_jalr_test_program.asm
+
+// Address 0x00: addi x10, x0, 5
+// 0x00500513
+00000101
+00000000
+00000000
+00000000
+
+// Address 0x04: addi x11, x0, 3
+// 0x00300593
+00000011
+00000000
+00000000
+00000000
+
+// Address 0x08: jal x1, add_function (offset = 20 bytes = 0x14)
+// Target: 0x08 + 0x14 = 0x1C
+// Encoding: imm[20|10:1|11|19:12] rd opcode
+// 0x014000EF
+00010100
+00000000
+00000000
+00000000
+
+// Address 0x0C: addi x13, x12, 10
+// 0x00A60693
+00001010
+00000110
+00000000
+00000000
+
+// Address 0x10: addi x10, x13, 0
+// 0x00068513
+00000000
+00000110
+10000101
+00000000
+
+// Address 0x14: jal x1, multiply_by_2 (offset = 12 bytes = 0xC)
+// Target: 0x14 + 0xC = 0x20
+// 0x00C000EF
+00001100
+00000000
+00000000
+00000000
+
+// Address 0x18: beq x0, x0, halt (offset = 0, loop to itself)
+// 0x00000063
+00000000
+00000000
+00000000
+00000000
+
+// Address 0x1C: add x12, x10, x11 (add_function)
+// 0x00B50633
+00001011
+01010000
+01100011
+00000000
+
+// Address 0x20: jalr x0, x1, 0 (return from add_function)
+// 0x00008067
+00000000
+00001000
+01100111
+00000000
+
+// Address 0x24: add x12, x10, x10 (multiply_by_2)
+// 0x00A50633
+00001010
+01010000
+01100011
+00000000
+
+// Address 0x28: jalr x0, x1, 0 (return from multiply_by_2)
+// 0x00008067
+00000000
+00001000
+01100111
+00000000

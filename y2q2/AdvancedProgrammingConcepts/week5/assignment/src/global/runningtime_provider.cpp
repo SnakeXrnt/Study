@@ -9,8 +9,7 @@ global::runningtime_provider::duration global::runningtime_provider::running_tim
     return std::chrono::high_resolution_clock::now() - m_t0;
 }
 
-global::runningtime_provider::runningtime_provider():
-    m_t0{std::chrono::high_resolution_clock::now()}
+global::runningtime_provider::runningtime_provider() : m_t0{std::chrono::high_resolution_clock::now()}
 {}
 
 const global::runningtime_provider& global::runningtime_provider::get_instance() {

@@ -1,0 +1,124 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.all; -- Required for STD_LOGIC types [4]
+
+entity Control_Unit is
+    port(
+        op          : in  STD_LOGIC_VECTOR(6 downto 0); -- Level 1: Opcode [2]
+        funct3      : in  STD_LOGIC_VECTOR(2 downto 0); -- Level 2: Funct3 [2]
+        funct7      : in  STD_LOGIC_VECTOR(6 downto 0); -- Level 2: Funct7 [2]
+        RegWrite    : out STD_LOGIC;                    -- Enable register storage [5]
+        ALUSrc      : out STD_LOGIC;                    -- Select Reg vs Immediate [6]
+        Branch      : out STD_LOGIC;                    -- Enable branch decision logic
+        Jump        : out STD_LOGIC;                    -- Enable unconditional jump (JAL/JALR)
+        MemWrite    : out STD_LOGIC;                    -- Enable data memory write
+        ResultSrc   : out STD_LOGIC_VECTOR(1 downto 0); -- Select ALU result (00) vs Memory data (01) vs PC+4 (10)
+        ALUControl  : out STD_LOGIC_VECTOR(2 downto 0)  -- ALU Operation code [7, 8]
+    );
+end entity;
+
+architecture behavioral of Control_Unit is
+begin
+    -- The process is executed whenever any input variable changes [9]
+    process(op, funct3, funct7) 
+    begin
+        case op is
+            when "0110011" => -- R-Type instructions (add, sub, and, or) [5, 10]
+                RegWrite   <= '1'; -- Result is written to rd [5]
+                ALUSrc     <= '0'; -- Use second register rs2 [6]
+                Branch     <= '0';
+                Jump       <= '0';
+                MemWrite   <= '0'; -- No memory write
+                ResultSrc  <= "00"; -- Use ALU result
+                
+                -- Level 2: ALU Decoder logic based on funct3 and funct7 [2]
+                if funct7 = "0000000" then
+                    if funct3 = "000" then
+                        ALUControl <= "010"; -- ADD [7, 8]
+                    elsif funct3 = "100" then
+                        ALUControl <= "011"; -- XOR 
+                    elsif funct3 = "111" then
+                        ALUControl <= "000"; -- AND [7, 8]
+                    elsif funct3 = "110" then
+                        ALUControl <= "001"; -- OR [7, 8]
+                    else
+                        ALUControl <= "000"; -- Default (avoid latch)
+                    end if;
+                elsif funct7 = "0100000" then
+                    ALUControl <= "110"; -- SUB [7, 8]
+                else
+                    ALUControl <= "000"; -- Default (avoid latch)
+                end if;
+
+            when "0010011" => -- I-Type arithmetic instructions (addi, xori, etc.)
+                RegWrite   <= '1';   -- Save result to register
+                ALUSrc     <= '1';   -- Use immediate constant
+                Branch     <= '0';
+                Jump       <= '0';
+                MemWrite   <= '0';   -- No memory write
+                ResultSrc  <= "00";  -- Use ALU result
+                
+                -- Check funct3 to determine which I-Type operation
+                if funct3 = "000" then
+                    ALUControl <= "010"; -- ADDI (ADD)
+                elsif funct3 = "100" then
+                    ALUControl <= "011"; -- XORI (XOR)
+                else
+                    ALUControl <= "010"; -- Default to ADD
+                end if;
+
+            when "0000011" => -- Load instruction (lw)
+                RegWrite   <= '1';   -- Write memory data to register
+                ALUSrc     <= '1';   -- Use immediate for address calculation
+                Branch     <= '0';
+                Jump       <= '0';
+                MemWrite   <= '0';   -- Reading from memory
+                ResultSrc  <= "01";  -- Use memory data (not ALU result)
+                ALUControl <= "010"; -- ADD for address calculation
+
+            when "0100011" => -- Store instruction (sw)
+                RegWrite   <= '0';   -- No register write
+                ALUSrc     <= '1';   -- Use immediate for address calculation
+                Branch     <= '0';
+                Jump       <= '0';
+                MemWrite   <= '1';   -- Writing to memory
+                ResultSrc  <= "00";  -- Don't care (no writeback)
+                ALUControl <= "010"; -- ADD for address calculation
+
+            when "1100011" => -- Branch instruction (beq)
+                RegWrite   <= '0';   -- No register write during branch
+                ALUSrc     <= '0';   -- Compare two registers
+                Branch     <= '1';   -- Signal to consider jumping
+                Jump       <= '0';
+                MemWrite   <= '0';   -- No memory write
+                ResultSrc  <= "00";  -- Don't care (no writeback)
+                ALUControl <= "110"; -- Subtract to check if Zero [7, 8]
+
+            when "1101111" => -- JAL instruction (Jump and Link)
+                RegWrite   <= '1';   -- Write PC+4 to rd
+                ALUSrc     <= '0';   -- Don't care
+                Branch     <= '0';
+                Jump       <= '1';   -- Unconditional jump
+                MemWrite   <= '0';   -- No memory write
+                ResultSrc  <= "10";  -- Write PC+4 to register
+                ALUControl <= "000"; -- Don't care
+
+            when "1100111" => -- JALR instruction (Jump and Link Register)
+                RegWrite   <= '1';   -- Write PC+4 to rd
+                ALUSrc     <= '1';   -- Use immediate for target calculation
+                Branch     <= '0';
+                Jump       <= '1';   -- Unconditional jump
+                MemWrite   <= '0';   -- No memory write
+                ResultSrc  <= "10";  -- Write PC+4 to register
+                ALUControl <= "010"; -- ADD rs1 + imm for target
+
+            when others => -- Default case to avoid latches [14]
+                RegWrite   <= '0';
+                ALUSrc     <= '0';
+                Branch     <= '0';
+                Jump       <= '0';
+                MemWrite   <= '0';
+                ResultSrc  <= "00";
+                ALUControl <= "000";
+        end case;
+    end process;
+end architecture;
