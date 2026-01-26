@@ -8,17 +8,11 @@ global::runningtime_provider::duration global::runningtime_provider::running_tim
     return std::chrono::high_resolution_clock::now() - m_t0;
 }
 
-// Constructor captures the program start time
-global::runningtime_provider::runningtime_provider() 
-    : m_t0{std::chrono::high_resolution_clock::now()} 
+global::runningtime_provider::runningtime_provider():
+    m_t0{std::chrono::high_resolution_clock::now()}
 {}
 
-// Singleton instance - initialized on first access
 const global::runningtime_provider& global::runningtime_provider::get_instance() {
-    static runningtime_provider instance{};
-    return instance;
+    static runningtime_provider obj{};
+    return obj;
 }
-
-// namespace { 
-//     [[maybe_unused]] const auto& _init_runningtime = global::runningtime_provider::get_instance();
-// }

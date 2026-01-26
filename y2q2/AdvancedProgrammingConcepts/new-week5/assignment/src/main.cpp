@@ -48,9 +48,7 @@ int main(){
     auto log = builders::default_builder()
         .with_console_output()
         .with_file_output("out5.txt")
-        .with_writer(std::make_unique<io::writers::stream_writer>("custom.txt"))
-        .with_rolling_log_with_interval(std::chrono::seconds(2))
-        .with_timestamp(timestamp_type::running_time)
+        .with_runningtime_timestamp()
         .get();
 
     program prog { std::move(log) };

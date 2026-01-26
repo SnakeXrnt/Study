@@ -1,21 +1,29 @@
 
-#include "../include/ilogger.hpp"
-#include "../clib/clib/logger.h"
+#include "../include/clogger_adapter.hpp"
+#include <stdexcept>
 
 namespace logging {
 
-class clogger_adapter : public ilogger {
+// Constructor implementation
+clogger_adapter::clogger_adapter(unsigned int rolling_interval_second) {
+    lg_result_e result = lg_create(&m_clogger, rolling_interval_second);
+    if (result == lgr_error) {
+        throw std::runtime_error("Failed to create C logger");
+    }
+}
 
-public:
-    
-    explicit clogger_adapter(unsigned int rolling_interval_second);
+// Destructor implementation
+clogger_adapter::~clogger_adapter() {
+    if (m_clogger != nullptr) {
+        lg_destroy(&m_clogger);
+    }
+}
 
-    virtual ~clogger_adapter() override;
+// Log method implementation
+void clogger_adapter::log(const std::string& msg) const {
+    if (m_clogger != nullptr) {
+        lg_log(m_clogger, msg.c_str());
+    }
+}
 
-    void log(const std::string& msg) const;
-
-private :
-    lg_logger_t* m_clogger = nullptr;
-
-};
 }

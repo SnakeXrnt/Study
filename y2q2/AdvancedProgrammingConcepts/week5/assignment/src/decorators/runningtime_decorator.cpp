@@ -4,20 +4,16 @@
 #include "decorators/runningtime_decorator.hpp"
 #include "global/runningtime_provider.hpp"
 
-
-void extensions::runningtime_decorator::log(std::string_view msg)  {
+void extensions::runningtime_decorator::log(std::string_view msg) {
+    // Get elapsed time since program start
+    auto elapsed = global::runningtime_provider::get_instance().running_time();
+    
+    // Convert to seconds as a floating point value
+    auto seconds_total = std::chrono::duration<double>(elapsed).count();
+    
+    // Format: [seconds.nanoseconds] message
     std::ostringstream oss;
-
-    auto running_time = global::runningtime_provider::get_instance().running_time();
-
-    // full seconds of the runing time
-    auto seconds = std::chrono::duration_cast<std::chrono::seconds>(running_time);
-    running_time -= seconds;
-
-    // remaining nanoseconds of the running time
-    auto nano = std::chrono::duration_cast<std::chrono::nanoseconds>(running_time);
-
-    oss << '[' << seconds.count() << '.' << std::setfill('0') << std::setw(9) << nano.count() << "] " << msg;
-    auto str = oss.str();
-    decorator::log(str);
+    oss << '[' << std::fixed << std::setprecision(9) << seconds_total << "] " << msg;
+    
+    decorator::log(oss.str());
 }

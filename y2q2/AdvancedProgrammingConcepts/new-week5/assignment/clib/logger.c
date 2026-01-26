@@ -5,7 +5,7 @@
 #include "stdio.h"
 #include "logger.h"
 
-#define _PRINT_TRACE (0)
+#define _PRINT_TRACE (1)
 
 #if defined(_PRINT_TRACE) && (_PRINT_TRACE)
 #   define PRINT_ENTER(fmt, ...) printf("%s ENTER " fmt "\n" , __PRETTY_FUNCTION__ __VA_OPT__(,) __VA_ARGS__)

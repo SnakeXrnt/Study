@@ -65,6 +65,4 @@ int main(){
 
     demo_logging();
 
-    auto a  = logging::clogger_adapter(2)
-
 }
