@@ -14,25 +14,54 @@ architecture behavioral of Instruction_Memory_JAL_JALR is
     -- ROM array containing test program with JAL/JALR instructions
     type rom_type is array (0 to 63) of STD_LOGIC_VECTOR(31 downto 0);
     constant ROM : rom_type := (
-        -- Test Program: Function Calls with JAL and JALR
-        -- main:
-        0  => X"00500513",  -- addi x10, x0, 5       (x10 = 5, arg1)
-        1  => X"00300593",  -- addi x11, x0, 3       (x11 = 3, arg2)
-        2  => X"014000EF",  -- jal x1, add_function  (call function at offset 20)
-        3  => X"00A60693",  -- addi x13, x12, 10     (x13 = x12 + 10)
-        4  => X"00068513",  -- addi x10, x13, 0      (x10 = x13, arg for next call)
-        5  => X"010000EF",  -- jal x1, multiply_by_2 (call function at offset 16)
-        -- halt:
-        6  => X"00000063",  -- beq x0, x0, halt      (infinite loop)
-        
-        -- add_function: (address 7 in array = PC 0x1C)
-        7  => X"00B50633",  -- add x12, x10, x11     (x12 = x10 + x11)
-        8  => X"00008067",  -- jalr x0, x1, 0        (return to caller)
-        
-        -- multiply_by_2: (address 9 in array = PC 0x24)
-        9  => X"00A50633",  -- add x12, x10, x10     (x12 = x10 * 2)
-        10 => X"00008067",  -- jalr x0, x1, 0        (return to caller)
-        
+        --- PROLOGUE (Setup) ---
+			0 => "11111101000000000000000000010011", -- addi sp, sp, -48 (Allocate stack)
+			1 => "01011000000000000010000000100011", -- sw s0, 32(sp)      (Save frame pointer)
+			2 => "00000011000000000000000000010011", -- addi s0, sp, 48   (Set frame pointer)
+
+			--- INITIALIZATION ---
+			3 => "00000110010000000000001010010011", -- li t0, 100         (Set limit = 100)
+			4 => "11000000010100000010111110100011", -- sw t0, -32(s0)     (Store limit)
+			5 => "10111000000000000010111110100011", -- sw zero, -48(s0)   (Store counter = 0)
+			6 => "00000000000100000000001010010011", -- li t0, 1           (Load 1)
+			7 => "11010000010100000010111110100011", -- sw t0, -16(s0)     (Store total = 1)
+
+			--- LOOP START (Condition Check) ---
+			8 => "11111101110000000010001000000011", -- lw t0, -48(s0)     (Load counter)
+			9 => "11111110100000000010001010000011", -- lw t1, -32(s0)     (Load limit)
+			10 => "00000000010100100000001010110011", -- blt t0, t1, 4      (If counter < limit, continue)
+			11 => "11001000010100000010111110100011", -- j 28               (Else, jump to exit)
+
+			--- LOOP BODY (Math) ---
+			12 => "00000000001100000000001010010011", -- li t0, 3           (Load 3)
+			13 => "11011000010100000010111110100011", -- sw t0, -20(s0)     (Store 3)
+			14 => "11111110110000000010001000000011", -- lw t0, -20(s0)     (Reload 3)
+			15 => "11111110000000000010001010000011", -- lw t1, -16(s0)     (Reload total)
+			16 => "00000010010100100100101001100011", -- add t0, t0, t1     (total = total + 3)
+			17 => "11111110100000000010001010000011", -- sw t0, -16(s0)     (Store updated total)
+
+			--- INCREMENT COUNTER ---
+			18 => "10111000010100000010111110100011", -- lw t0, -48(s0)     (Load counter)
+			19 => "11111110010000000010001010000011", -- addi t0, t0, 1     (counter++)
+			20 => "11010000010100000010111110100011", -- sw t0, -48(s0)     (Store counter)
+
+			--- REPEAT LOOP ---
+			21 => "11111101110000000010001000000011", -- lw t0, -48(s0)     (Load counter)
+			22 => "11111110100000000010001010000011", -- lw t1, -32(s0)     (Load limit)
+			23 => "00000000010100100000001010110011", -- blt t0, t1, -60    (Jump back to start of loop)
+
+			--- EXIT SEQUENCE ---
+			24 => "11001000010100000010111110100011", -- j 28               (Jump to cleanup)
+			25 => "11111110110000000010001010000011", -- lw a0, -16(s0)     (Load result into return reg)
+			26 => "00000000000100101000001010010011", -- li a0, 0           (Set return status 0)
+			27 => "11011000010100000010111110100011", -- nop                (No operation/padding)
+			28 => "11111100100111111111000001101111", -- jal zero, exit     (Jump to epilogue)
+
+			--- EPILOGUE (Cleanup) ---
+			29 => "00000000000000101000000000010011", -- li a0, 0           (Final return value)
+			30 => "00000000000000000000001010010011", -- lw s0, 32(sp)      (Restore old frame pointer)
+			31 => "00000010110000000010000000000011", -- addi sp, sp, 48    (Deallocate stack)
+			32 => "00000011000000000000000000010011", -- ret                (Return to caller)
         others => X"00000000"  -- nop (no operation)
     );
 begin

@@ -85,13 +85,33 @@ begin
                 ALUControl <= "010"; -- ADD for address calculation
 
             when "1100011" => -- Branch instruction (beq)
-                RegWrite   <= '0';   -- No register write during branch
-                ALUSrc     <= '0';   -- Compare two registers
-                Branch     <= '1';   -- Signal to consider jumping
-                Jump       <= '0';
-                MemWrite   <= '0';   -- No memory write
-                ResultSrc  <= "00";  -- Don't care (no writeback)
-                ALUControl <= "110"; -- Subtract to check if Zero [7, 8]
+                if funct3 = "000" then
+                    RegWrite   <= '0';   -- No register write during branch
+                    ALUSrc     <= '0';   -- Compare two registers
+                    Branch     <= '1';   -- Signal to consider jumping
+                    Jump       <= '0';
+                    MemWrite   <= '0';   -- No memory write
+                    ResultSrc  <= "00";  -- Don't care (no writeback)
+                    ALUControl <= "110"; -- Subtract to check if Zero [7, 8]                
+                elsif funct3 = "100" then
+                    RegWrite   <= '0';   -- No register write during branch
+                    ALUSrc     <= '0';   -- Compare two registers
+                    Branch     <= '1';   -- Signal to consider jumping
+                    Jump       <= '0';
+                    MemWrite   <= '0';   -- No memory write
+                    ResultSrc  <= "00";  -- Don't care (no writeback)
+                    ALUControl <= "111"; -- Subtract to check if Zero [7, 8]
+                else
+                    RegWrite   <= '0';   -- No register write during branch
+                    ALUSrc     <= '0';   -- Compare two registers
+                    Branch     <= '1';   -- Signal to consider jumping
+                    Jump       <= '0';
+                    MemWrite   <= '0';   -- No memory write
+                    ResultSrc  <= "00";  -- Don't care (no writeback)
+                    ALUControl <= "110"; -- Subtract to check if Zero [7, 8]                
+                end if;
+
+                
 
             when "1101111" => -- JAL instruction (Jump and Link)
                 RegWrite   <= '1';   -- Write PC+4 to rd

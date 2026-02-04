@@ -1,0 +1,24 @@
+architecture sim of riscv_tb is
+    signal clk   : std_logic := '0';
+    signal reset : std_logic := '1';
+    -- Debug signals to watch
+    signal Result : std_logic_vector(31 downto 0);
+begin
+    -- Connect your Processor
+    UUT: entity work.riscv_top 
+        port map (
+            clk => clk, 
+            reset => reset, 
+            Result_debug => Result
+        );
+
+    -- The "Heartbeat": Toggle every 10ns
+    clk <= not clk after 10 ns;
+
+    -- The "Start Button": Let go of reset after 20ns
+    process begin
+        wait for 20 ns;
+        reset <= '0';
+        wait;
+    end process;
+end architecture;

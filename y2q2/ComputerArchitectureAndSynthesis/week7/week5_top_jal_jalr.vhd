@@ -9,7 +9,11 @@ entity week5_top_jal_jalr is
         -- Debug outputs
         PC_debug    : out std_logic_vector(31 downto 0);
         instr_debug : out std_logic_vector(31 downto 0);
-        ALU_debug   : out std_logic_vector(31 downto 0)
+        ALU_debug   : out std_logic_vector(31 downto 0);
+        -- Register File Debug outputs (to see calculation results)
+        RD1_debug   : out std_logic_vector(31 downto 0);
+        RD2_debug   : out std_logic_vector(31 downto 0);
+        Result_debug: out std_logic_vector(31 downto 0)
     );
 end entity;
 
@@ -68,5 +72,8 @@ begin
     PC_debug    <= PC_out;
     instr_debug <= instr;
     ALU_debug   <= ALUResult;
+    RD1_debug   <= RD1;
+    RD2_debug   <= RD2;
+    Result_debug<= Result;
 
 end architecture;

@@ -39,7 +39,7 @@
 
 set_global_assignment -name FAMILY "MAX 10"
 set_global_assignment -name DEVICE 10M50DAF484C7G
-set_global_assignment -name TOP_LEVEL_ENTITY week5_top
+set_global_assignment -name TOP_LEVEL_ENTITY week5_top_jal_jalr
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 20.1.1
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "04:48:20  JANUARY 06, 2026"
 set_global_assignment -name LAST_QUARTUS_VERSION "20.1.1 Lite Edition"
@@ -59,7 +59,7 @@ set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
 set_global_assignment -name VHDL_INPUT_VERSION VHDL_2008
 set_global_assignment -name VHDL_SHOW_LMF_MAPPING_MESSAGES OFF
 set_global_assignment -name EDA_TEST_BENCH_ENABLE_STATUS TEST_BENCH_MODE -section_id eda_simulation
-set_global_assignment -name EDA_NATIVELINK_SIMULATION_TEST_BENCH week5_top_tb -section_id eda_simulation
+set_global_assignment -name EDA_NATIVELINK_SIMULATION_TEST_BENCH week7_jal_jalr_tb -section_id eda_simulation
 set_global_assignment -name VHDL_FILE Instruction_Memory_JAL_JALR.vhd
 set_global_assignment -name VHDL_FILE Program_Counter.vhd
 set_global_assignment -name VHDL_FILE PC_Adder.vhd
@@ -81,8 +81,8 @@ set_global_assignment -name NUM_PARALLEL_PROCESSORS ALL
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
-set_global_assignment -name EDA_TEST_BENCH_NAME week5_top_tb -section_id eda_simulation
-set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id week5_top_tb
-set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME week5_top_tb -section_id week5_top_tb
-set_global_assignment -name EDA_TEST_BENCH_FILE week5_top_tb.vhd -section_id week5_top_tb
+set_global_assignment -name EDA_TEST_BENCH_NAME week7_jal_jalr_tb -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id week7_jal_jalr_tb
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME week7_jal_jalr_tb -section_id week7_jal_jalr_tb
+set_global_assignment -name EDA_TEST_BENCH_FILE week7_jal_jalr_tb.vhd -section_id week7_jal_jalr_tb
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

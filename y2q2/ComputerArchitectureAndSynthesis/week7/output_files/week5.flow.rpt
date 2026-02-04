@@ -1,5 +1,5 @@
 Flow report for week5
-Wed Jan 14 01:05:36 2026
+Tue Feb  3 12:28:14 2026
 Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
 
 
@@ -41,18 +41,18 @@ https://fpgasoftware.intel.com/eula.
 +----------------------------------------------------------------------------------+
 ; Flow Summary                                                                     ;
 +------------------------------------+---------------------------------------------+
-; Flow Status                        ; Successful - Wed Jan 14 01:05:36 2026       ;
+; Flow Status                        ; Successful - Tue Feb  3 12:28:14 2026       ;
 ; Quartus Prime Version              ; 20.1.1 Build 720 11/11/2020 SJ Lite Edition ;
 ; Revision Name                      ; week5                                       ;
-; Top-level Entity Name              ; week5_top                                   ;
+; Top-level Entity Name              ; week5_top_jal_jalr                          ;
 ; Family                             ; MAX 10                                      ;
 ; Device                             ; 10M50DAF484C7G                              ;
 ; Timing Models                      ; Final                                       ;
-; Total logic elements               ; 3,172 / 49,760 ( 6 % )                      ;
-;     Total combinational functions  ; 2,079 / 49,760 ( 4 % )                      ;
-;     Dedicated logic registers      ; 2,336 / 49,760 ( 5 % )                      ;
-; Total registers                    ; 2336                                        ;
-; Total pins                         ; 98 / 360 ( 27 % )                           ;
+; Total logic elements               ; 3,803 / 49,760 ( 8 % )                      ;
+;     Total combinational functions  ; 2,677 / 49,760 ( 5 % )                      ;
+;     Dedicated logic registers      ; 2,592 / 49,760 ( 5 % )                      ;
+; Total registers                    ; 2592                                        ;
+; Total pins                         ; 194 / 360 ( 54 % )                          ;
 ; Total virtual pins                 ; 0                                           ;
 ; Total memory bits                  ; 0 / 1,677,312 ( 0 % )                       ;
 ; Embedded Multiplier 9-bit elements ; 0 / 288 ( 0 % )                             ;
@@ -67,44 +67,44 @@ https://fpgasoftware.intel.com/eula.
 +-------------------+---------------------+
 ; Option            ; Setting             ;
 +-------------------+---------------------+
-; Start date & time ; 01/14/2026 01:04:34 ;
+; Start date & time ; 02/03/2026 12:26:19 ;
 ; Main task         ; Compilation         ;
 ; Revision Name     ; week5               ;
 +-------------------+---------------------+
 
 
-+-------------------------------------------------------------------------------------------------------------------------------------------------+
-; Flow Non-Default Global Settings                                                                                                                ;
-+--------------------------------------+----------------------------------------+---------------+-------------+-----------------------------------+
-; Assignment Name                      ; Value                                  ; Default Value ; Entity Name ; Section Id                        ;
-+--------------------------------------+----------------------------------------+---------------+-------------+-----------------------------------+
-; COMPILER_SIGNATURE_ID                ; 141306738779782.176834907417450        ; --            ; --          ; --                                ;
-; EDA_DESIGN_INSTANCE_NAME             ; NA                                     ; --            ; --          ; week5_top_tb                      ;
-; EDA_GENERATE_FUNCTIONAL_NETLIST      ; Off                                    ; --            ; --          ; eda_board_design_timing           ;
-; EDA_GENERATE_FUNCTIONAL_NETLIST      ; Off                                    ; --            ; --          ; eda_board_design_boundary_scan    ;
-; EDA_GENERATE_FUNCTIONAL_NETLIST      ; Off                                    ; --            ; --          ; eda_board_design_signal_integrity ;
-; EDA_GENERATE_FUNCTIONAL_NETLIST      ; Off                                    ; --            ; --          ; eda_board_design_symbol           ;
-; EDA_NATIVELINK_SIMULATION_TEST_BENCH ; week5_top_tb                           ; --            ; --          ; eda_simulation                    ;
-; EDA_OUTPUT_DATA_FORMAT               ; Verilog Hdl                            ; --            ; --          ; eda_simulation                    ;
-; EDA_SIMULATION_TOOL                  ; ModelSim-Altera (Verilog)              ; <None>        ; --          ; --                                ;
-; EDA_TEST_BENCH_ENABLE_STATUS         ; TEST_BENCH_MODE                        ; --            ; --          ; eda_simulation                    ;
-; EDA_TEST_BENCH_FILE                  ; week5_top_tb.vhd                       ; --            ; --          ; week5_top_tb                      ;
-; EDA_TEST_BENCH_MODULE_NAME           ; week5_top_tb                           ; --            ; --          ; week5_top_tb                      ;
-; EDA_TEST_BENCH_NAME                  ; week5_top_tb                           ; --            ; --          ; eda_simulation                    ;
-; EDA_TIME_SCALE                       ; 1 ps                                   ; --            ; --          ; eda_simulation                    ;
-; MAX_CORE_JUNCTION_TEMP               ; 85                                     ; --            ; --          ; --                                ;
-; MIN_CORE_JUNCTION_TEMP               ; 0                                      ; --            ; --          ; --                                ;
-; NUM_PARALLEL_PROCESSORS              ; All                                    ; --            ; --          ; --                                ;
-; PARTITION_COLOR                      ; -- (Not supported for targeted family) ; --            ; week5_top   ; Top                               ;
-; PARTITION_FITTER_PRESERVATION_LEVEL  ; -- (Not supported for targeted family) ; --            ; week5_top   ; Top                               ;
-; PARTITION_NETLIST_TYPE               ; -- (Not supported for targeted family) ; --            ; week5_top   ; Top                               ;
-; POWER_BOARD_THERMAL_MODEL            ; None (CONSERVATIVE)                    ; --            ; --          ; --                                ;
-; POWER_PRESET_COOLING_SOLUTION        ; 23 MM HEAT SINK WITH 200 LFPM AIRFLOW  ; --            ; --          ; --                                ;
-; PROJECT_OUTPUT_DIRECTORY             ; output_files                           ; --            ; --          ; --                                ;
-; TOP_LEVEL_ENTITY                     ; week5_top                              ; week5         ; --          ; --                                ;
-; VHDL_INPUT_VERSION                   ; VHDL_2008                              ; VHDL_1993     ; --          ; --                                ;
-; VHDL_SHOW_LMF_MAPPING_MESSAGES       ; Off                                    ; --            ; --          ; --                                ;
-+--------------------------------------+----------------------------------------+---------------+-------------+-----------------------------------+
++--------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Flow Non-Default Global Settings                                                                                                                       ;
++--------------------------------------+----------------------------------------+---------------+--------------------+-----------------------------------+
+; Assignment Name                      ; Value                                  ; Default Value ; Entity Name        ; Section Id                        ;
++--------------------------------------+----------------------------------------+---------------+--------------------+-----------------------------------+
+; COMPILER_SIGNATURE_ID                ; 141306738779782.177011797910250        ; --            ; --                 ; --                                ;
+; EDA_DESIGN_INSTANCE_NAME             ; NA                                     ; --            ; --                 ; week7_jal_jalr_tb                 ;
+; EDA_GENERATE_FUNCTIONAL_NETLIST      ; Off                                    ; --            ; --                 ; eda_board_design_timing           ;
+; EDA_GENERATE_FUNCTIONAL_NETLIST      ; Off                                    ; --            ; --                 ; eda_board_design_boundary_scan    ;
+; EDA_GENERATE_FUNCTIONAL_NETLIST      ; Off                                    ; --            ; --                 ; eda_board_design_signal_integrity ;
+; EDA_GENERATE_FUNCTIONAL_NETLIST      ; Off                                    ; --            ; --                 ; eda_board_design_symbol           ;
+; EDA_NATIVELINK_SIMULATION_TEST_BENCH ; week7_jal_jalr_tb                      ; --            ; --                 ; eda_simulation                    ;
+; EDA_OUTPUT_DATA_FORMAT               ; Verilog Hdl                            ; --            ; --                 ; eda_simulation                    ;
+; EDA_SIMULATION_TOOL                  ; ModelSim-Altera (Verilog)              ; <None>        ; --                 ; --                                ;
+; EDA_TEST_BENCH_ENABLE_STATUS         ; TEST_BENCH_MODE                        ; --            ; --                 ; eda_simulation                    ;
+; EDA_TEST_BENCH_FILE                  ; week7_jal_jalr_tb.vhd                  ; --            ; --                 ; week7_jal_jalr_tb                 ;
+; EDA_TEST_BENCH_MODULE_NAME           ; week7_jal_jalr_tb                      ; --            ; --                 ; week7_jal_jalr_tb                 ;
+; EDA_TEST_BENCH_NAME                  ; week7_jal_jalr_tb                      ; --            ; --                 ; eda_simulation                    ;
+; EDA_TIME_SCALE                       ; 1 ps                                   ; --            ; --                 ; eda_simulation                    ;
+; MAX_CORE_JUNCTION_TEMP               ; 85                                     ; --            ; --                 ; --                                ;
+; MIN_CORE_JUNCTION_TEMP               ; 0                                      ; --            ; --                 ; --                                ;
+; NUM_PARALLEL_PROCESSORS              ; All                                    ; --            ; --                 ; --                                ;
+; PARTITION_COLOR                      ; -- (Not supported for targeted family) ; --            ; week5_top_jal_jalr ; Top                               ;
+; PARTITION_FITTER_PRESERVATION_LEVEL  ; -- (Not supported for targeted family) ; --            ; week5_top_jal_jalr ; Top                               ;
+; PARTITION_NETLIST_TYPE               ; -- (Not supported for targeted family) ; --            ; week5_top_jal_jalr ; Top                               ;
+; POWER_BOARD_THERMAL_MODEL            ; None (CONSERVATIVE)                    ; --            ; --                 ; --                                ;
+; POWER_PRESET_COOLING_SOLUTION        ; 23 MM HEAT SINK WITH 200 LFPM AIRFLOW  ; --            ; --                 ; --                                ;
+; PROJECT_OUTPUT_DIRECTORY             ; output_files                           ; --            ; --                 ; --                                ;
+; TOP_LEVEL_ENTITY                     ; week5_top_jal_jalr                     ; week5         ; --                 ; --                                ;
+; VHDL_INPUT_VERSION                   ; VHDL_2008                              ; VHDL_1993     ; --                 ; --                                ;
+; VHDL_SHOW_LMF_MAPPING_MESSAGES       ; Off                                    ; --            ; --                 ; --                                ;
++--------------------------------------+----------------------------------------+---------------+--------------------+-----------------------------------+
 
 
 +--------------------------------------------------------------------------------------------------------------------------+
@@ -112,12 +112,12 @@ https://fpgasoftware.intel.com/eula.
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 ; Module Name          ; Elapsed Time ; Average Processors Used ; Peak Virtual Memory ; Total CPU Time (on all processors) ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
-; Analysis & Synthesis ; 00:00:14     ; 1.0                     ; 509 MB              ; 00:00:38                           ;
-; Fitter               ; 00:00:39     ; 1.4                     ; 2117 MB             ; 00:01:19                           ;
-; Assembler            ; 00:00:02     ; 1.0                     ; 368 MB              ; 00:00:02                           ;
-; Timing Analyzer      ; 00:00:03     ; 2.8                     ; 688 MB              ; 00:00:07                           ;
-; EDA Netlist Writer   ; 00:00:01     ; 1.0                     ; 613 MB              ; 00:00:01                           ;
-; Total                ; 00:00:59     ; --                      ; --                  ; 00:02:07                           ;
+; Analysis & Synthesis ; 00:00:17     ; 1.0                     ; 519 MB              ; 00:00:39                           ;
+; Fitter               ; 00:01:31     ; 1.2                     ; 2113 MB             ; 00:02:26                           ;
+; Assembler            ; 00:00:02     ; 1.0                     ; 369 MB              ; 00:00:02                           ;
+; Timing Analyzer      ; 00:00:03     ; 3.1                     ; 701 MB              ; 00:00:08                           ;
+; EDA Netlist Writer   ; 00:00:01     ; 1.0                     ; 614 MB              ; 00:00:01                           ;
+; Total                ; 00:01:54     ; --                      ; --                  ; 00:03:16                           ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 
 
