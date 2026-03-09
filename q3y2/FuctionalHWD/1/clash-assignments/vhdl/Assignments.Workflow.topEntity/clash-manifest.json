@@ -1,0 +1,92 @@
+{
+    "components": [
+        "adder"
+    ],
+    "dependencies": {
+        "transitive": []
+    },
+    "domains": {
+        "CLK50": {
+            "active_edge": "Rising",
+            "init_behavior": "Defined",
+            "period": 20000,
+            "reset_kind": "Asynchronous",
+            "reset_polarity": "ActiveHigh"
+        },
+        "IntelSystem": {
+            "active_edge": "Rising",
+            "init_behavior": "Defined",
+            "period": 10000,
+            "reset_kind": "Asynchronous",
+            "reset_polarity": "ActiveHigh"
+        },
+        "System": {
+            "active_edge": "Rising",
+            "init_behavior": "Defined",
+            "period": 10000,
+            "reset_kind": "Asynchronous",
+            "reset_polarity": "ActiveHigh"
+        },
+        "XilinxSystem": {
+            "active_edge": "Rising",
+            "init_behavior": "Defined",
+            "period": 10000,
+            "reset_kind": "Synchronous",
+            "reset_polarity": "ActiveHigh"
+        }
+    },
+    "files": [
+        {
+            "name": "adder.sdc",
+            "sha256": "fea3106bbf08526cd819efb55e41f7cc312e289f2c458a64567204000c30453d"
+        },
+        {
+            "name": "adder_types.vhdl",
+            "sha256": "151f5d95e002d96735d6512d8bc128c88fe1347049ddeb9b8bbfddba715a1a59"
+        },
+        {
+            "name": "adder.vhdl",
+            "sha256": "118acb96e4b2633b2cf60ea1ad198e992e7c6470d93a20ce2477d8775463677e"
+        }
+    ],
+    "flags": [
+        20,
+        20
+    ],
+    "hash": "4c34a5d38394221b8b99594b2c1ad399d19d597d6593dddf7e00d6622158e30a",
+    "top_component": {
+        "name": "adder",
+        "ports_flat": [
+            {
+                "direction": "in",
+                "domain": "CLK50",
+                "is_clock": true,
+                "name": "MAX10_CLK1_50",
+                "type_name": "MAX10_CLK1_50.adder_types.clk_CLK50",
+                "width": 1
+            },
+            {
+                "direction": "in",
+                "is_clock": false,
+                "name": "SW",
+                "type_name": "std_logic_vector(9 downto 0)",
+                "width": 10
+            },
+            {
+                "direction": "in",
+                "is_clock": false,
+                "name": "KEY",
+                "type_name": "std_logic_vector(1 downto 0)",
+                "width": 2
+            },
+            {
+                "direction": "out",
+                "is_clock": false,
+                "name": "LEDR",
+                "type_name": "unsigned(4 downto 0)",
+                "width": 5
+            }
+        ]
+    },
+    "version": "unstable"
+}

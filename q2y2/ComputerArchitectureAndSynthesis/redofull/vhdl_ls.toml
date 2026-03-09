@@ -1,0 +1,10 @@
+[libraries]
+lib.files = [
+    "ALU.vhd",
+    "ControlUnit.vhd",
+    "Register_File.vhd",
+    "Imm_Ext.vhd",
+    "riscv_top.vhd",
+    "Data_Memory.vhd",
+    "Instruction_Memory.vhd"
+]

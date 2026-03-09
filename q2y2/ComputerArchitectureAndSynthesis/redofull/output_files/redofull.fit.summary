@@ -1,0 +1,18 @@
+Fitter Status : Successful - Thu Feb  5 00:20:41 2026
+Quartus Prime Version : 20.1.1 Build 720 11/11/2020 SJ Lite Edition
+Revision Name : redofull
+Top-level Entity Name : riscv_top
+Family : MAX 10
+Device : 10M50DAF484C7G
+Timing Models : Final
+Total logic elements : 5,249 / 49,760 ( 11 % )
+    Total combinational functions : 3,870 / 49,760 ( 8 % )
+    Dedicated logic registers : 3,136 / 49,760 ( 6 % )
+Total registers : 3136
+Total pins : 194 / 360 ( 54 % )
+Total virtual pins : 0
+Total memory bits : 0 / 1,677,312 ( 0 % )
+Embedded Multiplier 9-bit elements : 0 / 288 ( 0 % )
+Total PLLs : 0 / 4 ( 0 % )
+UFM blocks : 0 / 1 ( 0 % )
+ADC blocks : 0 / 2 ( 0 % )
