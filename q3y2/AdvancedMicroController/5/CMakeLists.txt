@@ -1,27 +1,27 @@
-
 cmake_minimum_required(VERSION 4.2)
-
 include(pico_sdk_import.cmake)
+include(pico_extras_import.cmake)
 
 project(Week1 C CXX ASM)
-
-add_executable(hello_pio)
-
 pico_sdk_init()
 
-pico_generate_pio_header(hello_pio ${CMAKE_CURRENT_LIST_DIR}/hello.pio)
+add_library(common_lib STATIC)
+target_link_libraries(common_lib PUBLIC
+    pico_stdlib
+    hardware_pio
+    hardware_i2c
+    hardware_pwm
+    hardware_sleep
+)
 
-target_sources(hello_pio PRIVATE hello.c)
+add_executable(picohost picohost.c)
+target_link_libraries(picohost PRIVATE common_lib)
+pico_enable_stdio_usb(picohost 1)
+pico_enable_stdio_uart(picohost 0)
+pico_add_extra_outputs(picohost)
 
-target_link_libraries(hello_pio PRIVATE
-        pico_stdlib
-        hardware_pio
-        hardware_i2c
-        pico_cyw43_arch_none 
-        )
-
-
-pico_add_extra_outputs(hello_pio)
-
-# add url via pico_set_program_url
-# example_auto_set_url(hello_pio)
+add_executable(picoslave picoslave.c)
+target_link_libraries(picoslave PRIVATE common_lib)
+pico_enable_stdio_usb(picoslave 1)
+pico_enable_stdio_uart(picoslave 0)
+pico_add_extra_outputs(picoslave)
