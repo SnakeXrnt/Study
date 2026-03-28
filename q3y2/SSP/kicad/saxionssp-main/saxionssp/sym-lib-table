@@ -1,0 +1,4 @@
+(sym_lib_table
+	(version 7)
+	(lib (name "TTGO") (type "KiCad") (uri "${KIPRJMOD}/ttgo-tdisplay-kicad-master/ttgo_esp32.kicad_sym") (options "") (descr ""))
+)
