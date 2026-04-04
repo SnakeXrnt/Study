@@ -217,7 +217,7 @@
       "internal_id": "",
       "mfg": "",
       "mpn": "",
-      "sch_revision": "1"
+      "sch_revision": "W2.42"
     },
     "layer_pairs": [],
     "layer_presets": [],
@@ -638,7 +638,7 @@
         "uuid": "a5ec32ac-2a24-49b9-84ca-625ca4239f77"
       }
     ],
-    "used_designators": "",
+    "used_designators": "J2-3,#PWR1,#PWR3-5,TTGO1-2",
     "variants": []
   },
   "sheets": [
