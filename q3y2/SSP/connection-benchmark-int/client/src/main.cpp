@@ -1,89 +1,90 @@
 #include <Arduino.h>
 #include <TFT_eSPI.h>
 #include <NimBLEDevice.h>
-#include <cstring>
 
 static NimBLEUUID serviceUUID("4fafc201-1fb5-459e-8fcc-c5c9c331914b");
 static NimBLEUUID charUUID   ("beb5483e-36e1-4688-b7f5-ea07361b26a8");
 
 TFT_eSPI tft = TFT_eSPI();
 
-// Packet layout: [seq:1][ts_ms:4][IMU0:12]...[IMU5:12]
-#define PACKET_HDR_SIZE   5  // 1 seq + 4 ts
-#define IMU_DATA_SIZE    12  // 6 x int16_t
-#define NUM_IMUS          6
-
-struct ImuSample {
-    int16_t ax, ay, az;
-    int16_t gx, gy, gz;
-};
-
-// T-Display is 240x135 landscape
-#define W 240
-#define H 135
-
-// Color palette — dark industrial theme
-#define C_BG        0x0841
-#define C_PANEL     0x10A2
-#define C_ACCENT    0x07FF
-#define C_GREEN     0x07E0
-#define C_YELLOW    0xFFE0
-#define C_ORANGE    0xFD20
-#define C_RED       0xF800
-#define C_DIM       0x4208
-#define C_WHITE     0xFFFF
-#define C_BORDER    0x2965
-
-// --- State ---
+// --- State -------------------------------------------------------------------
 
 NimBLEAddress targetAddress;
 NimBLEClient* pClient         = nullptr;
 bool          doConnect       = false;
 bool          connected       = false;
 bool          scanning        = false;
+int           lastValue       = 0;
+int           drawnValue      = -1;
+int           packetsReceived = 0;
+int           peakValue       = 0;
 unsigned long lastPacketMs    = 0;
+unsigned long connectedAtMs   = 0;
 unsigned long startMs         = 0;
 unsigned long lastScreenMs    = 0;
-unsigned long disconnectAtMs  = 0;
 
-uint8_t       lastSeq         = 0;
-uint32_t      lastTs          = 0;
-int           packetsReceived = 0;
-int           droppedPackets  = 0;
-ImuSample     imus[NUM_IMUS];
+// --- Helpers -----------------------------------------------------------------
 
-// --- Helpers ---
+// T-Display is 240x135 landscape
+#define W 240
+#define H 135
+
+// Color palette — dark industrial theme
+#define C_BG        0x0841   // near-black blue-grey
+#define C_PANEL     0x10A2   // slightly lighter panel
+#define C_ACCENT    0x07FF   // cyan
+#define C_GREEN     0x07E0   // green
+#define C_YELLOW    0xFFE0   // yellow
+#define C_ORANGE    0xFD20   // orange
+#define C_RED       0xF800   // red
+#define C_DIM       0x4208   // dark grey for labels
+#define C_WHITE     0xFFFF
+#define C_BORDER    0x2965   // subtle border grey
 
 String formatTime(unsigned long ms) {
     unsigned long s = ms / 1000;
     char buf[10];
-    snprintf(buf, sizeof(buf), "%02u:%02u:%02u", (unsigned)(s/3600), (unsigned)((s%3600)/60), (unsigned)(s%60));
+    snprintf(buf, sizeof(buf), "%02lu:%02lu:%02lu", s/3600, (s%3600)/60, s%60);
     return String(buf);
 }
 
-int ageMs() {
-    if (lastPacketMs == 0) return 9999;
-    return (int)(millis() - lastPacketMs);
+int ageSeconds() {
+    if (lastPacketMs == 0) return 0;
+    return (int)min((millis() - lastPacketMs) / 1000UL, (unsigned long)999);
 }
 
+int sessionSeconds() {
+    if (connectedAtMs == 0) return 0;
+    return (int)((millis() - connectedAtMs) / 1000UL);
+}
+
+// Pick color for age indicator — green=fresh, yellow=stale, red=dead
 uint16_t ageColor() {
-    int a = ageMs();
-    if (a < 100)  return C_GREEN;
-    if (a < 500) return C_YELLOW;
+    int a = ageSeconds();
+    if (a < 5)  return C_GREEN;
+    if (a < 15) return C_YELLOW;
     return C_RED;
 }
 
+// Draw a labeled value box
+// x,y = top-left, w,h = size, label on top, value inside
 void drawBox(int x, int y, int w, int h,
              const char* label, const char* value,
              uint16_t valueColor, uint8_t valueSize) {
+    // Panel background
     tft.fillRoundRect(x, y, w, h, 3, C_PANEL);
     tft.drawRoundRect(x, y, w, h, 3, C_BORDER);
+
+    // Label
     tft.setTextColor(C_DIM, C_PANEL);
     tft.setTextSize(1);
     tft.setCursor(x + 4, y + 3);
     tft.print(label);
+
+    // Value
     tft.setTextColor(valueColor, C_PANEL);
     tft.setTextSize(valueSize);
+    // Center value horizontally in box
     int charW = valueSize * 6;
     int valLen = strlen(value);
     int vx = x + (w - valLen * charW) / 2;
@@ -92,38 +93,63 @@ void drawBox(int x, int y, int w, int h,
     tft.print(value);
 }
 
-// --- Screens ---
+// Draw a labeled value box — String overload
+void drawBox(int x, int y, int w, int h,
+             const char* label, String value,
+             uint16_t valueColor, uint8_t valueSize) {
+    drawBox(x, y, w, h, label, value.c_str(), valueColor, valueSize);
+}
+
+// --- Screens -----------------------------------------------------------------
 
 void screenBase() {
+    // Full background
     tft.fillScreen(C_BG);
+
+    // Top header bar
     tft.fillRect(0, 0, W, 18, C_PANEL);
     tft.drawFastHLine(0, 18, W, C_ACCENT);
+
+    // Header: device name left, status right
     tft.setTextColor(C_ACCENT, C_PANEL);
     tft.setTextSize(1);
     tft.setCursor(4, 5);
     tft.print("T-DISPLAY CLIENT");
+
+    // Bottom footer bar
     tft.drawFastHLine(0, H - 14, W, C_BORDER);
     tft.fillRect(0, H - 13, W, 13, C_PANEL);
 }
 
 void screenScanning() {
     screenBase();
+
+    // Status badge top-right
     tft.setTextColor(C_YELLOW, C_PANEL);
     tft.setTextSize(1);
     tft.setCursor(W - 60, 5);
     tft.print("BLE:SCAN");
+
+    // Big scanning text
     tft.setTextColor(C_YELLOW, C_BG);
     tft.setTextSize(2);
     tft.setCursor(8, 28);
     tft.print("Scanning...");
+
     tft.setTextColor(C_DIM, C_BG);
     tft.setTextSize(1);
     tft.setCursor(8, 52);
     tft.print("Looking for: C3_Sensor");
+
+    // Animated dot indicator using uptime
     tft.setTextColor(C_ACCENT, C_BG);
     tft.setCursor(8, 66);
-    for (int i = 0; i < (millis() / 400) % 4; i++) tft.print("* ");
+    int dots = (millis() / 400) % 4;
+    for (int i = 0; i < dots; i++) tft.print("* ");
+
+    // Footer: uptime
     tft.setTextColor(C_DIM, C_PANEL);
+    tft.setTextSize(1);
     tft.setCursor(4, H - 11);
     tft.print("UPTIME: ");
     tft.setTextColor(C_WHITE, C_PANEL);
@@ -132,18 +158,22 @@ void screenScanning() {
 
 void screenConnecting() {
     screenBase();
+
     tft.setTextColor(C_ORANGE, C_PANEL);
     tft.setTextSize(1);
     tft.setCursor(W - 72, 5);
     tft.print("BLE:CONN...");
+
     tft.setTextColor(C_ORANGE, C_BG);
     tft.setTextSize(2);
     tft.setCursor(8, 28);
     tft.print("Connecting");
+
     tft.setTextColor(C_DIM, C_BG);
     tft.setTextSize(1);
     tft.setCursor(8, 52);
     tft.print("Target: C3_Sensor");
+
     tft.setTextColor(C_DIM, C_PANEL);
     tft.setCursor(4, H - 11);
     tft.print("UPTIME: ");
@@ -151,116 +181,78 @@ void screenConnecting() {
     tft.print(formatTime(millis() - startMs));
 }
 
-void screenConnectedLayout() {
-    // Called once — draws static elements (headers, IMU IDs)
+void screenConnected() {
     screenBase();
+
+    // Status badge
     tft.setTextColor(C_GREEN, C_PANEL);
     tft.setTextSize(1);
     tft.setCursor(W - 54, 5);
     tft.print("BLE:LIVE");
 
-    tft.setTextColor(C_ACCENT, C_BG);
-    tft.setTextSize(1);
-    tft.setCursor(4, 22);
-    tft.print("  ");
-    tft.setCursor(36, 22); tft.print("AX");
-    tft.setCursor(68, 22); tft.print("AY");
-    tft.setCursor(100, 22); tft.print("AZ");
-    tft.setCursor(132, 22); tft.print("GX");
-    tft.setCursor(164, 22); tft.print("GY");
-    tft.setCursor(196, 22); tft.print("GZ");
-    tft.drawFastHLine(0, 32, W, C_ACCENT);
+    // --- Row 1: big VALUE box + AGE box ---
+    // Value box is wide, age box is narrow
+    // VALUE
+    char valStr[12];
+    snprintf(valStr, sizeof(valStr), "%d", lastValue);
+    drawBox(4, 22, 110, 50, "VALUE", valStr, C_YELLOW, 3);
 
-    // IMU IDs — static
-    tft.setTextColor(C_DIM, C_BG);
-    for (int i = 0; i < NUM_IMUS; i++) {
-        tft.setCursor(4, 35 + i * 13);
-        tft.printf("IMU%d", i);
-    }
+    // AGE — color changes with staleness
+    char ageStr[8];
+    snprintf(ageStr, sizeof(ageStr), "%ds", ageSeconds());
+    drawBox(118, 22, 56, 50, "AGE", ageStr, ageColor(), 2);
 
-    // Stats separator
-    tft.drawFastHLine(0, 111, W, C_BORDER);
-}
+    // PEAK
+    char peakStr[12];
+    snprintf(peakStr, sizeof(peakStr), "%d", peakValue);
+    drawBox(178, 22, 58, 50, "PEAK", peakStr, C_ACCENT, 2);
 
-static const int colX[7] = {4, 36, 68, 100, 132, 164, 196};
+    // --- Row 2: PKTS, SESSION, SOURCE ---
+    char pktsStr[10];
+    snprintf(pktsStr, sizeof(pktsStr), "%d", packetsReceived);
+    drawBox(4, 76, 68, 36, "PACKETS", pktsStr, C_WHITE, 1);
 
-void updateScreenData() {
-    // Called every 50ms — only redraws numbers, erases old with bg color
-    char buf[8];
+    char sessStr[10];
+    int ss = sessionSeconds();
+    snprintf(sessStr, sizeof(sessStr), "%02d:%02d", ss/60, ss%60);
+    drawBox(76, 76, 80, 36, "SESSION", sessStr, C_ACCENT, 1);
 
-    // 6 IMU rows — overwrite values directly
-    for (int i = 0; i < NUM_IMUS; i++) {
-        int y = 35 + i * 13;
-        int16_t vals[6] = {imus[i].ax, imus[i].ay, imus[i].az,
-                           imus[i].gx, imus[i].gy, imus[i].gz};
-        for (int j = 0; j < 6; j++) {
-            uint16_t color = (j < 3) ? C_GREEN : C_YELLOW;
-            tft.setTextColor(C_BG, C_BG);  // Erase old value
-            tft.setCursor(colX[j + 1], y);
-            tft.print("-9999");  // Clear width
-            tft.setTextColor(color, C_BG);
-            tft.setCursor(colX[j + 1], y);
-            int16_t v = vals[j];
-            if (v < 0) {
-                tft.print("-");
-                int absV = -v;
-                tft.print(absV > 9999 ? 9999 : absV);
-            } else {
-                tft.print(v);
-            }
-        }
-    }
+    drawBox(160, 76, 76, 36, "SOURCE", "C3_Sensor", C_GREEN, 1);
 
-    // Stats line — erase old, draw new
-    tft.setTextColor(C_BG, C_BG);
-    tft.setCursor(4, 113);
-    tft.print("SEQ:99999  PKTS:99999  DROP:99999  AGE:9999ms  99Hz  ");
-
-    tft.setTextColor(C_WHITE, C_BG);
-    tft.setCursor(4, 113);
-    snprintf(buf, sizeof(buf), "SEQ:%u  PKTS:%d  DROP:%d",
-             lastSeq, packetsReceived, droppedPackets);
-    tft.print(buf);
-
-    tft.setTextColor(ageColor(), C_BG);
-    snprintf(buf, sizeof(buf), "  AGE:%dms", ageMs());
-    tft.print(buf);
-
-    tft.setTextColor(C_DIM, C_BG);
-    tft.print("  60Hz");
-
-    // Footer uptime — erase old, draw new
-    tft.setTextColor(C_PANEL, C_PANEL);
-    tft.setCursor(60, H - 11);
-    tft.print("UPTIME: 00:00:00                  ");
+    // Footer: system uptime
     tft.setTextColor(C_DIM, C_PANEL);
+    tft.setTextSize(1);
     tft.setCursor(4, H - 11);
     tft.print("UPTIME: ");
     tft.setTextColor(C_WHITE, C_PANEL);
-    tft.setCursor(60, H - 11);
     tft.print(formatTime(millis() - startMs));
-}
 
-void screenConnected() {
-    screenConnectedLayout();
-    updateScreenData();  // Draw initial data
+    // Footer right: packet rate hint
+    tft.setTextColor(C_DIM, C_PANEL);
+    tft.setCursor(W - 72, H - 11);
+    tft.print("2s interval");
 }
 
 void screenFailed() {
     screenBase();
+
     tft.setTextColor(C_RED, C_PANEL);
     tft.setTextSize(1);
     tft.setCursor(W - 54, 5);
     tft.print("BLE:ERR");
+
     tft.setTextColor(C_RED, C_BG);
     tft.setTextSize(2);
     tft.setCursor(8, 28);
     tft.print("FAILED");
+
     tft.setTextColor(C_DIM, C_BG);
+    tft.setTextSize(1);
     tft.setCursor(8, 52);
     tft.print("Could not reach C3_Sensor");
     tft.setCursor(8, 64);
     tft.print("Retrying scan...");
+
     tft.setTextColor(C_DIM, C_PANEL);
     tft.setCursor(4, H - 11);
     tft.print("UPTIME: ");
@@ -270,18 +262,39 @@ void screenFailed() {
 
 void screenDisconnected() {
     screenBase();
+
     tft.setTextColor(C_RED, C_PANEL);
     tft.setTextSize(1);
     tft.setCursor(W - 60, 5);
     tft.print("BLE:LOST");
+
     tft.setTextColor(C_RED, C_BG);
     tft.setTextSize(2);
     tft.setCursor(8, 26);
     tft.print("LINK LOST");
+
     tft.setTextColor(C_DIM, C_BG);
     tft.setTextSize(1);
     tft.setCursor(8, 50);
-    tft.print("Reconnecting...");
+    tft.print("Last value:  ");
+    tft.setTextColor(C_YELLOW, C_BG);
+    tft.print(lastValue);
+
+    tft.setTextColor(C_DIM, C_BG);
+    tft.setCursor(8, 62);
+    tft.print("Packets rcvd: ");
+    tft.setTextColor(C_WHITE, C_BG);
+    tft.print(packetsReceived);
+
+    tft.setCursor(8, 74);
+    tft.setTextColor(C_DIM, C_BG);
+    tft.print("Session: ");
+    tft.setTextColor(C_ACCENT, C_BG);
+    int ss = sessionSeconds();
+    char sessStr[10];
+    snprintf(sessStr, sizeof(sessStr), "%02d:%02d", ss/60, ss%60);
+    tft.print(sessStr);
+
     tft.setTextColor(C_DIM, C_PANEL);
     tft.setCursor(4, H - 11);
     tft.print("UPTIME: ");
@@ -289,13 +302,12 @@ void screenDisconnected() {
     tft.print(formatTime(millis() - startMs));
 }
 
-// --- BLE Callbacks ---
+// --- BLE Callbacks -----------------------------------------------------------
 
 class ClientCallbacks : public NimBLEClientCallbacks {
     void onDisconnect(NimBLEClient* pclient) override {
         connected = false;
         scanning  = false;
-        disconnectAtMs = millis();
         Serial.println("Disconnected");
     }
 };
@@ -314,41 +326,35 @@ class ScanCallbacks : public NimBLEAdvertisedDeviceCallbacks {
     }
 };
 
-// --- Notify ---
+// --- Notify ------------------------------------------------------------------
 
 static void notifyCallback(
     NimBLERemoteCharacteristic* pChar,
     uint8_t* pData, size_t length, bool isNotify)
 {
-    if (length < PACKET_HDR_SIZE) return;
+    if (length == 0 || length > 16) return;
 
-    uint8_t seq = pData[0];
-    uint32_t ts;
-    memcpy(&ts, pData + 1, sizeof(uint32_t));
-
-    size_t expected = PACKET_HDR_SIZE + NUM_IMUS * IMU_DATA_SIZE;
-    if (length >= expected) {
-        for (int i = 0; i < NUM_IMUS; i++) {
-            memcpy(&imus[i], pData + PACKET_HDR_SIZE + i * IMU_DATA_SIZE, IMU_DATA_SIZE);
-        }
+    char buf[17] = {0};
+    bool valid = true;
+    for (size_t i = 0; i < length; i++) {
+        if (pData[i] < '0' || pData[i] > '9') { valid = false; break; }
+        buf[i] = (char)pData[i];
     }
+    if (!valid) return;
 
-    if (packetsReceived > 0) {
-        uint8_t expectedSeq = lastSeq + 1;
-        if (seq != expectedSeq) {
-            droppedPackets++;
-        }
-    }
+    int parsed = atoi(buf);
+    if (parsed == 0 && packetsReceived == 0) return; // skip stale init
 
-    lastSeq = seq;
-    lastTs = ts;
+    lastValue = parsed;
+    if (lastValue > peakValue) peakValue = lastValue; // track peak
     packetsReceived++;
     lastPacketMs = millis();
 
-    Serial.printf("RX seq=%u ts=%u ax[0]=%d\n", seq, ts, imus[0].ax);
+    Serial.print("RX: ");
+    Serial.println(lastValue);
 }
 
-// --- Connect ---
+// --- Connect -----------------------------------------------------------------
 
 bool connectToServer() {
     screenConnecting();
@@ -382,7 +388,7 @@ bool connectToServer() {
     return true;
 }
 
-// --- Scan ---
+// --- Scan --------------------------------------------------------------------
 
 void startScan() {
     Serial.println("Scanning...");
@@ -395,7 +401,7 @@ void startScan() {
     pScan->start(10, false);
 }
 
-// --- Setup ---
+// --- Setup -------------------------------------------------------------------
 
 void setup() {
     Serial.begin(115200);
@@ -412,14 +418,13 @@ void setup() {
     tft.print("Booting...");
 
     NimBLEDevice::init("");
-    NimBLEDevice::setMTU(200);
     delay(500);
 
     startMs = millis();
     startScan();
 }
 
-// --- Loop ---
+// --- Loop --------------------------------------------------------------------
 
 void loop() {
     unsigned long now = millis();
@@ -428,6 +433,8 @@ void loop() {
         doConnect = false;
         if (connectToServer()) {
             connected     = true;
+            connectedAtMs = now;
+            drawnValue    = -1;
             lastPacketMs  = now;
             screenConnected();
         } else {
@@ -444,20 +451,19 @@ void loop() {
         return;
     }
 
-    // Disconnect screen
-    if (!connected && !scanning) {
-        screenDisconnected();
-        return;
-    }
-
-    // Refresh screen data fast
-    if (now - lastScreenMs >= 50) {
+    // Refresh screen every 500ms so age/uptime/session tick live
+    if (now - lastScreenMs >= 500) {
         lastScreenMs = now;
         if (connected) {
-            updateScreenData();
+            screenConnected();
         } else if (scanning) {
             screenScanning();
         }
+    }
+
+    // Show disconnect screen immediately when connection drops
+    if (!connected && !scanning) {
+        screenDisconnected();
     }
 
     delay(50);
