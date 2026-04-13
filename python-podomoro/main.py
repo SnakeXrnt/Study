@@ -2,7 +2,6 @@ import json
 import os
 import curses
 from datetime import datetime
-from collections import deque
 
 class TodoApp:
     def __init__(self, filename="todos.json"):
@@ -113,7 +112,7 @@ def draw_footer(stdscr, todos, current_index):
     
     # Navigation instructions
     stdscr.attron(curses.color_pair(5))
-    stdscr.addstr(y, 0, "  🖱️  UP/DOWN: Navigate | SPACE: Toggle Complete | DEL: Delete | Q: Quit")
+    stdscr.addstr(y, 0, "  ⬆️⬇️ UP/DOWN: Navigate | SPACE: Toggle Complete | DEL: Delete | Q: Quit")
     stdscr.attroff(curses.color_pair(5))
     
     # Current selection
@@ -192,14 +191,6 @@ def main(stdscr):
         
         elif key == ord('a') or key == ord('A'):
             # Add new task
-            stdscr.clear()
-            stdscr.attron(curses.color_pair(1) | curses.A_BOLD)
-            stdscr.addstr(0, 0, "  📝 Add New Task")
-            stdscr.addstr(1, 0, "  ═════════════════")
-            stdscr.attroff(curses.color_pair(1) | curses.A_BOLD)
-            stdscr.refresh()
-            
-            # Get input
             task_input = ""
             while True:
                 stdscr.clear()
@@ -258,7 +249,7 @@ def main(stdscr):
                 app.todos[current_index]['completed'] = not app.todos[current_index]['completed']
                 app.save_todos()
         
-        elif key == ord('d') or key == ord('D'):  # Delete
+        elif key == curses.KEY_DC or key == ord('d') or key == ord('D'):  # Delete key or 'd'
             if 0 <= current_index < len(app.todos):
                 app.delete_task(current_index + 1)
                 app.save_todos()
