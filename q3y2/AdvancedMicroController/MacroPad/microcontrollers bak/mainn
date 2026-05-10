@@ -1,0 +1,112 @@
+#include <stdio.h>
+#include "pico/stdlib.h"
+//#include "pico/cyw43_arch.h"
+#include "bsp/board.h"
+#include "tusb.h"
+#include "class/hid/hid.h"
+#include "usb_descriptors.h"
+
+#define NUM_ROWS 4
+#define NUM_COLS 3
+
+
+const uint rowPins[NUM_ROWS] = {2, 3, 4, 5};     
+const uint colPins[NUM_COLS] = {6, 7, 8};         
+
+
+const uint8_t keymap[NUM_ROWS][NUM_COLS] = {
+    {HID_KEY_9, HID_KEY_6, HID_KEY_3},            
+    {HID_KEY_8, HID_KEY_5, HID_KEY_2},             
+    {HID_KEY_7, HID_KEY_4, HID_KEY_1},              
+    {HID_KEY_KEYPAD_DECIMAL, HID_KEY_0, HID_KEY_KEYPAD_MULTIPLY} 
+};
+
+// Track current key states
+bool key_states[NUM_ROWS][NUM_COLS] = {0};
+
+int main() {
+    board_init();
+    
+    
+    tusb_init();
+
+    for (uint i = 0; i < NUM_ROWS; i++) {
+        gpio_init(rowPins[i]);
+        gpio_set_dir(rowPins[i], GPIO_OUT);
+        gpio_put(rowPins[i], 1); 
+    }
+    
+    for (uint i = 0; i < NUM_COLS; i++) {
+        gpio_init(colPins[i]);
+        gpio_set_dir(colPins[i], GPIO_IN);
+        gpio_pull_up(colPins[i]);
+    }
+
+    uint32_t last_report_time = 0;
+
+    while (true) {
+        tud_task();
+        
+
+        if (!tud_mounted()) continue;
+
+        if (tud_hid_ready() && (board_millis() - last_report_time > 10)) {
+            
+            uint8_t keycodes[6] = {0}; 
+            uint8_t keys_pressed = 0;
+
+            for (uint row = 0; row < NUM_ROWS; row++) {
+                gpio_put(rowPins[row], 0);
+                
+                sleep_us(10);
+                
+                // Check each column
+                for (uint col = 0; col < NUM_COLS; col++) {
+                    // If low key at [row][col] is pressed
+                    if (!gpio_get(colPins[col])) {
+                        if (keys_pressed < 6) {
+                            keycodes[keys_pressed] = keymap[row][col];
+                            keys_pressed++;
+                        }
+                    }
+                }
+                
+                // set it back to high
+                gpio_put(rowPins[row], 1);
+            }
+
+            tud_hid_keyboard_report(REPORT_ID_KEYBOARD, 0, keycodes);
+            
+            last_report_time = board_millis();
+        }
+    }
+    return 0;
+}
+
+
+
+
+
+
+
+
+uint16_t tud_hid_get_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_t report_type, uint8_t* buffer, uint16_t reqlen)
+{
+    (void) instance;
+    (void) report_id;
+    (void) report_type;
+    (void) buffer;
+    (void) reqlen;
+    return 0;
+}
+
+
+
+void tud_hid_set_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_t report_type, uint8_t const* buffer, uint16_t bufsize)
+{
+    (void) instance;
+    (void) report_id;
+    (void) report_type;
+    (void) buffer;
+    (void) bufsize;
+}
