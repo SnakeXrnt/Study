@@ -1,0 +1,67 @@
+;
+; SPDX-FileCopyrightText: 2022 Jamon Terrell
+; SPDX-FileCopyrightText: 2023 Arda Alıcı
+; SPDX-FileCopyrightText: 2025 Kiril V. Strezikozin, Zurab Kvachadze
+;
+; SPDX-License-Identifier: Apache-2.0
+;
+; Portions of this file were derived from the following sources:
+;   - The rotary encoder phase detection logic, Pico Pio Quadrature Encoder,
+;     authored by Jamon Terell in 2022 and by Arda Alıcı in 2023, licensed
+;     under MIT.
+; See the README file for more details.
+;
+
+; This PIO program implements the EC11 Rotary Encoder signal logic:
+; 1.   The A terminal (pin) of the Encoder changes its value (high -> low
+;      or low -> high).
+; 2.a. If B terminal (pin) of the Encoder has the same value as the new
+;      terminal A value, the knob rotation direction is counter-clockwise.
+; 2.b. Otherwise, if B terminal (pin) of the Encoder has a different value than
+;      the new terminal A value, the knob rotation direction is clockwise.
+
+.program ec11
+
+; The number of PIO State machine clock cycles to wait after receiving a signal
+; on Rotary Encoder's pins. Allows the pin to rest (debounce) before performing
+; signal conditioning based on its value. If Rotary Encoder pins are loose
+; (such can happen when using a breadboard, for example), this helps filter
+; the noise that will otherwise be detected as Rotary Encoder knob rotations.
+.define PIN_REST_DELAY 15
+
+.wrap_target
+a_high:
+    ; Wait for the A terminal (pin) of the Encoder to become High (`1`).
+    ; This represents a change in A pin value from the previous Low (`0`).
+    ; The rest delay occurs after this instruction.
+    wait 1 pin 0 [PIN_REST_DELAY]
+
+    ; The Encoder's knob is now half-rotated. Any output delivered to the ISR
+    ; at this moment can be used to detect the start of rotation.
+
+a_low:
+    ; Wait for the A terminal (pin) of the Encoder to become Low (`0`).
+    ; This represents a change in A pin value from the previous High (`1`).
+    ; The rest delay occurs after this instruction.
+    wait 0 pin 0  [PIN_REST_DELAY]
+
+    ; Temporarily store logical High (`1`) in the scratch register X.
+    mov x, !null
+
+    ; If B terminal (pin) of the Encoder is now High (`1`), the following
+    ; instruction jumps to the `output` label. This leaves the X register value
+    ; at High (`1`), which, for the current value of terminal A - Low (`0`)
+    ; indicates the clockwise Encoder knob rotation direction.
+    jmp pin, output
+
+    ; If B terminal (pin) of the Encoder is otherwise Low (`0`), the jump
+    ; instruction above was a no-op, and the X register value is set to logical
+    ; Low (`0`). The output phase follows afterwards, which, for the current
+    ; value of terminal A - Low (`0`), indicates the counter-clockwise Encoder
+    ; knob rotation direction.
+    mov x, null ; Store `0` (Low) in X.
+
+output:
+    ; Output X scratch register value to the ISR.
+    in x, 1
+.wrap

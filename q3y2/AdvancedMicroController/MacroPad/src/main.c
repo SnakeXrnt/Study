@@ -69,11 +69,32 @@ void draw_grid() {
                 ssd1306_draw_square(&disp, x + 1, y + 1, 30, 20);
             }
 
-            int num = (2 - row) * 4 + col + 1;
-            char snum[3];
-            sprintf(snum, "%d", num);
+            char snum[8] = "";
+            int x_offset = 12;
 
-            int x_offset = (num < 10) ? 12 : 9;
+            // Match labels to lib/numpad/numpad.c keymap:
+            // Row 0 (Bottom): 9, 6, F1, PREV
+            // Row 1 (Middle): 8, 5, F2, PLAY
+            // Row 2 (Top):    7, 4, F3, NEXT
+            if (col == 3) { // Media Column
+                if (row == 0)      { strcpy(snum, "|<");   x_offset = 9; }
+                else if (row == 1) { strcpy(snum, "> ||"); x_offset = 5; }
+                else if (row == 2) { strcpy(snum, ">|");   x_offset = 9; }
+            } else if (col == 2) { // Shortcut Column
+                if (row == 0)      strcpy(snum, "F1");
+                else if (row == 1) strcpy(snum, "F2");
+                else if (row == 2) strcpy(snum, "F3");
+                x_offset = 9;
+            } else if (col == 1) { // Numbers Column 2
+                if (row == 0)      strcpy(snum, "6");
+                else if (row == 1) strcpy(snum, "5");
+                else if (row == 2) strcpy(snum, "4");
+            } else if (col == 0) { // Numbers Column 1
+                if (row == 0)      strcpy(snum, "9");
+                else if (row == 1) strcpy(snum, "8");
+                else if (row == 2) strcpy(snum, "7");
+            }
+
             ssd1306_draw_string_with_color(&disp, x + x_offset, y + 7, 1, font_8x5, snum, !pressed);
         }
     }
@@ -100,7 +121,9 @@ void set_status_msg(const char* msg) {
 }
 
 int main() {
+    sleep_ms(10);
     board_init();
+    sleep_ms(10);
     tusb_init();
     sleep_ms(100);
 
@@ -114,10 +137,15 @@ int main() {
     if (ssd1306_init(&disp, 128, 64, 0x3C, I2C_PORT)) {
         oled_initialized = true;
         ssd1306_clear(&disp);
-        ssd1306_draw_string(&disp, 10, 10, 2, "MacroPad");
-        ssd1306_draw_string(&disp, 10, 35, 1, "by Kiwi X 1728NW");
+        ssd1306_draw_string(&disp, 16, 10, 2, "MacroPad");
+        ssd1306_draw_string(&disp, 1, 30, 1, "A 1728NW x Kiwi Project");
         ssd1306_show(&disp);
-        sleep_ms(4000);
+        
+        // Call tud_task during wait to avoid USB enumeration timeout
+        uint32_t start_ms = to_ms_since_boot(get_absolute_time());
+        while (to_ms_since_boot(get_absolute_time()) - start_ms < 2000) {
+            tud_task();
+        }
         draw_grid();
     }
 
@@ -135,61 +163,69 @@ int main() {
     gpio_set_irq_enabled_with_callback(EC11_PIN_BTN, GPIO_IRQ_EDGE_FALL, true, btn_handler);
 
     uint16_t last_consumer_report = 0;
-bool needs_display_update = false;
-uint32_t last_display_update_time = 0;
-bool consumer_release_pending = false;  // renamed for clarity
+    bool needs_display_update = false;
+    uint32_t last_display_update_time = 0;
+    bool consumer_release_pending = false;
+    bool keyboard_report_pending = false;
+    uint8_t pending_keycodes[6] = {0};
+    uint8_t pending_modifier = 0;
 
-while (true) {
-    tud_task();
-    uint32_t now = to_ms_since_boot(get_absolute_time());
+    while (true) {
+        tud_task();
+        uint32_t now = to_ms_since_boot(get_absolute_time());
 
-    if (status_msg_timeout != 0 && now >= status_msg_timeout) {
-        status_msg_timeout = 0;
-        needs_display_update = true;
-    }
-
-    if (needs_display_update && (now - last_display_update_time > 50)) {
-        draw_grid();
-        last_display_update_time = now;
-        needs_display_update = false;
-    }
-
-    if (!tud_mounted()) continue;
-
-    if (tud_hid_ready()) {
+        // Always scan matrix so OLED updates even if USB is not ready
         uint8_t keycodes[6] = {0};
         uint8_t keys_pressed = 0;
         uint16_t matrix_consumer_usage = 0;
         bool matrix_changed = false;
-
         numpad_scan(keycodes, &keys_pressed, &matrix_consumer_usage, &matrix_changed);
 
-        // --- Keyboard report ---
         if (matrix_changed) {
-            uint8_t modifier = 0;
-            for (int i = 0; i < keys_pressed; i++) {
-                if (keycodes[i] == HID_KEY_F1 || keycodes[i] == HID_KEY_F2 || keycodes[i] == HID_KEY_F3) {
-                    modifier = KEYBOARD_MODIFIER_LEFTCTRL | KEYBOARD_MODIFIER_LEFTALT | KEYBOARD_MODIFIER_LEFTSHIFT;
-                    break;
+            needs_display_update = true;
+            if (tud_mounted()) {
+                keyboard_report_pending = true;
+                pending_modifier = 0;
+                for (int i = 0; i < keys_pressed; i++) {
+                    if (keycodes[i] == HID_KEY_F1 || keycodes[i] == HID_KEY_F2 || keycodes[i] == HID_KEY_F3) {
+                        pending_modifier = KEYBOARD_MODIFIER_LEFTCTRL | KEYBOARD_MODIFIER_LEFTALT | KEYBOARD_MODIFIER_LEFTSHIFT;
+                        break;
+                    }
                 }
+                memcpy(pending_keycodes, keycodes, 6);
             }
-            tud_hid_keyboard_report(REPORT_ID_KEYBOARD, modifier, keycodes);
+        }
+
+        if (status_msg_timeout != 0 && now >= status_msg_timeout) {
+            status_msg_timeout = 0;
             needs_display_update = true;
         }
 
+        if (needs_display_update && (now - last_display_update_time > 50)) {
+            draw_grid();
+            last_display_update_time = now;
+            needs_display_update = false;
+        }
+
+        if (!tud_mounted() || !tud_hid_ready()) continue;
+
+        // --- Keyboard report ---
+        if (keyboard_report_pending) {
+            if (tud_hid_keyboard_report(REPORT_ID_KEYBOARD, pending_modifier, pending_keycodes)) {
+                keyboard_report_pending = false;
+            }
+        }
+
+        if (keyboard_report_pending || !tud_hid_ready()) continue;
+
         // --- Consumer report ---
-        uint16_t current_consumer_report = 0;
+        uint16_t current_consumer_report = last_consumer_report;
 
         if (consumer_release_pending) {
-            // Send zero (release) after any consumer key press
             current_consumer_report = 0;
-            consumer_release_pending = false;
         }
-        // Matrix media keys: only fire on key-down edge (matrix_changed + non-zero usage)
         else if (matrix_changed && matrix_consumer_usage != 0) {
             current_consumer_report = matrix_consumer_usage;
-            consumer_release_pending = true;  // release next loop
-
             if (matrix_consumer_usage == HID_USAGE_CONSUMER_SCAN_NEXT)     set_status_msg("NEXT");
             if (matrix_consumer_usage == HID_USAGE_CONSUMER_SCAN_PREVIOUS) set_status_msg("PREV");
             if (matrix_consumer_usage == HID_USAGE_CONSUMER_PLAY_PAUSE)    set_status_msg("PLAY/PAUSE");
@@ -200,14 +236,12 @@ while (true) {
             set_status_msg("VOL +");
             needs_display_update = true;
             vol_change--;
-            consumer_release_pending = true;
         }
         else if (vol_change < 0) {
             current_consumer_report = HID_USAGE_CONSUMER_VOLUME_DECREMENT;
             set_status_msg("VOL -");
             needs_display_update = true;
             vol_change++;
-            consumer_release_pending = true;
         }
         else if (mute_req) {
             current_consumer_report = HID_USAGE_CONSUMER_MUTE;
@@ -215,16 +249,15 @@ while (true) {
             set_status_msg(is_muted ? "MUTE" : "UNMUTE");
             needs_display_update = true;
             mute_req = false;
-            consumer_release_pending = true;
         }
 
-        // Only send if report changed
         if (current_consumer_report != last_consumer_report) {
-            tud_hid_report(REPORT_ID_CONSUMER_CONTROL, &current_consumer_report, sizeof(current_consumer_report));
-            last_consumer_report = current_consumer_report;
+            if (tud_hid_report(REPORT_ID_CONSUMER_CONTROL, &current_consumer_report, sizeof(current_consumer_report))) {
+                last_consumer_report = current_consumer_report;
+                consumer_release_pending = (current_consumer_report != 0);
+            }
         }
-    }
-}    return 0;
+    }    return 0;
 }
 
 uint16_t tud_hid_get_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_t report_type, uint8_t* buffer, uint16_t reqlen) {

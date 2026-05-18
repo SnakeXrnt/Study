@@ -1,0 +1,3 @@
+[submodule "LoRa-mesh/MeshCore-MKRWAN1310D"]
+	path = LoRa-mesh/MeshCore-MKRWAN1310D
+	url = git@github.com:SnakeXrnt/MeshCore-MKRWAN1310.git

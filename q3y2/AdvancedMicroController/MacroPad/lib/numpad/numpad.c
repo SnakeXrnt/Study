@@ -2,7 +2,7 @@
 #include "class/hid/hid.h"
 
 static const uint rowPins[NUM_ROWS] = {2, 4, 6};     
-static const uint colPins[NUM_COLS] = {16, 15, 10, 8};         
+static const uint colPins[NUM_COLS] = {8, 10, 15, 16};         
 
 // Physical Layout Mapping:
 // Column 4: [G4: Prev]  [G8: Play]  [G12: Next]
