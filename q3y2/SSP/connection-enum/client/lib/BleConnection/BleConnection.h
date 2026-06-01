@@ -47,6 +47,7 @@ public:
     void updateClient();
     bool isConnected();
     bool isScanning();
+    bool isConnecting();
     void connect();
     void disconnect();
 #endif

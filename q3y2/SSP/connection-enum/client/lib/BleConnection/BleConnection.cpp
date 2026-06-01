@@ -10,6 +10,7 @@ static BleConnection::DiscoveryCallback _discoveryCallback = nullptr;
 static bool _doConnect = false;
 static bool _connected = false;
 static bool _scanning  = false;
+static bool _connecting = false;
 static NimBLEAddress _targetAddress;
 static NimBLEClient* _pClient = nullptr;
 
@@ -106,7 +107,11 @@ void BleConnection::disconnect() {
 
 #if defined(ARDUINO_ARCH_ESP32)
 class ClientCallbacks : public NimBLEClientCallbacks {
-    void onDisconnect(NimBLEClient* pclient) override { _connected = false; _scanning = false; }
+    void onDisconnect(NimBLEClient* pclient) override { 
+        _connected = false; 
+        _scanning = false; 
+        _connecting = false;
+    }
 };
 
 class ScanCallbacks : public NimBLEAdvertisedDeviceCallbacks {
@@ -124,7 +129,7 @@ class ScanCallbacks : public NimBLEAdvertisedDeviceCallbacks {
             isTarget = true;
         }
 
-        if (isTarget && !_connected && !_doConnect) {
+        if (isTarget && !_connected && !_doConnect && !_connecting) {
             Serial.printf("Target detected! Name: %s, Addr: %s, RSSI: %d\n", 
                           advertisedDevice->getName().c_str(),
                           advertisedDevice->getAddress().toString().c_str(),
@@ -153,11 +158,14 @@ bool BleConnection::initClient(NotifyCallback callback, DiscoveryCallback discov
     pScan->setAdvertisedDeviceCallbacks(new ScanCallbacks());
     pScan->setActiveScan(true);
     _scanning = false;
+    _connecting = false;
+    _connected = false;
     return true;
 }
 
-bool BleConnection::isConnected() { return _connected; }
-bool BleConnection::isScanning()  { return _scanning; }
+bool BleConnection::isConnected()  { return _connected; }
+bool BleConnection::isScanning()   { return _scanning; }
+bool BleConnection::isConnecting() { return _connecting; }
 
 void BleConnection::connect() {
     _doConnect = true;
@@ -166,12 +174,14 @@ void BleConnection::connect() {
 void BleConnection::disconnect() {
     if (_pClient) _pClient->disconnect();
     _connected = false;
+    _connecting = false;
 }
 
 void BleConnection::updateClient() {
     if (_doConnect) {
         Serial.println(">>> [BLE] _doConnect triggered. Stopping scan...");
         _doConnect = false;
+        _connecting = true;
         
         NimBLEDevice::getScan()->stop();
         _scanning = false;
@@ -179,6 +189,7 @@ void BleConnection::updateClient() {
         
         if (_targetAddress.toString() == "00:00:00:00:00:00") {
             Serial.println(">>> [BLE] Error: Invalid Address.");
+            _connecting = false;
         } else {
             Serial.printf(">>> [BLE] Connecting to %s...\n", _targetAddress.toString().c_str());
 
@@ -199,6 +210,7 @@ void BleConnection::updateClient() {
                             if (pChr->subscribe(true, internalNotifyCallback)) {
                                 Serial.println(">>> [BLE] Subscribed! System READY.");
                                 _connected = true;
+                                _connecting = false;
                                 _scanning = false;
                                 return;
                             } else {
@@ -220,11 +232,12 @@ void BleConnection::updateClient() {
         
         if (_pClient) _pClient->disconnect();
         Serial.println(">>> [BLE] Failed to complete setup. Restarting scan...");
+        _connecting = false;
         NimBLEDevice::getScan()->start(0, scanEndedCB, false);
         _scanning = true;
     }
     
-    if (!_connected && !_scanning) {
+    if (!_connected && !_scanning && !_connecting) {
         Serial.println(">>> [BLE] Scan starting (Async)...");
         if (NimBLEDevice::getScan()->start(0, scanEndedCB, false)) {
             _scanning = true;
