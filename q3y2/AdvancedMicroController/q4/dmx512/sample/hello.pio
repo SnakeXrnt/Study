@@ -1,0 +1,72 @@
+.pio_version 0
+
+.program dmx
+.wrap_target
+
+; --- BREAK ---  already given
+    set pins, 0
+    set x, 30         ; 31 iterations * 4us = 124us (>88us)
+
+    break_loop:
+        nop [2]       ; 1 + 2 = 3 cycles
+        jmp x-- break_loop ; 1 cycle
+
+; --- MAB --- (Mark After Break)
+    set pins, 1       ; Set pin HIGH
+    set x, 2          ; 3 iterations * 4us = 12us (>8us)
+    mab_loop:
+        nop [2]
+        jmp x-- mab_loop
+
+; --- DATA ---
+    pull block        ; pull the amount of bytes (count - 1)
+    mov y, osr        ; copies the amount of bytes in y register
+
+    byte_loop:        ; loop through every byte
+        pull block    ; get the data byte into OSR
+        set pins, 0 [3] ; Start bit: 4us Low (1 cycle + 3 delay)
+        
+        set x, 7      ; Send 8 bits
+    bit_loop:
+        out pins, 1 [3] ; Shift out 1 bit, wait 3 cycles (total 4us)
+        jmp x-- bit_loop
+        
+        set pins, 1 [7] ; 2 Stop bits: 8us High (1 cycle + 7 delay)
+    jmp y-- byte_loop
+
+.wrap
+
+% c-sdk {
+static inline void dmx_program_init(PIO pio, uint sm, uint offset, uint pin) {
+    pio_sm_config c = dmx_program_get_default_config(offset);
+
+    // Set clock divider to 125.0. 
+    // Assuming 125MHz system clock, 1 cycle = 1us.
+    // 4 cycles = 4us, which matches 250kbaud (DMX standard).
+    sm_config_set_clkdiv(&c, 125.0f);
+
+    // Configure shift register: 
+    // - Shift right (true) for LSB first
+    // - No autopull (false)
+    // - 8 bits per byte
+    sm_config_set_out_shift(&c, true, false, 8);
+
+    // Map the SET pin group to the specified pin (for BREAK, MAB, Start/Stop bits)
+    sm_config_set_set_pins(&c, pin, 1);
+    
+    // Map the OUT pin group to the same pin (for data bits)
+    sm_config_set_out_pins(&c, pin, 1);
+
+    // Connect PIO to the pad
+    pio_gpio_init(pio, pin);
+
+    // Set the pin direction to output
+    pio_sm_set_consecutive_pindirs(pio, sm, pin, 1, true);
+
+    // Load our configuration and jump to the start of the program
+    pio_sm_init(pio, sm, offset, &c);
+    
+    // Set the state machine running
+    pio_sm_set_enabled(pio, sm, true);
+}
+%}

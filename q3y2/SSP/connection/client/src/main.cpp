@@ -1,464 +1,119 @@
 #include <Arduino.h>
 #include <TFT_eSPI.h>
 #include <NimBLEDevice.h>
-#include <cstring>
 
 static NimBLEUUID serviceUUID("4fafc201-1fb5-459e-8fcc-c5c9c331914b");
 static NimBLEUUID charUUID   ("beb5483e-36e1-4688-b7f5-ea07361b26a8");
 
 TFT_eSPI tft = TFT_eSPI();
 
-// Packet layout: [seq:1][ts_ms:4][IMU0:12]...[IMU5:12]
-#define PACKET_HDR_SIZE   5  // 1 seq + 4 ts
-#define IMU_DATA_SIZE    12  // 6 x int16_t
-#define NUM_IMUS          6
+enum Direction { LEFT = 0, RIGHT = 1, UP = 2, DOWN = 3 };
+const char* dirNames[] = {"LEFT", "RIGHT", "UP", "DOWN"};
 
-struct ImuSample {
-    int16_t ax, ay, az;
-    int16_t gx, gy, gz;
-};
-
-// T-Display is 240x135 landscape
-#define W 240
-#define H 135
-
-// Color palette — dark industrial theme
 #define C_BG        0x0841
-#define C_PANEL     0x10A2
 #define C_ACCENT    0x07FF
-#define C_GREEN     0x07E0
-#define C_YELLOW    0xFFE0
-#define C_ORANGE    0xFD20
-#define C_RED       0xF800
-#define C_DIM       0x4208
 #define C_WHITE     0xFFFF
-#define C_BORDER    0x2965
 
-// --- State ---
-
-NimBLEAddress targetAddress;
-NimBLEClient* pClient         = nullptr;
+NimBLEAddress targetAddress("");
 bool          doConnect       = false;
 bool          connected       = false;
-bool          scanning        = false;
-unsigned long lastPacketMs    = 0;
-unsigned long startMs         = 0;
-unsigned long lastScreenMs    = 0;
-unsigned long disconnectAtMs  = 0;
-
-uint8_t       lastSeq         = 0;
-uint32_t      lastTs          = 0;
-int           packetsReceived = 0;
-int           droppedPackets  = 0;
-ImuSample     imus[NUM_IMUS];
-
-// --- Helpers ---
-
-String formatTime(unsigned long ms) {
-    unsigned long s = ms / 1000;
-    char buf[10];
-    snprintf(buf, sizeof(buf), "%02u:%02u:%02u", (unsigned)(s/3600), (unsigned)((s%3600)/60), (unsigned)(s%60));
-    return String(buf);
-}
-
-int ageMs() {
-    if (lastPacketMs == 0) return 9999;
-    return (int)(millis() - lastPacketMs);
-}
-
-uint16_t ageColor() {
-    int a = ageMs();
-    if (a < 100)  return C_GREEN;
-    if (a < 500) return C_YELLOW;
-    return C_RED;
-}
-
-void drawBox(int x, int y, int w, int h,
-             const char* label, const char* value,
-             uint16_t valueColor, uint8_t valueSize) {
-    tft.fillRoundRect(x, y, w, h, 3, C_PANEL);
-    tft.drawRoundRect(x, y, w, h, 3, C_BORDER);
-    tft.setTextColor(C_DIM, C_PANEL);
-    tft.setTextSize(1);
-    tft.setCursor(x + 4, y + 3);
-    tft.print(label);
-    tft.setTextColor(valueColor, C_PANEL);
-    tft.setTextSize(valueSize);
-    int charW = valueSize * 6;
-    int valLen = strlen(value);
-    int vx = x + (w - valLen * charW) / 2;
-    if (vx < x + 2) vx = x + 2;
-    tft.setCursor(vx, y + 13);
-    tft.print(value);
-}
-
-// --- Screens ---
-
-void screenBase() {
-    tft.fillScreen(C_BG);
-    tft.fillRect(0, 0, W, 18, C_PANEL);
-    tft.drawFastHLine(0, 18, W, C_ACCENT);
-    tft.setTextColor(C_ACCENT, C_PANEL);
-    tft.setTextSize(1);
-    tft.setCursor(4, 5);
-    tft.print("T-DISPLAY CLIENT");
-    tft.drawFastHLine(0, H - 14, W, C_BORDER);
-    tft.fillRect(0, H - 13, W, 13, C_PANEL);
-}
-
-void screenScanning() {
-    screenBase();
-    tft.setTextColor(C_YELLOW, C_PANEL);
-    tft.setTextSize(1);
-    tft.setCursor(W - 60, 5);
-    tft.print("BLE:SCAN");
-    tft.setTextColor(C_YELLOW, C_BG);
-    tft.setTextSize(2);
-    tft.setCursor(8, 28);
-    tft.print("Scanning...");
-    tft.setTextColor(C_DIM, C_BG);
-    tft.setTextSize(1);
-    tft.setCursor(8, 52);
-    tft.print("Looking for: C3_Sensor");
-    tft.setTextColor(C_ACCENT, C_BG);
-    tft.setCursor(8, 66);
-    for (int i = 0; i < (millis() / 400) % 4; i++) tft.print("* ");
-    tft.setTextColor(C_DIM, C_PANEL);
-    tft.setCursor(4, H - 11);
-    tft.print("UPTIME: ");
-    tft.setTextColor(C_WHITE, C_PANEL);
-    tft.print(formatTime(millis() - startMs));
-}
-
-void screenConnecting() {
-    screenBase();
-    tft.setTextColor(C_ORANGE, C_PANEL);
-    tft.setTextSize(1);
-    tft.setCursor(W - 72, 5);
-    tft.print("BLE:CONN...");
-    tft.setTextColor(C_ORANGE, C_BG);
-    tft.setTextSize(2);
-    tft.setCursor(8, 28);
-    tft.print("Connecting");
-    tft.setTextColor(C_DIM, C_BG);
-    tft.setTextSize(1);
-    tft.setCursor(8, 52);
-    tft.print("Target: C3_Sensor");
-    tft.setTextColor(C_DIM, C_PANEL);
-    tft.setCursor(4, H - 11);
-    tft.print("UPTIME: ");
-    tft.setTextColor(C_WHITE, C_PANEL);
-    tft.print(formatTime(millis() - startMs));
-}
-
-void screenConnectedLayout() {
-    // Called once — draws static elements (headers, IMU IDs)
-    screenBase();
-    tft.setTextColor(C_GREEN, C_PANEL);
-    tft.setTextSize(1);
-    tft.setCursor(W - 54, 5);
-    tft.print("BLE:LIVE");
-
-    tft.setTextColor(C_ACCENT, C_BG);
-    tft.setTextSize(1);
-    tft.setCursor(4, 22);
-    tft.print("  ");
-    tft.setCursor(36, 22); tft.print("AX");
-    tft.setCursor(68, 22); tft.print("AY");
-    tft.setCursor(100, 22); tft.print("AZ");
-    tft.setCursor(132, 22); tft.print("GX");
-    tft.setCursor(164, 22); tft.print("GY");
-    tft.setCursor(196, 22); tft.print("GZ");
-    tft.drawFastHLine(0, 32, W, C_ACCENT);
-
-    // IMU IDs — static
-    tft.setTextColor(C_DIM, C_BG);
-    for (int i = 0; i < NUM_IMUS; i++) {
-        tft.setCursor(4, 35 + i * 13);
-        tft.printf("IMU%d", i);
-    }
-
-    // Stats separator
-    tft.drawFastHLine(0, 111, W, C_BORDER);
-}
-
-static const int colX[7] = {4, 36, 68, 100, 132, 164, 196};
-
-void updateScreenData() {
-    // Called every 50ms — only redraws numbers, erases old with bg color
-    char buf[8];
-
-    // 6 IMU rows — overwrite values directly
-    for (int i = 0; i < NUM_IMUS; i++) {
-        int y = 35 + i * 13;
-        int16_t vals[6] = {imus[i].ax, imus[i].ay, imus[i].az,
-                           imus[i].gx, imus[i].gy, imus[i].gz};
-        for (int j = 0; j < 6; j++) {
-            uint16_t color = (j < 3) ? C_GREEN : C_YELLOW;
-            tft.setTextColor(C_BG, C_BG);  // Erase old value
-            tft.setCursor(colX[j + 1], y);
-            tft.print("-9999");  // Clear width
-            tft.setTextColor(color, C_BG);
-            tft.setCursor(colX[j + 1], y);
-            int16_t v = vals[j];
-            if (v < 0) {
-                tft.print("-");
-                int absV = -v;
-                tft.print(absV > 9999 ? 9999 : absV);
-            } else {
-                tft.print(v);
-            }
-        }
-    }
-
-    // Stats line — erase old, draw new
-    tft.setTextColor(C_BG, C_BG);
-    tft.setCursor(4, 113);
-    tft.print("SEQ:99999  PKTS:99999  DROP:99999  AGE:9999ms  99Hz  ");
-
-    tft.setTextColor(C_WHITE, C_BG);
-    tft.setCursor(4, 113);
-    snprintf(buf, sizeof(buf), "SEQ:%u  PKTS:%d  DROP:%d",
-             lastSeq, packetsReceived, droppedPackets);
-    tft.print(buf);
-
-    tft.setTextColor(ageColor(), C_BG);
-    snprintf(buf, sizeof(buf), "  AGE:%dms", ageMs());
-    tft.print(buf);
-
-    tft.setTextColor(C_DIM, C_BG);
-    tft.print("  60Hz");
-
-    // Footer uptime — erase old, draw new
-    tft.setTextColor(C_PANEL, C_PANEL);
-    tft.setCursor(60, H - 11);
-    tft.print("UPTIME: 00:00:00                  ");
-    tft.setTextColor(C_DIM, C_PANEL);
-    tft.setCursor(4, H - 11);
-    tft.print("UPTIME: ");
-    tft.setTextColor(C_WHITE, C_PANEL);
-    tft.setCursor(60, H - 11);
-    tft.print(formatTime(millis() - startMs));
-}
-
-void screenConnected() {
-    screenConnectedLayout();
-    updateScreenData();  // Draw initial data
-}
-
-void screenFailed() {
-    screenBase();
-    tft.setTextColor(C_RED, C_PANEL);
-    tft.setTextSize(1);
-    tft.setCursor(W - 54, 5);
-    tft.print("BLE:ERR");
-    tft.setTextColor(C_RED, C_BG);
-    tft.setTextSize(2);
-    tft.setCursor(8, 28);
-    tft.print("FAILED");
-    tft.setTextColor(C_DIM, C_BG);
-    tft.setCursor(8, 52);
-    tft.print("Could not reach C3_Sensor");
-    tft.setCursor(8, 64);
-    tft.print("Retrying scan...");
-    tft.setTextColor(C_DIM, C_PANEL);
-    tft.setCursor(4, H - 11);
-    tft.print("UPTIME: ");
-    tft.setTextColor(C_WHITE, C_PANEL);
-    tft.print(formatTime(millis() - startMs));
-}
-
-void screenDisconnected() {
-    screenBase();
-    tft.setTextColor(C_RED, C_PANEL);
-    tft.setTextSize(1);
-    tft.setCursor(W - 60, 5);
-    tft.print("BLE:LOST");
-    tft.setTextColor(C_RED, C_BG);
-    tft.setTextSize(2);
-    tft.setCursor(8, 26);
-    tft.print("LINK LOST");
-    tft.setTextColor(C_DIM, C_BG);
-    tft.setTextSize(1);
-    tft.setCursor(8, 50);
-    tft.print("Reconnecting...");
-    tft.setTextColor(C_DIM, C_PANEL);
-    tft.setCursor(4, H - 11);
-    tft.print("UPTIME: ");
-    tft.setTextColor(C_WHITE, C_PANEL);
-    tft.print(formatTime(millis() - startMs));
-}
-
-// --- BLE Callbacks ---
+Direction     lastDirection   = LEFT;
+Direction     displayedDir    = (Direction)-1;
+int           pkts            = 0;
 
 class ClientCallbacks : public NimBLEClientCallbacks {
-    void onDisconnect(NimBLEClient* pclient) override {
-        connected = false;
-        scanning  = false;
-        disconnectAtMs = millis();
-        Serial.println("Disconnected");
+    void onConnect(NimBLEClient* pClient) override { connected = true; }
+    void onDisconnect(NimBLEClient* pClient) override { 
+        connected = false; 
+        Serial.println("!!! Disconnected");
     }
 };
+
+void notifyCallback(NimBLERemoteCharacteristic* pChar, uint8_t* pData, size_t length, bool isNotify) {
+    if (length > 0 && pData[0] < 4) {
+        lastDirection = (Direction)pData[0];
+        pkts++;
+        Serial.printf("[RX] Received: %s\n", dirNames[lastDirection]);
+    }
+}
 
 class ScanCallbacks : public NimBLEAdvertisedDeviceCallbacks {
     void onResult(NimBLEAdvertisedDevice* advertisedDevice) override {
-        Serial.print("Found: ");
-        Serial.println(advertisedDevice->getName().c_str());
         if (advertisedDevice->getName() == "C3_Sensor") {
             NimBLEDevice::getScan()->stop();
             targetAddress = advertisedDevice->getAddress();
             doConnect     = true;
-            scanning      = false;
-            Serial.println("Target found, connecting...");
         }
     }
 };
 
-// --- Notify ---
-
-static void notifyCallback(
-    NimBLERemoteCharacteristic* pChar,
-    uint8_t* pData, size_t length, bool isNotify)
-{
-    if (length < PACKET_HDR_SIZE) return;
-
-    uint8_t seq = pData[0];
-    uint32_t ts;
-    memcpy(&ts, pData + 1, sizeof(uint32_t));
-
-    size_t expected = PACKET_HDR_SIZE + NUM_IMUS * IMU_DATA_SIZE;
-    if (length >= expected) {
-        for (int i = 0; i < NUM_IMUS; i++) {
-            memcpy(&imus[i], pData + PACKET_HDR_SIZE + i * IMU_DATA_SIZE, IMU_DATA_SIZE);
-        }
+void updateUI() {
+    if (lastDirection != displayedDir) {
+        tft.setTextColor(C_WHITE, C_BG);
+        tft.setTextSize(4);
+        tft.setTextPadding(200);
+        tft.setCursor(40, 60);
+        tft.print(dirNames[lastDirection]);
+        displayedDir = lastDirection;
     }
-
-    if (packetsReceived > 0) {
-        uint8_t expectedSeq = lastSeq + 1;
-        if (seq != expectedSeq) {
-            droppedPackets++;
-        }
-    }
-
-    lastSeq = seq;
-    lastTs = ts;
-    packetsReceived++;
-    lastPacketMs = millis();
-
-    Serial.printf("RX seq=%u ts=%u ax[0]=%d\n", seq, ts, imus[0].ax);
+    tft.setTextSize(1);
+    tft.setCursor(4, 115);
+    tft.setTextColor(0x7BEF, C_BG);
+    tft.printf("Packets: %d", pkts);
 }
-
-// --- Connect ---
 
 bool connectToServer() {
-    screenConnecting();
+    Serial.println(">>> Connecting...");
+    NimBLEClient* pClient = NimBLEDevice::createClient();
+    pClient->setClientCallbacks(new ClientCallbacks());
+    if (!pClient->connect(targetAddress)) return false;
 
-    if (pClient == nullptr) {
-        pClient = NimBLEDevice::createClient();
-        pClient->setClientCallbacks(new ClientCallbacks());
-    }
-
-    if (!pClient->connect(targetAddress)) {
-        Serial.println("Connect failed");
-        return false;
-    }
-    Serial.println("Connected");
-
-    NimBLERemoteService* pService = pClient->getService(serviceUUID);
-    if (!pService) { pClient->disconnect(); return false; }
-
-    NimBLERemoteCharacteristic* pChar = pService->getCharacteristic(charUUID);
-    if (!pChar)    { pClient->disconnect(); return false; }
-
-    if (pChar->canNotify()) {
-        bool ok = pChar->subscribe(true, notifyCallback);
-        Serial.print("Subscribe: ");
-        Serial.println(ok ? "OK" : "FAILED");
-        if (!ok) { pClient->disconnect(); return false; }
-    } else {
-        return false;
-    }
-
-    return true;
+    NimBLERemoteService* pSvc = pClient->getService(serviceUUID);
+    if (!pSvc) return false;
+    NimBLERemoteCharacteristic* pChr = pSvc->getCharacteristic(charUUID);
+    if (!pChr || !pChr->canNotify()) return false;
+    
+    return pChr->subscribe(true, notifyCallback);
 }
-
-// --- Scan ---
-
-void startScan() {
-    Serial.println("Scanning...");
-    scanning  = true;
-    doConnect = false;
-    screenScanning();
-    NimBLEScan* pScan = NimBLEDevice::getScan();
-    pScan->setAdvertisedDeviceCallbacks(new ScanCallbacks());
-    pScan->setActiveScan(true);
-    pScan->start(10, false);
-}
-
-// --- Setup ---
 
 void setup() {
     Serial.begin(115200);
-
-    pinMode(4, OUTPUT);
-    digitalWrite(4, HIGH);
+    delay(1000);
+    Serial.println("\n--- CLIENT STARTING ---");
 
     tft.init();
     tft.setRotation(1);
     tft.fillScreen(C_BG);
-    tft.setTextColor(C_WHITE, C_BG);
-    tft.setTextSize(2);
-    tft.setCursor(8, 50);
-    tft.print("Booting...");
+    tft.setTextColor(C_ACCENT);
+    tft.setCursor(10, 10);
+    tft.print("SCANNING...");
 
     NimBLEDevice::init("");
-    NimBLEDevice::setMTU(200);
-    delay(500);
-
-    startMs = millis();
-    startScan();
+    NimBLEDevice::getScan()->setAdvertisedDeviceCallbacks(new ScanCallbacks());
+    NimBLEDevice::getScan()->setActiveScan(true);
+    NimBLEDevice::getScan()->start(0, false); // continuous scan
 }
 
-// --- Loop ---
-
 void loop() {
-    unsigned long now = millis();
-
     if (doConnect) {
         doConnect = false;
         if (connectToServer()) {
-            connected     = true;
-            lastPacketMs  = now;
-            screenConnected();
+            Serial.println(">>> Connected!");
+            tft.fillScreen(C_BG);
+            tft.setCursor(10, 10);
+            tft.print("LIVE");
         } else {
-            screenFailed();
-            delay(3000);
-            startScan();
-        }
-        return;
-    }
-
-    if (!connected && !scanning && !doConnect) {
-        delay(1000);
-        startScan();
-        return;
-    }
-
-    // Disconnect screen
-    if (!connected && !scanning) {
-        screenDisconnected();
-        return;
-    }
-
-    // Refresh screen data fast
-    if (now - lastScreenMs >= 50) {
-        lastScreenMs = now;
-        if (connected) {
-            updateScreenData();
-        } else if (scanning) {
-            screenScanning();
+            Serial.println(">>> Connection Failed");
+            NimBLEDevice::getScan()->start(0, false);
         }
     }
 
+    if (connected) {
+        updateUI();
+    } else {
+        if (!NimBLEDevice::getScan()->isScanning()) {
+            NimBLEDevice::getScan()->start(0, false);
+        }
+    }
     delay(50);
 }

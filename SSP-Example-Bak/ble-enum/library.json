@@ -1,0 +1,8 @@
+{
+    "name": "BleConnectionEnum",
+    "version": "1.0.0",
+    "build": {
+        "includeDir": "libs",
+        "srcDir": "libs"
+    }
+}
