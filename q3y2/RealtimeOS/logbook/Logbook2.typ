@@ -844,3 +844,28 @@ I allocate and initialize the GPIO pin inside the `register_device` function and
   gpio_free(gpio_pin);
 ```
 
+== Nokia Screen SPI
+
+With the LED being done now, lets cook some stuff 
+
+From The wise man (the one that tell me to do a C file to interact with the kernel driver), he lended me a very unique stuff. Its a Nokia 5110 Screen, but with an SPI breakout board, made by Adafruit.
+
+#link("https://github.com/adafruit/Adafruit-PCD8544-Nokia-5110-LCD-library.git")
+
+Its a neat little screen. Also very retro looking. But now we have work to do, which is to make the screen work
+
+=== Planning 
+
+Let's do the planning. Here is some of my plan : 
+- I want the screen to be connected with SPI to the GPIO (Pi Hat+)
+- I want the SPI screen to be initialized when we load the module (then initializer in the register device func)
+- I want the Buffer to change as well (whats on the screen = whats on the buffer)
+- I want the backlit to turn on when the RPI turn on, and turn off when the RPI turned off (power indicator logic)
+- I want when i do `echo` something to the driver, the screen update immediately
+
+I think this enough for Planning. Now lets cook. 
+
+=== SPI research in the making
+
+
+
