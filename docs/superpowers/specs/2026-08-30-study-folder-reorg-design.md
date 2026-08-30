@@ -102,3 +102,41 @@ Folder-name typos (`microcontroler`, `FuctionalHWD`, `HOMEGOUP`) are left as-is.
 - All moves via `git mv` to preserve history
 - Obsidian: 280 markdown files, only 2 use wikilinks and both resolve within
   their own assignment folder, so link breakage is negligible
+
+## Execution notes (what diverged from the plan)
+
+Five things were discovered during execution that the design did not anticipate.
+
+**The proposed ignore patterns were too broad.** A blanket `**/bin/` would have
+untracked `clash-assignments/bin/Clash.hs` in six FuctionalHWD assignments, which
+is Haskell source, not output. A blanket `*.zip` would have untracked roughly 120
+legitimate files: assignment archives and KiCad backups. Patterns were narrowed to
+`**/obj/`, `**/bin/Debug/`, `**/bin/Release/`, `**/.stack-work/` and
+`**/node_modules/`, and the zip rule reduced to the single superseded file.
+11,913 files were untracked, all verified as build output or dependencies.
+
+**Nine gitlinks existed, only one of them registered.** Beyond the known
+MeshCore path mismatch: five pointed at empty directories with no repo and no
+URL, so they could never be fetched and were removed; `SimpleLinuxDriver` was a
+real upstream repo never registered, now a proper submodule with
+`ignore = untracked` to suppress a stray `compile_commands.json`; two editor
+`.history` directories were gitlinks and are now ignored; `Saxion-SSP` held 68 MB
+of course examples that git was not actually storing, now tracked as ordinary
+content (579 files).
+
+**Branch `y2q1` was not merged**, contrary to the design's assumption. It carries
+one unique commit on a divergent root, so it was left untouched rather than
+deleted.
+
+**`learnreact` contained no source.** All 6,293 files were `node_modules`; there
+was no React app. Deleted with the user's approval rather than moved.
+
+**`git mv learnreact` failed** because untracking `node_modules` left it with zero
+tracked files; it was moved with plain `mv` before being deleted.
+
+## Outcome
+
+- Working tree clean; both submodules resolve on the correct branches
+- 6,417 renames recorded, so `git log --follow` traces files across the move
+- Root reduced to six entries: three year folders, `projects/`, `work/`, `docs/`
+- Backup branch `backup/pre-reorg-2026-08-30` at `71a240f8`
