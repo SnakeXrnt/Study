@@ -29,3 +29,6 @@ library_ec11(1).zip
 
 # Editor local-history
 **/.history/
+
+# Local design/spec notes, not published
+/docs/
