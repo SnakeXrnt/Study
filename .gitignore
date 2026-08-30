@@ -1,10 +1,28 @@
+# .NET build output
+**/obj/
+**/bin/Debug/
+**/bin/Release/
+
+# Other build output
 **/build/
-.DS_Store
+**/.stack-work/
 compile_commands.json
 **/.cache/
+
+# Dependencies
+**/node_modules/
 **/.venv/
 **/pyenv/
-project/tradingbot/pyenv/
+
+# Secrets / env
 .env
 
+# Tooling
+.DS_Store
 .aider*
+
+# Superseded by projects/library_ec11/
+library_ec11(1).zip
+
+# Work lives here but is a separate repo with its own history
+/work/
