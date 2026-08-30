@@ -32,3 +32,13 @@ library_ec11(1).zip
 
 # Local design/spec notes, not published
 /docs/
+
+# Syncthing metadata
+/.stfolder/
+/.stversions/
+
+# KDE folder view settings
+.directory
+
+# Obsidian vault config (synced via Syncthing, not git)
+/.obsidian/
