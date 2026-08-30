@@ -1,3 +1,6 @@
-[submodule "LoRa-mesh/MeshCore-MKRWAN1310D"]
-	path = LoRa-mesh/MeshCore-MKRWAN1310D
+[submodule "projects/LoRa-mesh/MeshCore-MKRWAN1310"]
+	path = projects/LoRa-mesh/MeshCore-MKRWAN1310
 	url = git@github.com:SnakeXrnt/MeshCore-MKRWAN1310.git
+[submodule "2025-2026/q3/RealtimeOS/kernel/SimpleLinuxDriver"]
+	path = 2025-2026/q3/RealtimeOS/kernel/SimpleLinuxDriver
+	url = https://github.com/apriorit/SimpleLinuxDriver.git

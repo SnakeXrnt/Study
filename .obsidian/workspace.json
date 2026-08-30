@@ -39,12 +39,12 @@
             "id": "30c3043dc6454e05",
             "type": "leaf",
             "state": {
-              "type": "release-notes",
+              "type": "pdf",
               "state": {
-                "currentVersion": "1.10.6"
+                "file": "LoRa-mesh/docs/Planning.pdf"
               },
-              "icon": "lucide-book-up",
-              "title": "Release Notes 1.10.6"
+              "icon": "lucide-file-text",
+              "title": "Planning"
             }
           }
         ],
@@ -198,6 +198,10 @@
   },
   "active": "30c3043dc6454e05",
   "lastOpenFiles": [
+    "LoRa-mesh/docs/plan.md",
+    "LoRa-mesh/docs/Planning.typ.tmp.28319.7054f4782324",
+    "LoRa-mesh/docs/Planning.pdf",
+    "LoRa-mesh/docs/plan.md.tmp.28319.5fe238b99113",
     "y2q2/AdvancedProgrammingConcepts/week1/assignment_01/uniqueptr.hpp.md",
     "y2q2/InteractionDesign/week2/week2 codes.md",
     "Untitled",
@@ -207,9 +211,6 @@
     "y2q2/AdvancedProgrammingConcepts/week1/assignment_01/build/CMakeFiles/Makefile2",
     "y2q2/AdvancedProgrammingConcepts/week1/assignment_01/build/tests/CMakeFiles/progress.marks",
     "y2q2/AdvancedProgrammingConcepts/week1/assignment_01/build/libptr/CMakeFiles/progress.marks",
-    "y2q2/AdvancedProgrammingConcepts/week1/assignment_01/build/CMakeFiles/progress.marks",
-    "y2q2/AdvancedProgrammingConcepts/week1/assignment_01/build/CMakeFiles/TargetDirectories.txt",
-    "y2q2/AdvancedProgrammingConcepts/week1/assignment_01/build/tests/cmake_install.cmake",
     "y2q2/InteractionDesign/week1/week 1, mini mincom.md",
     "y2q2/AdvancedProgrammingConcepts/week2/assignment/README.md",
     "y2q2/AdvancedProgrammingConcepts/week2/assignment/img/rpn_calc.png",

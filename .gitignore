@@ -26,3 +26,6 @@ library_ec11(1).zip
 
 # Work lives here but is a separate repo with its own history
 /work/
+
+# Editor local-history
+**/.history/
