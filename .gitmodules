@@ -4,3 +4,4 @@
 [submodule "2025-2026/q3/RealtimeOS/kernel/SimpleLinuxDriver"]
 	path = 2025-2026/q3/RealtimeOS/kernel/SimpleLinuxDriver
 	url = https://github.com/apriorit/SimpleLinuxDriver.git
+	ignore = untracked
