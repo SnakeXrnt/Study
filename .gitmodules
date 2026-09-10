@@ -5,3 +5,7 @@
 	path = 2025-2026/q3/RealtimeOS/kernel/SimpleLinuxDriver
 	url = https://github.com/apriorit/SimpleLinuxDriver.git
 	ignore = untracked
+[submodule "2026-2027/pi-glo/Saxion-SSP"]
+	path = 2026-2027/pi-glo/Saxion-SSP
+	url = git@github.com:KirilStrezikozin/Saxion-SSP.git
+	branch = openday
