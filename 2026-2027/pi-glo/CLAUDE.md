@@ -10,8 +10,11 @@ self-contained on one Raspberry Pi.
 known bugs, untested paths and unfinished business that will otherwise waste
 your time.
 
+Also read the `memory/to-do.md` to see and remind what you have to-do
+
 Load the rest on demand: `project.md`, `hardware.md`, `protocols.md`,
 `visualiser.md`, `pi-deployment.md`, `working-notes.md`.
+
 
 ## Things to know immediately
 
