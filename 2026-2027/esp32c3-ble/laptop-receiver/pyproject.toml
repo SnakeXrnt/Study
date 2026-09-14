@@ -1,0 +1,26 @@
+[project]
+name = "ble-rx"
+version = "0.1.0"
+description = "TUI receiver for the ESP32-C3 SuperMini BLE sensor peripheral"
+requires-python = ">=3.10"
+dependencies = [
+    "bleak>=0.22",
+    "textual>=0.60",
+    "rich>=13.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+ble-rx = "ble_rx.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["ble_rx*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,11 @@
+# firmware build output
+esp32-client/.pio/
+
+# receiver
+laptop-receiver/.venv/
+laptop-receiver/**/__pycache__/
+laptop-receiver/*.egg-info/
+laptop-receiver/.pytest_cache/
+
+# captured data
+*.csv
