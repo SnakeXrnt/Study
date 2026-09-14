@@ -47,43 +47,72 @@ ssh pi-glo 'sudo systemctl restart piglo-server piglo-ble'
 
 ## Kiosk mode
 
-Opt-in, because a kiosk that seizes the screen at every login is disruptive
-while developing:
+**Enabled as of 2026-09-11.** On power-on the Pi auto-logs in, waits for the
+visualiser to answer, and opens Chromium full-screen on it.
 
 ```sh
-ssh pi-glo 'cd ~/pi-glo/web && sudo ./install-pi.sh --kiosk'   # enable
+ssh pi-glo 'cd ~/pi-glo/web && sudo ./install-pi.sh --kiosk'      # enable
 ssh pi-glo 'cd ~/pi-glo/web && sudo ./install-pi.sh --uninstall'  # remove everything
 ```
 
-Two things that bit us and are now handled in the script:
+The launcher is `/usr/local/bin/piglo-kiosk`, hooked in by one marked line in
+`~/.config/labwc/autostart`. It reads the port from `/etc/default/piglo`, polls
+the URL for up to 90 seconds, then runs:
 
-**Chromium needs `--ozone-platform=wayland`.** The desktop is labwc, which is
-Wayland, but this Chromium build defaults to the X11 backend and exits with
-`Missing X server or $DISPLAY`.
+```sh
+chromium-browser --ozone-platform=wayland --kiosk --noerrdialogs \
+    --password-store=basic --use-mock-keychain \
+    --user-data-dir=~/.config/piglo-chromium http://localhost:8080/
+```
+
+`--password-store=basic` and `--use-mock-keychain` stop Chromium asking to
+unlock the login keyring on every start, which otherwise puts a dialog over the
+demo. The kiosk stores no passwords, so it has no business touching the keyring.
+
+Three things that bit us and are now handled in the script:
+
+**The browser must be told to use Wayland.** The desktop is labwc, and Chromium
+exits with `Missing X server or $DISPLAY` without `--ozone-platform=wayland`.
 
 **A user `~/.config/labwc/autostart` replaces the system one entirely.** Writing
 one naively kills the taskbar, desktop icons and display config. The installer
 seeds it from `/etc/xdg/labwc/autostart` first, then appends the kiosk line
 between markers so it can be removed cleanly.
 
+**The launcher must live outside `web/`.** Redeploys rsync that folder with
+`--delete`, which would remove anything generated inside it.
+
+The kiosk uses its own Chromium user-data-dir so the demo never inherits the
+desktop user's browsing state. Chromium is configured entirely by flags, so
+there is no profile file to maintain.
+
 ## Performance
 
-The Pi 4 drives a 2560x1440 screen here, which is a lot of pixels for a
-VideoCore VI. Two changes took the hand view from **13 fps to 22 fps**:
+**Re-measured 2026-09-11; the earlier 13-to-22 fps figures here were wrong.**
+Full findings in `../memory/pi-deployment.md` under *Performance*, including
+everything that was measured and made no difference.
 
-- **Render on demand.** The scene is only redrawn when something actually
-  changes — new sensor data, a camera move, a control change. Previously it
-  redrew 60 times a second regardless. The Render readout in Diagnostics shows
-  `idle` when nothing is moving; that is correct, not a stall.
-- **Capped drawing buffer** at 1400px wide, upscaled by CSS. Barely visible,
-  and it lifted the GPU ceiling above the data rate.
+The single biggest factor is the browser:
 
-22 fps is now the *ceiling imposed by the data*, not the GPU: the firmware emits
-at 20 Hz, so there are only ~20 new poses per second to draw. Rendering faster
-would draw the same pose twice.
+| browser, 1920x1080, hand at full width | frame time | rate |
+|---|---|---|
+| Firefox ESR 140 | 99 ms | 11 fps |
+| **Chromium 152** | **33 ms** | **34 fps** |
 
-If it ever needs more headroom: turn off *Compare with raw* (it halves the work),
-or drop `MAX_BUFFER_W` in `static/index.html`.
+*Compare with raw* roughly halves that, because two viewports mean two WebGL
+contexts rendering and two canvases composited.
+
+Two things that are **not** worth optimising, both measured:
+
+- **Model complexity.** The hand is 5588 triangles. Cutting it to 72, one box per
+  finger, bought 16%. A wireframe was no faster at all.
+- **Antialiasing, drawing-buffer size, and the unused second WebGL context.** All
+  no change.
+
+The other large saving was not in drawing at all: an idle `requestAnimationFrame`
+loop cost 66.6% of a core against 4.4% for the same work scheduled with
+`setTimeout`, while using 2ms of JavaScript per second either way. The page now
+uses rAF only while the hand is moving.
 
 ## Not yet done
 

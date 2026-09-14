@@ -95,12 +95,19 @@ late frame is worthless.
 
 ## Status
 
-Verified against the simulator, rendering at ~58 fps with both hands visible.
-The serial parser is tested against the exact wire format the firmware emits,
-including split reads, dropped sensors, corrupt records and interleaved log
-lines.
+Deployed and running on the Pi as a kiosk. The serial parser is tested against
+the exact wire format the firmware emits, including split reads, dropped
+sensors, corrupt records and interleaved log lines.
 
-**Not yet tested against hardware**, and not yet run on the Pi itself.
+Performance was measured on the Pi on 2026-09-11. The kiosk runs **Chromium**,
+which is worth three times the frame rate of Firefox here: 34 fps against 11 at
+1920x1080 with the hand full width. `requestAnimationFrame` is used only while
+the hand is moving, because an idle rAF loop cost most of a core. The hand's
+5588 triangles are not worth reducing; that was measured too. See
+`../memory/pi-deployment.md` before changing any of it.
+
+**The six-sensor hand has still not been tested against real hardware** over
+serial. The Bluetooth swipe path has run with the glove connected.
 
 Known gaps:
 

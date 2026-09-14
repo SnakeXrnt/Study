@@ -95,19 +95,163 @@ field is constant and carries no live data, so nothing is lost by ignoring it.
 
 ## Rendering performance
 
-Two changes took the Pi from **13 fps to 22 fps** at 2560x1440:
+**Superseded 2026-09-11.** This section previously claimed 22 fps at 2560x1440
+from render-on-demand and a capped drawing buffer. Re-measured on the Pi, the
+drawing-buffer cap makes no measurable difference, and the real figures are very
+different. The full set of measurements, the three things that actually mattered
+and the several that did not, are in `pi-deployment.md` under *Performance*.
 
-- **Render on demand.** Redraw only when something changes — new sensor data, a
-  camera move, a control change. Previously it redrew 60x/second regardless. The
-  Render readout shows `idle` when nothing moves; **that is correct, not a
-  stall.**
-- **Drawing buffer capped** at 1400px wide (`MAX_BUFFER_W`), upscaled by CSS.
+Short version: the kiosk runs Chromium, not Firefox, and that one choice was
+worth three times the frame rate. At 1920x1080 with the hand at full width it
+renders at 34 fps. The model's triangle count is irrelevant: cutting the hand
+from 5588 triangles to 72 bought 16%.
 
-22 fps is now the ceiling imposed by the *data*, not the GPU: the firmware emits
-at 20 Hz, so there are only ~20 new poses per second to draw.
+Two traps worth carrying here:
 
-For more headroom: turn off *Compare with raw* (halves the work) or lower
-`MAX_BUFFER_W`.
+- **The browser is the biggest lever, by far.** Chromium over Firefox was worth
+  3x. Check which one is running before investigating anything else.
+- **`requestAnimationFrame` is expensive when nothing is being drawn.** The page
+  schedules ordinary updates with `setTimeout` and uses rAF only while the hand
+  is actually moving. Do not "fix" this back without measuring on the Pi.
+- **Render on demand is still right**, and the Render readout showing `idle` when
+  nothing moves is still correct rather than a stall.
+
+## The media player
+
+The swipe demo really plays music, so a gesture does something you can hear.
+Added 2026-09-11.
+
+Audio lives **in the page**, not in the operating system: no media daemon, no
+D-Bus, nothing extra to fail at a venue, and it works with the network unplugged.
+The gesture vocabulary drives it exactly as the firmware's media bindings
+describe, so what the rosette says is what happens.
+
+**Tracks live outside the app directory**, at `~/pi-glo/music`, set by
+`PIGLO_MUSIC`. This is not arbitrary: deploys rsync `web/` with `--delete`, so
+anything put inside `static/` is erased on the next deploy.
+
+Album art is read straight out of FLAC picture blocks by `server.py`, walking the
+metadata blocks by hand so the Pi needs no audio library. A file with no artwork
+gets the placeholder drawing, never a substituted image. Track names are tidied
+from the filename: a leading track number is dropped and artist is split from
+title on the first dash, so `09-the_weeknd-blinding_lights` shows as *Blinding
+Lights* by *The Weeknd*.
+
+`/music/` responses are the one exception to the server's no-store rule. They are
+large and immutable, and re-fetching a 3MB cover on every track change would be
+daft.
+
+The swipe view is **two columns**: the player on the left, the gesture readout on
+the right. It was one centred column, which crowded the middle and wasted the
+sides.
+
+## The settings tab
+
+Added 2026-09-11. Sensor source, audio output and volume, display layout size
+and panel rotation, plus a live read-out of the glove link.
+
+**It answers on the loopback address only.** The visualiser deliberately listens
+on every interface so visitors can watch from a phone; changing the machine's
+configuration is a different thing, so `/api/settings` returns 403 to anything
+that is not the device itself. The demo page stays public.
+
+**The server never gets general root.** `/usr/local/bin/piglo-config` is the
+entire privileged surface, reached through a sudo rule naming that one command.
+It accepts a fixed list of keys, validates every value against a pattern, and
+refuses everything else. Verified against shell-metacharacter injection on the
+values and against unknown keys. Add a key only with a pattern that cannot
+express a metacharacter.
+
+Audio is PipeWire, driven with `pactl` and `wpctl`. A system service does not
+join the user's session automatically, so `XDG_RUNTIME_DIR` is set explicitly.
+**The Pi 5 has no headphone jack**, so HDMI is the only built-in output; a USB
+adapter or a Bluetooth speaker is what adds another.
+
+### WiFi
+
+Scan, pick a network, type the password on the Pi's own screen. Reading the list
+is unprivileged; joining goes through the helper.
+
+**The password never becomes a command argument.** It is sent to `nmcli --ask`
+on standard input, so it does not appear in the process list, in the helper's
+arguments, or in any log. Verified by grepping `ps` while a connection attempt
+was running. The endpoint is loopback-only, so it is typed on the device rather
+than sent across the network.
+
+### The on-screen keyboard is ours, on purpose
+
+The kiosk has a touchscreen and no physical keyboard, and nothing on the system
+provides a virtual one. Tried and rejected on 2026-09-11: `squeekboard` is
+installed and starts cleanly, and labwc does implement `zwp_input_method_v2`,
+`zwp_text_input_v3` and `zwp_virtual_keyboard_v1`. But Chromium never raised it,
+even with `--enable-wayland-ime` and a field focused on load. Three uncertain
+links between a visitor and a password field is too many the week of an open day.
+
+So the keyboard lives in the page: `#kbd` in `static/index.html`. QWERTY with a
+number row, a symbol layer, sticky-once shift, backspace, and a masked preview
+with a reveal toggle for typing a long password on a touchscreen. It needs no
+packages and cannot be broken by a compositor update.
+
+Two details that were not obvious:
+
+- **Keys use `pointerdown` with `preventDefault`**, or the field loses focus the
+  moment a key is touched.
+- **The field must be scrolled clear of the keys.** `scrollIntoView` is no good
+  here: it centres within the scroll container, and on a 540px-tall layout the
+  container's own centre is behind the keyboard. It scrolls by the measured
+  overlap instead.
+
+**A markup ordering trap, worth remembering.** The keyboard's HTML was first
+added after the closing `</script>`, so at script time the elements did not
+exist, `getElementById` returned null, and the whole script threw partway
+through. Everything declared after that point stayed in the temporal dead zone,
+and tapping a tab then failed with "Cannot access 'rafId' before initialization".
+A late-throwing script fails in a way that looks nothing like its cause.
+
+### A validation bypass worth remembering
+
+The helper's first version checked values with `grep -Eq "$PAT"`. grep works a
+line at a time, so a value like `yes\nPIGLO_OTHER=x` matched the pattern on its
+first line and was then written whole, **appending a second key** to a file
+systemd reads as an EnvironmentFile. That is arbitrary environment injection into
+the service, reachable from the local settings endpoint. Found by review on
+2026-09-11 and confirmed exploitable before it was fixed.
+
+The fix rejects control characters before matching. The first attempt at *that*
+was also wrong: it used `$(... | tr -d '[:print:]')`, and command substitution
+strips trailing newlines, so a value ending in one looked empty and passed. It
+now compares byte counts instead. The web layer refuses control characters too,
+independently, which is what caught the case the shell missed.
+
+**Two lessons.** Validate on the byte string, not line by line. And keep the
+check in both layers: the duplication is what made the gap visible.
+
+### Bluetooth audio, and the radio it shares
+
+Built 2026-09-11. Search, connect, disconnect and forget a speaker, from the
+settings tab. Addresses are validated against a strict pattern before reaching
+`bluetoothctl`; anything else is refused.
+
+**Scanning does not disturb the glove.** Measured with the glove connected and
+streaming telemetry:
+
+| | link connected | samples carrying fresh telemetry |
+|---|---|---|
+| idle | 15 of 15 | 15 of 15 |
+| during a 25s classic scan | 22 of 22 | 21 of 22 |
+
+**Streaming has not been tested**, because the only audio device in range
+belongs to someone else and pairing with it would be wrong. That test still
+needs doing with a speaker that belongs to the project: connect it, play a
+track, and watch whether the link stays up and telemetry keeps arriving. Audio
+streaming is far more demanding of the radio than discovery is, so the scan
+result above does not settle it.
+
+`bt-scan 0` lists what is already known without putting the radio to work, which
+is what the page uses on load.
+
+Still to test: the Bluetooth speaker under load. It shares one radio with the glove's BLE
+link, so test whether the link survives audio streaming before relying on it.
 
 ## Endpoints
 
@@ -117,6 +261,8 @@ For more headroom: turn off *Compare with raw* (halves the work) or lower
 | `GET /stream` | SSE — `event: frame` per frame, `event: status` each second |
 | `GET /api/status` | source, counters, gesture vocabulary, BLE UUIDs, thresholds |
 | `POST /api/asl` · `/api/gesture` · `/api/link` | prediction overlays |
+| `GET /api/music` | the playlist, with tidied names and whether art exists |
+| `GET /music/<file>` · `/music/art/<file>` | a track, and its embedded cover |
 
 ## What is honest about absent data
 

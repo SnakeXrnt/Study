@@ -1,0 +1,48 @@
+- generic [active] [ref=f1e1]:
+  - generic [ref=f1e2]:
+    - generic [ref=f1e3]:
+      - text: pi‑glo
+      - emphasis [ref=f1e4]: glove
+    - tablist [ref=f1e5]:
+      - tab "Hand" [selected] [ref=f1e6] [cursor=pointer]
+      - tab "Fingerspell" [ref=f1e7] [cursor=pointer]
+      - tab "Swipe" [ref=f1e8] [cursor=pointer]
+      - tab "Settings" [ref=f1e9] [cursor=pointer]
+    - generic [ref=f1e10]:
+      - generic [ref=f1e11]: Waiting for glove
+      - generic [ref=f1e14]: —
+  - main [ref=f1e16]:
+    - generic [ref=f1e17]:
+      - generic [ref=f1e18]:
+        - generic:
+          - generic: Constrained pose
+          - text: Joint limits applied
+        - generic: Drag to turn · scroll to zoom
+      - generic [ref=f1e20]:
+        - generic [ref=f1e21]:
+          - heading "Finger curl" [level=2] [ref=f1e22]
+          - generic [ref=f1e23]:
+            - generic [ref=f1e25]:
+              - generic [ref=f1e26]: Thumb
+              - generic [ref=f1e27]: —
+            - generic [ref=f1e30]:
+              - generic [ref=f1e31]: Index
+              - generic [ref=f1e32]: —
+            - generic [ref=f1e35]:
+              - generic [ref=f1e36]: Middle
+              - generic [ref=f1e37]: —
+            - generic [ref=f1e40]:
+              - generic [ref=f1e41]: Ring
+              - generic [ref=f1e42]: —
+            - generic [ref=f1e45]:
+              - generic [ref=f1e46]: Pinky
+              - generic [ref=f1e47]: —
+        - generic [ref=f1e49]:
+          - heading "View" [level=2] [ref=f1e50]
+          - button "Compare with raw" [ref=f1e51] [cursor=pointer]
+          - button "Reset view" [ref=f1e52] [cursor=pointer]
+  - group [ref=f1e53]:
+    - generic "Diagnostics" [ref=f1e54] [cursor=pointer]
+    - option "+Y knuckles" [selected]
+    - option "+Z projections.py"
+    - option "+X"

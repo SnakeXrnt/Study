@@ -43,6 +43,17 @@ outside it, so nothing here pollutes the shared repo. Two consequences:
 - Anything written to `Saxion-SSP` lands on a **shared branch** that a teammate
   also works on. Treat edits there as affecting someone else's work.
 
+## Where the processing is moving
+
+As of 2026-09-11 the direction is that **the Nano streams raw IMU data and the
+Pi does all the processing**: calibration, bias tracking, Madgwick fusion, the
+palm-relative transform and the kinematics.
+
+This is a decision, not a state. The flashed firmware still fuses on-device and
+emits quaternions, and every wire format in `protocols.md` describes that. The
+consequences, including the parser change and the throughput question that has
+never been measured, are written up in `open-items.md`.
+
 ## Where the ESP32 went
 
 An ESP32 TTGO used to be the hub: it received gestures over BLE, drove a small

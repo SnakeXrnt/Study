@@ -61,12 +61,15 @@
     box-shadow: 0 0 0 3px rgba(0,0,0,.03);
   }
   .lamp[data-state="connected"] { background: var(--sage); }
-  .lamp[data-state="scanning"], .lamp[data-state="connecting"] {
-    background: var(--amber); animation: pulse 1.1s ease-in-out infinite;
-  }
+  .lamp[data-state="scanning"], .lamp[data-state="connecting"] { background: var(--amber); }
   .lamp[data-state="disconnected"] { background: #b4463c; }
-  @keyframes pulse { 50% { opacity: .35; } }
-  @media (prefers-reduced-motion: reduce) { .lamp { animation: none !important; } }
+  /* Blink is driven by a class the script toggles twice a second, not by a CSS
+     animation. An infinite animation keeps the compositor producing frames at
+     the display rate forever, which was measured on the Pi costing more than
+     the 3D hand does. Scanning is the idle demo's resting state, so it would
+     have run the whole time nobody was using it. */
+  body.blink .lamp[data-state="scanning"],
+  body.blink .lamp[data-state="connecting"] { opacity: .35; }
 
   /* ---------- stage ---------- */
   main { flex: 1; min-height: 0; display: flex; flex-direction: column; }
@@ -77,6 +80,12 @@
     flex: 1; min-width: 0; background: var(--screen); border-radius: 10px;
     position: relative; overflow: hidden;
     box-shadow: inset 0 1px 3px rgba(0,0,0,.5), 0 1px 0 #fff;
+    /* Full width again. This was capped to 1000x500 on 2026-09-11 while the
+       kiosk still ran Firefox, where frame cost tracked the on-screen area of
+       this element and a full-width view managed only 11 fps. Under Chromium
+       the same page runs full width at 34 fps, so the cap is not needed. If the
+       hand ever turns sluggish again, capping this is the biggest single lever,
+       but check which browser is running first. */
   }
   .screen canvas { display: block; width: 100%; height: 100%; }
   .screen .cap {
@@ -132,38 +141,159 @@
     color: var(--ink); min-height: 28px;
   }
   .buffer u { text-decoration: none; color: var(--rule); }
-  .caret { animation: blink 1.1s steps(2) infinite; }
-  @keyframes blink { 50% { opacity: 0; } }
+  body.blink .caret { opacity: 0; }   /* same cheap toggle as the lamp */
 
   /* ---------- swipe ---------- */
-  .swipe { flex-direction: column; align-items: center; justify-content: center; }
-  .rosette { position: relative; width: 344px; height: 344px; }
+  /* Two columns: what the glove is driving on the left, what it just did on the
+     right. It was one centred column, which crowded the middle of the screen
+     and left the sides empty. */
+  .swipe { flex-direction: row; align-items: stretch; justify-content: center;
+           gap: clamp(12px, 2.2vw, 24px); }
+  .gesture-panel {
+    flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+
+  /* ---------- media panel ---------- */
+  .media-panel {
+    flex: 0 0 clamp(210px, 32%, 330px); min-width: 0; display: flex;
+    flex-direction: column; padding: clamp(10px, 1.8vh, 16px);
+    background: var(--card); border: 1px solid var(--rule); border-radius: 12px;
+  }
+  .cover {
+    width: 100%; aspect-ratio: 1 / 1; border-radius: 9px; overflow: hidden;
+    background: #e3ded6; color: var(--rule); display: grid; place-items: center;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,.06);
+  }
+  .cover svg { width: 34%; height: 34%; }
+  .cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .pl-title {
+    margin-top: clamp(8px, 1.6vh, 13px); font-weight: 600;
+    font-size: clamp(13px, 2.9vh, 16px); line-height: 1.25;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .pl-sub { color: var(--muted); font-size: clamp(11px, 2.2vh, 13px); margin-top: 2px; }
+  .pl-vol { display: flex; align-items: center; gap: 8px; margin-top: clamp(7px, 1.5vh, 12px); }
+  .pl-volnum { font: 500 12px var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+  .pl-volbar { flex: 1 1 auto; height: 4px; border-radius: 2px; background: #e2ddd5; }
+  .pl-volbar i { display: block; height: 100%; border-radius: 2px; background: var(--cobalt); }
+  .pl-list {
+    list-style: none; margin: clamp(7px, 1.5vh, 12px) 0 0; padding: 0;
+    overflow: hidden; font-size: clamp(11px, 2.1vh, 12.5px); color: var(--muted);
+  }
+  .pl-list li {
+    padding: 3px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .pl-list li[data-on] { color: var(--ink); font-weight: 600; }
+  /* The rosette sizes itself to the space available and never shrinks below its
+     own layout. It used to be a fixed 344px square with pads placed at absolute
+     pixel offsets; as a flex item it was then squashed on a short screen while
+     the pads kept their offsets, so the bottom pad slid up under the centre and
+     disappeared. Proportional placement keeps the arrangement correct at any
+     size. */
+  .rosette {
+    position: relative; flex: 0 0 auto;
+    width: min(344px, 46vh, 40vw); aspect-ratio: 1 / 1;
+  }
   .pad {
     position: absolute; display: grid; place-items: center; border-radius: 12px;
     background: var(--card); border: 1px solid var(--rule); color: var(--muted);
   }
-  .pad svg { width: 30px; height: 30px; }
+  .pad svg { width: 32%; height: 32%; max-width: 30px; max-height: 30px; }
   .pad[data-on] { background: var(--cobalt); border-color: var(--cobalt); color: #fff; }
-  .pad.u { left: 121px; top: 0; width: 102px; height: 90px; }
-  .pad.d { left: 121px; bottom: 0; width: 102px; height: 90px; }
-  .pad.l { left: 0; top: 121px; width: 90px; height: 102px; }
-  .pad.r { right: 0; top: 121px; width: 90px; height: 102px; }
-  .pad.c { left: 106px; top: 106px; width: 132px; height: 132px; border-radius: 66px;
-           font-size: 14px; font-weight: 600; }
+  .pad.u { left: 35.2%; top: 0;    width: 29.7%; height: 26.2%; }
+  .pad.d { left: 35.2%; bottom: 0; width: 29.7%; height: 26.2%; }
+  .pad.l { left: 0;     top: 35.2%; width: 26.2%; height: 29.7%; }
+  .pad.r { right: 0;    top: 35.2%; width: 26.2%; height: 29.7%; }
+  .pad.c { left: 30.8%; top: 30.8%; width: 38.4%; height: 38.4%; border-radius: 50%;
+           font-size: clamp(11px, 3.6vh, 14px); font-weight: 600; }
   .pad.c[data-on] { background: var(--amber); border-color: var(--amber); }
 
-  .verdict { margin-top: 26px; text-align: center; }
-  .verdict .act { font-size: 30px; font-weight: 600; letter-spacing: -0.01em; }
+  .verdict { margin-top: clamp(12px, 3vh, 26px); text-align: center; flex: 0 0 auto; }
+  .verdict .act { font-size: clamp(22px, 5.4vh, 30px); font-weight: 600; letter-spacing: -0.01em; }
   .verdict .act[data-idle] { color: var(--rule); }
   .verdict .sub { color: var(--muted); font-size: 13px; margin-top: 3px; }
 
-  .state-row { display: flex; align-items: center; gap: 10px; margin-top: 22px; }
-  .chip {
-    padding: 4px 11px; border-radius: 20px; font-size: 12.5px; background: #e3ded6; color: var(--muted);
+  .state-row { display: flex; align-items: center; gap: 10px; flex: 0 0 auto;
+               margin-top: clamp(10px, 2.6vh, 22px); }
+
+  /* ---------- settings ---------- */
+  .settings { overflow: auto; }
+  .set-grid {
+    width: 100%; display: grid; gap: clamp(10px, 1.8vh, 16px);
+    /* Two per row, and the stage scrolls. Three fitted, but only by squeezing
+       everything; two gives each card room to breathe. */
+    grid-template-columns: repeat(auto-fit, minmax(min(360px, 100%), 1fr));
+    align-content: start;
   }
-  .chip[data-on="recording"] { background: var(--amber); color: #fff; }
-  .chip[data-on="cooldown"]  { background: #ded7cc; color: var(--ink); }
-  #energyCanvas { border-radius: 6px; background: var(--card); border: 1px solid var(--rule); }
+  .set-card h2 { margin: 0 0 clamp(7px, 1.5vh, 11px); }
+  .set-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    margin-bottom: clamp(6px, 1.3vh, 10px); font-size: clamp(12px, 2.3vh, 14px);
+  }
+  /* `display: flex` above beats the browser's own [hidden] rule, so rows that
+     hide themselves need saying explicitly. */
+  .set-row[hidden] { display: none; }
+  .set-row > span { color: var(--muted); flex: 0 0 auto; }
+  .set-row > b { font: 500 clamp(11px, 2.2vh, 13px) var(--mono); text-align: right;
+                 overflow-wrap: anywhere; }
+  .set-row select, .set-row input[type=range] { flex: 1 1 auto; min-width: 0; max-width: 62%; }
+  .set-row select, .set-row input[type=password] {
+    background: var(--paper); border: 1px solid var(--rule); border-radius: 6px;
+    padding: 7px 8px; font: inherit; font-size: clamp(12px, 2.2vh, 13px);
+  }
+  .set-row input[type=password] { font-family: var(--mono); letter-spacing: .08em; }
+  .set-note { margin: clamp(4px, 1vh, 8px) 0 0; color: var(--muted);
+              font-size: clamp(10.5px, 2vh, 12px); line-height: 1.45; }
+  .set-btn {
+    margin-top: clamp(7px, 1.5vh, 11px); width: 100%; padding: 10px 12px;
+    background: var(--ink); color: var(--card); border: 0; border-radius: 8px;
+    font-size: clamp(12px, 2.3vh, 14px); font-weight: 600;
+  }
+  .set-btn:disabled { background: var(--rule); color: var(--muted); }
+  .set-btnrow { display: flex; gap: 8px; }
+  .set-btnrow .set-btn { flex: 1 1 0; }
+  .set-btnrow .set-btn:first-child {
+    background: var(--paper); color: var(--ink); border: 1px solid var(--rule);
+  }
+
+  /* ---------- on-screen keyboard ----------
+     Built into the page on purpose. The kiosk has a touchscreen and no physical
+     keyboard, and nothing on the system provides one: labwc ships none, and
+     squeekboard plus Chromium's Wayland IME was tried on 2026-09-11 and never
+     appeared. Doing it here needs no packages, cannot be broken by a compositor
+     update, and is the only version that is certain to work at the venue. */
+  .kbd {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+    background: var(--card); border-top: 1px solid var(--rule);
+    padding: 8px 8px 10px; box-shadow: 0 -6px 20px rgba(0,0,0,.10);
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .kbd[hidden] { display: none; }
+  .kbd-row { display: flex; gap: 6px; justify-content: center; }
+  .kbd-key {
+    flex: 1 1 0; min-width: 0; height: clamp(34px, 7.4vh, 48px);
+    border: 1px solid var(--rule); border-radius: 8px; background: var(--paper);
+    font: 500 clamp(14px, 3.4vh, 19px) var(--sans); color: var(--ink);
+    display: grid; place-items: center; user-select: none; touch-action: manipulation;
+  }
+  .kbd-key:active { background: var(--ink); color: var(--card); }
+  .kbd-key[data-wide]  { flex-grow: 1.6; }
+  .kbd-key[data-wider] { flex-grow: 2.6; }
+  .kbd-key[data-space] { flex-grow: 6; }
+  .kbd-key[data-on] { background: var(--ink); color: var(--card); border-color: var(--ink); }
+  .kbd-key[data-go] { background: var(--cobalt); border-color: var(--cobalt); color: #fff; }
+  .kbd-head {
+    display: flex; align-items: center; gap: 10px; padding: 0 4px 2px;
+    font-size: clamp(11px, 2.2vh, 13px); color: var(--muted);
+  }
+  .kbd-head b { color: var(--ink); font: 500 clamp(12px, 2.4vh, 14px) var(--mono);
+                flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .kbd-peek {
+    border: 1px solid var(--rule); background: var(--paper); border-radius: 6px;
+    padding: 4px 10px; font-size: clamp(11px, 2.2vh, 12.5px); color: var(--muted);
+  }
 
   /* ---------- diagnostics drawer ---------- */
   .drawer { flex-shrink: 0; border-top: 1px solid var(--rule); background: var(--card); }
@@ -210,6 +340,7 @@
     <button class="tab" role="tab" aria-selected="true"  data-mode="hand">Hand</button>
     <button class="tab" role="tab" aria-selected="false" data-mode="spell">Fingerspell</button>
     <button class="tab" role="tab" aria-selected="false" data-mode="swipe">Swipe</button>
+    <button class="tab" role="tab" aria-selected="false" data-mode="settings">Settings</button>
   </div>
   <div class="end">
     <div class="link-chip"><span class="lamp" id="lamp"></span><span id="linkText">Waiting for glove</span></div>
@@ -256,6 +387,27 @@
 
   <!-- ============ swipe ============ -->
   <section class="stage swipe" data-mode="swipe">
+
+    <!-- what the glove is driving -->
+    <div class="media-panel" id="player">
+      <div class="cover" id="plCover">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"
+             stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+        </svg>
+      </div>
+      <div class="pl-title" id="plTitle">No music loaded</div>
+      <div class="pl-sub" id="plSub">Add files to the music folder</div>
+      <div class="pl-vol">
+        <span class="pl-volnum" id="plVolNum">70%</span>
+        <div class="pl-volbar"><i id="plVolBar" style="width:70%"></i></div>
+      </div>
+      <ol class="pl-list" id="plList"></ol>
+    </div>
+    <audio id="audio" preload="auto"></audio>
+
+    <!-- what the glove just did -->
+    <div class="gesture-panel">
     <div class="rosette">
       <div class="pad u" data-g="UP"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></div>
@@ -274,6 +426,109 @@
     <div class="state-row">
       <span class="chip" id="swipeState">idle</span>
       <span class="chip" id="energyLabel" style="background:none;padding-left:0">Motion energy</span><canvas id="energyCanvas" width="300" height="54"></canvas>
+    </div>
+    </div>
+  </section>
+  <!-- ============ settings ============ -->
+  <section class="stage settings" data-mode="settings">
+    <div class="set-grid">
+
+      <div class="panel set-card">
+        <h2>Demo</h2>
+        <label class="set-row">
+          <span>Sensor source</span>
+          <select id="setSource">
+            <option value="--idle">Bluetooth glove only</option>
+            <option value="--simulate">Simulated (no hardware)</option>
+          </select>
+        </label>
+        <p class="set-note" id="setSourceNote">
+          Use the simulator only with no glove attached. It invents gestures over
+          the same channel the real glove uses, and the two fight.
+        </p>
+        <button class="set-btn" id="setApplySource">Apply and restart</button>
+      </div>
+
+      <div class="panel set-card">
+        <h2>Audio</h2>
+        <label class="set-row">
+          <span>Output</span>
+          <select id="setSink"></select>
+        </label>
+        <label class="set-row">
+          <span>Volume</span>
+          <input type="range" id="setVol" min="0" max="100" step="5" value="60">
+        </label>
+        <p class="set-note" id="setAudioNote">This Pi has no headphone jack.</p>
+      </div>
+
+      <div class="panel set-card">
+        <h2>Display</h2>
+        <label class="set-row">
+          <span>Layout size</span>
+          <select id="setLogical">
+            <option value="960x540">960 x 540 — biggest text</option>
+            <option value="1280x720">1280 x 720 — more on screen</option>
+          </select>
+        </label>
+        <label class="set-row">
+          <span>Panel rotation</span>
+          <select id="setTransform">
+            <option value="90">90°</option>
+            <option value="270">270°</option>
+            <option value="180">180°</option>
+            <option value="normal">None</option>
+          </select>
+        </label>
+        <p class="set-note">Takes effect at the next restart of the screen session.</p>
+      </div>
+
+      <div class="panel set-card">
+        <h2>WiFi</h2>
+        <div class="set-row"><span>Network</span><b id="wifiNow">—</b></div>
+        <div class="set-row" id="wifiIpRow" hidden><span>Address</span><b id="wifiIp">—</b></div>
+        <label class="set-row">
+          <span>Join</span>
+          <select id="wifiList"><option value="">Scanning…</option></select>
+        </label>
+        <label class="set-row" id="wifiPassRow" hidden>
+          <span>Password</span>
+          <input type="password" id="wifiPass" autocomplete="off"
+                 autocapitalize="off" autocorrect="off" spellcheck="false">
+        </label>
+        <button class="set-btn" id="wifiConnect" disabled>Connect</button>
+        <p class="set-note" id="wifiNote">
+          Type the password here on the Pi. This never travels over the network:
+          the page will not answer anything but the machine itself.
+        </p>
+      </div>
+
+      <div class="panel set-card">
+        <h2>Bluetooth speaker</h2>
+        <div class="set-row"><span>Connected</span><b id="btNow">none</b></div>
+        <label class="set-row">
+          <span>Device</span>
+          <select id="btList"><option value="">None found yet</option></select>
+        </label>
+        <div class="set-btnrow">
+          <button class="set-btn" id="btScan">Search</button>
+          <button class="set-btn" id="btGo" disabled>Connect</button>
+        </div>
+        <p class="set-note" id="btNote">
+          Shares one radio with the glove. Searching was measured not to disturb
+          it; check the glove still responds after connecting a speaker.
+        </p>
+      </div>
+
+      <div class="panel set-card">
+        <h2>Glove</h2>
+        <div class="set-row"><span>Link</span><b id="setLink">—</b></div>
+        <div class="set-row" id="setRssiRow" hidden><span>Signal</span><b id="setRssi">—</b></div>
+        <div class="set-row" id="setSeqRow" hidden><span>Packets</span><b id="setSeq">—</b></div>
+        <div class="set-row"><span>Music folder</span><b id="setMusic">—</b></div>
+        <p class="set-note" id="setStatus">Settings are only reachable from this device.</p>
+      </div>
+
     </div>
   </section>
 </main>
@@ -322,6 +577,15 @@
     </div>
   </div>
 </details>
+
+<div class="kbd" id="kbd" hidden>
+  <div class="kbd-head">
+    <span id="kbdFor">Password</span>
+    <b id="kbdEcho"></b>
+    <button class="kbd-peek" id="kbdPeek" type="button">Show</button>
+  </div>
+  <div id="kbdRows"></div>
+</div>
 
 <script src="vendor/three.min.js"></script>
 <script>
@@ -434,7 +698,13 @@ function buildHand(tone) {
       parent.add(pivot);
 
       const rTop = rads[i] * 0.86, rBot = rads[i];
-      const bone = new THREE.Mesh(new THREE.CylinderGeometry(rTop, rBot, lens[i], 12), wood);
+      /* Open-ended. Both caps sit inside the joint spheres and are never seen,
+         so they are 24 triangles each of pure waste. Segment counts stay where
+         they are: halving the hand from 5588 to 2332 triangles was measured on
+         the Pi on 2026-09-11 and moved compare mode from 15 fps to 16, with
+         identical frame times. Geometry is not what limits this. */
+      const bone = new THREE.Mesh(
+        new THREE.CylinderGeometry(rTop, rBot, lens[i], 12, 1, true), wood);
       bone.position.y = lens[i] / 2;
       pivot.add(bone);
       pivot.add(new THREE.Mesh(new THREE.SphereGeometry(rBot * 1.02, 12, 8), joint));
@@ -502,6 +772,8 @@ function makeViewport(el, tone) {
   scene.background = new THREE.Color(0x15181d);
 
   const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+  /* Antialiasing stays on. Turning it off was measured on the Pi on 2026-09-11
+     and made no difference to CPU, so there is no reason to give up the edges. */
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   el.appendChild(renderer.domElement);
 
@@ -519,6 +791,33 @@ function makeViewport(el, tone) {
 }
 
 let dirty = true;
+
+/* Work is scheduled, not run on a perpetual loop, and deliberately NOT with
+   requestAnimationFrame.
+
+   Measured on the Pi, 2026-09-11, idle mode, identical page and identical work,
+   changing only this one line:
+
+       requestAnimationFrame(tick)   66.6% of a core
+       setTimeout(tick, 0)            4.4% of a core
+
+   The script itself uses 2ms per second either way, and renders zero frames in
+   idle. The cost is not this code. On this machine's Firefox and labwc stack,
+   touching requestAnimationFrame at all appears to hold the compositor in a
+   continuously-animating state, compositing the WebGL layers every vsync
+   forever, however rarely the callback does anything.
+
+   So the usually-wrong primitive is the right one here. If you are tempted to
+   change it back, measure on the Pi first: see memory/pi-deployment.md. The
+   `scheduled` flag coalesces bursts and work is only scheduled by real events,
+   so this never runs hotter than data arrives. Anything that changes what is on
+   screen must call invalidate() or schedule(). */
+let scheduled = false;
+function schedule() {
+  if (!scheduled) { scheduled = true; setTimeout(tick, 0); }
+}
+function invalidate() { dirty = true; schedule(); }
+
 const cam = { theta: -0.28, phi: 1.19, dist: 3.15 };
 const CAM0 = { ...cam };
 const target = new THREE.Vector3(0.04, 0.20, 0);
@@ -540,13 +839,13 @@ function orbit(el) {
   el.addEventListener("pointerup",   e => { on = false; el.releasePointerCapture(e.pointerId); });
   el.addEventListener("pointermove", e => {
     if (!on) return;
-    cam.theta -= (e.clientX - px) * 0.008; dirty = true;
+    cam.theta -= (e.clientX - px) * 0.008; invalidate();
     cam.phi = clamp(cam.phi - (e.clientY - py) * 0.008, 0.18, Math.PI - 0.18);
     px = e.clientX; py = e.clientY;
   });
   el.addEventListener("wheel", e => {
     e.preventDefault();
-    cam.dist = clamp(cam.dist * (1 + Math.sign(e.deltaY) * 0.08), 1.4, 12); dirty = true;
+    cam.dist = clamp(cam.dist * (1 + Math.sign(e.deltaY) * 0.08), 1.4, 12); invalidate();
   }, { passive: false });
 }
 
@@ -565,10 +864,13 @@ const stages = [...document.querySelectorAll(".stage")];
 const tabs = [...document.querySelectorAll(".tab")];
 function setMode(m) {
   mode = m;
+  eDirty = true;
+  if (m === "settings" && !settingsLoaded) { loadSettings(); loadWifi(); loadBt(0); }
   tabs.forEach(t => t.setAttribute("aria-selected", String(t.dataset.mode === m)));
   stages.forEach(s => s.toggleAttribute("data-active", s.dataset.mode === m));
-  dirty = true;
+  invalidate();
   resize();
+  startRender();
 }
 tabs.forEach(t => t.onclick = () => setMode(t.dataset.mode));
 
@@ -579,9 +881,9 @@ document.getElementById("btnCompare").onclick = e => {
   document.getElementById("capMain").textContent = compare ? "Constrained pose" : "Live hand";
   resize();
 };
-document.getElementById("btnResetCam").onclick = () => { Object.assign(cam, CAM0); dirty = true; };
-document.getElementById("selAxis").onchange = e => { axis = e.target.value; dirty = true; };
-document.getElementById("rngCoupling").oninput = e => { coupling = e.target.value / 100; dirty = true; };
+document.getElementById("btnResetCam").onclick = () => { Object.assign(cam, CAM0); invalidate(); };
+document.getElementById("selAxis").onchange = e => { axis = e.target.value; invalidate(); };
+document.getElementById("rngCoupling").oninput = e => { coupling = e.target.value / 100; invalidate(); };
 
 const rows = {};
 const fingersEl = document.getElementById("fingers");
@@ -606,7 +908,74 @@ for (const c of ALPHABET) {
 const pads = {};
 document.querySelectorAll(".pad").forEach(p => pads[p.dataset.g] = p);
 
-const MAX_BUFFER_W = 1400;   // widest drawing buffer we will ask the GPU for
+/* Element cache. tick() used to call getElementById around twenty times per
+   animation frame, sixty times a second, against data arriving at 20Hz or
+   slower. Looked up once here instead, the same way `rows`, `stripCells` and
+   `pads` above already do. */
+const el = {};
+for (const id of ["dPresent", "glyph", "confBar", "confPct", "alts", "buffer",
+                  "swipeState", "swipeAct", "swipeSub", "lamp", "linkText",
+                  "dTransport", "dState", "dDevice", "dAddr", "dRssi", "dSeq",
+                  "dFps", "dSource", "dFrames", "dRate", "dErr", "rateText",
+                  "dSvc", "dChr"]) {
+  el[id] = document.getElementById(id);
+}
+const diagDrawer = document.querySelector("details.drawer");
+
+/* Most values do not change between frames. Writing textContent anyway costs a
+   style invalidation each time, which at 60Hz across twenty nodes is most of
+   the page's cost on this hardware. */
+function setText(node, value) {
+  const v = value == null ? "" : String(value);
+  if (node._last !== v) { node._last = v; node.textContent = v; }
+}
+function setHTML(node, value) {
+  if (node._lastHTML !== value) { node._lastHTML = value; node.innerHTML = value; }
+}
+/* Attribute and style writes must be guarded too, and this matters more than the
+   text. Measured on the Pi 2026-09-11: the loop body uses 2ms of JavaScript per
+   second, yet the page burned most of a core. The cost is not the script, it is
+   the repaint each DOM mutation triggers on a 2560x1440 page. Writing a value
+   that is already there still counts as a mutation. */
+function setFlag(node, key, on) {
+  const has = key in node.dataset;
+  if (on && !has) node.dataset[key] = "";
+  else if (!on && has) delete node.dataset[key];
+}
+function setData(node, key, value) {
+  if (node.dataset[key] !== value) node.dataset[key] = value;
+}
+function setStyle(node, prop, value) {
+  if (node.style[prop] !== value) node.style[prop] = value;
+}
+
+/* Widest drawing buffer we will ask the GPU for, upscaled by CSS to fill the
+   2560x1440 panel. Lowering this is the most direct lever on render cost. */
+/* Interface scale, from ?ui=<factor> on the URL.
+
+   The projector runs at its native 1920x1080 so its image is sharp, but at that
+   size the interface is small for a room. Scaling here rather than lowering the
+   output resolution keeps every pixel real. Chromium's
+   --force-device-scale-factor was tried first and is wrong on Wayland: it sized
+   the window in scaled units, so it filled only part of the screen. */
+const UI_ZOOM = (() => {
+  const v = parseFloat(new URLSearchParams(location.search).get("ui"));
+  return Number.isFinite(v) && v > 0 ? v : 1;
+})();
+if (UI_ZOOM !== 1) {
+  /* A transform rather than CSS zoom. Zoom left a black band down the right and
+     bottom edges, because the full-height flex layout resolves its 100% against
+     the unzoomed viewport. Sizing the body to viewport/scale and then scaling it
+     back up covers the screen exactly. */
+  const b = document.body.style;
+  b.width = `calc(100vw / ${UI_ZOOM})`;
+  b.height = `calc(100vh / ${UI_ZOOM})`;
+  b.transformOrigin = "0 0";
+  b.transform = `scale(${UI_ZOOM})`;
+  document.documentElement.style.overflow = "hidden";
+}
+
+const MAX_BUFFER_W = 1400;
 
 function resize() {
   for (const v of views) {
@@ -614,12 +983,13 @@ function resize() {
     if (!w || !h) continue;
     if (v._w === w && v._h === h) continue;
     v._w = w; v._h = h;
-    const dpr = Math.min(devicePixelRatio || 1, 2);
+    /* Multiply by the zoom so the 3D buffer still matches real pixels. */
+    const dpr = Math.min((devicePixelRatio || 1) * UI_ZOOM, 2);
     v.renderer.setPixelRatio(Math.max(0.5, Math.min(dpr, MAX_BUFFER_W / w)));
     v.renderer.setSize(w, h, false);
     v.camera.aspect = w / h;
     v.camera.updateProjectionMatrix();
-    dirty = true;
+    invalidate();
   }
 }
 addEventListener("resize", resize);
@@ -631,8 +1001,13 @@ const eCtx = eCanvas.getContext("2d");
 const eHist = new Array(120).fill(0);
 let eThresh = { start: 0.10, end: 0.06 };
 let energyLive = false;
+/* The trace only changes when a new energy sample arrives, which is 20Hz at
+   most. Redrawing a canvas every animation frame for an unchanged line is pure
+   waste on a VideoCore VI. */
+let eDirty = true;
 
 function drawEnergy() {
+  eDirty = false;
   const { width: W, height: H } = eCanvas;
   const top = 0.24;
   eCtx.clearRect(0, 0, W, H);
@@ -659,25 +1034,535 @@ function drawEnergy() {
   eCtx.stroke();
 }
 
+/* ----------------------------------------------------------- media player
+
+   The swipe gestures already carry a media action apiece, so the demo may as
+   well really play something. Audio lives in the page rather than in the
+   operating system: no daemon, no D-Bus, nothing to fail at a venue, and it
+   keeps working with the network unplugged.
+
+   Tracks are served from a folder OUTSIDE the deployed app, because deploys
+   rsync web/ with --delete and would erase anything put inside it. */
+
+const audio = document.getElementById("audio");
+const player = {
+  el: document.getElementById("player"),
+  cover: document.getElementById("plCover"),
+  title: document.getElementById("plTitle"),
+  sub: document.getElementById("plSub"),
+  volNum: document.getElementById("plVolNum"),
+  volBar: document.getElementById("plVolBar"),
+  list: document.getElementById("plList"),
+};
+let tracks = [], trackIx = 0;
+const COVER_PLACEHOLDER = document.getElementById("plCover").innerHTML;
+const VOL_STEP = 0.1;
+audio.volume = 0.7;
+
+function buildPlaylist() {
+  player.list.innerHTML = "";
+  tracks.forEach((t, i) => {
+    const li = document.createElement("li");
+    li.textContent = `${i + 1}.  ${t.name}`;
+    player.list.appendChild(li);
+  });
+}
+
+function showCover(t) {
+  /* Real artwork when the file carries it, the line-drawing placeholder when it
+     does not. Nothing is substituted from elsewhere. */
+  const want = t && t.art ? "/music/art/" + encodeURIComponent(t.file) : "";
+  if (player.cover._src === want) return;
+  player.cover._src = want;
+  if (!want) { player.cover.innerHTML = COVER_PLACEHOLDER; return; }
+  const img = new Image();
+  img.alt = "";
+  img.onload = () => { if (player.cover._src === want) player.cover.replaceChildren(img); };
+  img.onerror = () => { player.cover.innerHTML = COVER_PLACEHOLDER; };
+  img.src = want;
+}
+
+function showPlayer() {
+  const t = tracks[trackIx];
+  if (!t) return;
+  setText(player.title, t.name);
+  const state = audio.paused ? "paused" : "playing";
+  setText(player.sub, t.artist ? `${t.artist}  ·  ${state}` : state);
+  showCover(t);
+  const pct = Math.round(audio.volume * 100);
+  setText(player.volNum, pct + "%");
+  setStyle(player.volBar, "width", pct + "%");
+  [...player.list.children].forEach((li, i) => setFlag(li, "on", i === trackIx));
+}
+
+function loadTrack(i, autoplay) {
+  if (!tracks.length) return;
+  trackIx = (i + tracks.length) % tracks.length;
+  audio.src = "/music/" + encodeURIComponent(tracks[trackIx].file);
+  if (autoplay) audio.play().catch(() => {});   /* blocked until a gesture; fine */
+  showPlayer();
+}
+
+/* The gesture vocabulary maps to playback exactly as the firmware's media
+   bindings describe it, so what the rosette says is what actually happens. */
+function applyMedia(gesture) {
+  if (!tracks.length) return;
+  switch (gesture) {
+    case "LEFT":  loadTrack(trackIx - 1, true); break;
+    case "RIGHT": loadTrack(trackIx + 1, true); break;
+    case "UP":    audio.volume = Math.min(1, +(audio.volume + VOL_STEP).toFixed(2)); break;
+    case "DOWN":  audio.volume = Math.max(0, +(audio.volume - VOL_STEP).toFixed(2)); break;
+    case "COBRA": audio.paused ? audio.play().catch(() => {}) : audio.pause(); break;
+    default: return;
+  }
+  showPlayer();
+}
+
+audio.addEventListener("ended", () => loadTrack(trackIx + 1, true));
+audio.addEventListener("play",  showPlayer);
+audio.addEventListener("pause", showPlayer);
+
+fetch("/api/music").then(r => r.json()).then(d => {
+  tracks = d.tracks || [];
+  buildPlaylist();
+  if (tracks.length) loadTrack(0, false);
+  else setText(player.sub, `No audio files in ${d.dir}`);
+}).catch(() => {});
+
+/* --------------------------------------------------------------- settings
+
+   Everything privileged goes through the server, which only answers these
+   endpoints on the loopback address: the demo page is deliberately reachable
+   from any phone on the network, and changing the machine's configuration is
+   not something that should be. */
+
+const setEl = {};
+for (const id of ["setSource", "setSourceNote", "setApplySource", "setSink", "setVol",
+                  "setAudioNote", "setLogical", "setTransform", "setLink",
+                  "setRssi", "setRssiRow", "setSeq", "setSeqRow", "setMusic", "setStatus"]) {
+  setEl[id] = document.getElementById(id);
+}
+
+let settingsLoaded = false;
+
+function renderSettings(d) {
+  const c = d.config || {};
+
+  /* A serial glove only appears as an option when one is actually plugged in,
+     rather than offering a port that is not there. */
+  const ports = d.serial_ports || [];
+  const wanted = c.PIGLO_SOURCE || "--idle";
+  [...setEl.setSource.querySelectorAll("option[data-port]")].forEach(o => o.remove());
+  for (const p of ports) {
+    const o = document.createElement("option");
+    o.value = "--port " + p;
+    o.textContent = "Sensor glove on " + p;
+    o.dataset.port = "";
+    setEl.setSource.appendChild(o);
+  }
+  if (![...setEl.setSource.options].some(o => o.value === wanted)) {
+    const o = document.createElement("option");
+    o.value = wanted; o.textContent = wanted; o.dataset.port = "";
+    setEl.setSource.appendChild(o);
+  }
+  setEl.setSource.value = wanted;
+
+  const sinks = (d.audio && d.audio.sinks) || [];
+  setEl.setSink.innerHTML = "";
+  for (const sk of sinks) {
+    const o = document.createElement("option");
+    o.value = sk.id; o.textContent = sk.name;
+    setEl.setSink.appendChild(o);
+  }
+  if (d.audio && d.audio.default) setEl.setSink.value = d.audio.default;
+  setEl.setSink.disabled = sinks.length < 2;
+  setText(setEl.setAudioNote, sinks.length < 2
+    ? "Only one output is connected. This Pi has no headphone jack, so a USB adapter or a Bluetooth speaker would add one."
+    : "Pick where the music plays.");
+
+  if (c.PIGLO_LOGICAL) setEl.setLogical.value = c.PIGLO_LOGICAL;
+  if (c.PIGLO_PANEL_TRANSFORM) setEl.setTransform.value = c.PIGLO_PANEL_TRANSFORM;
+  setText(setEl.setMusic, c.PIGLO_MUSIC || "—");
+  settingsLoaded = true;
+}
+
+function loadSettings() {
+  fetch("/api/settings").then(r => {
+    if (r.status === 403) throw new Error("not on this device");
+    return r.json();
+  }).then(renderSettings).catch(err => {
+    setText(setEl.setStatus, "Settings can only be changed on the Pi itself.");
+    [setEl.setSource, setEl.setSink, setEl.setVol, setEl.setLogical,
+     setEl.setTransform, setEl.setApplySource].forEach(e => e.disabled = true);
+  });
+}
+
+function saveSettings(body, note) {
+  setText(setEl.setStatus, note || "Saving…");
+  return fetch("/api/settings", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  }).then(r => r.json()).then(d => {
+    const bad = Object.keys(d.errors || {});
+    setText(setEl.setStatus, bad.length
+      ? "Refused: " + bad.map(k => `${k} (${d.errors[k]})`).join(", ")
+      : (d.restarted ? "Saved, restarting the visualiser…" : "Saved."));
+    if (d.config) renderSettings(d);
+    return d;
+  }).catch(() => setText(setEl.setStatus, "Could not reach the server."));
+}
+
+setEl.setApplySource.onclick = () => {
+  setEl.setApplySource.disabled = true;
+  saveSettings({ config: { PIGLO_SOURCE: setEl.setSource.value }, restart: true },
+               "Applying…").finally(() => {
+    setTimeout(() => { setEl.setApplySource.disabled = false; }, 3000);
+  });
+};
+setEl.setSink.onchange = () => saveSettings({ audio_sink: setEl.setSink.value });
+setEl.setVol.onchange  = () => saveSettings({ audio_volume: setEl.setVol.value / 100 });
+setEl.setLogical.onchange   = () => saveSettings({ config: { PIGLO_LOGICAL: setEl.setLogical.value } });
+setEl.setTransform.onchange = () => saveSettings({ config: { PIGLO_PANEL_TRANSFORM: setEl.setTransform.value } });
+
+/* ------------------------------------------------- on-screen keyboard */
+
+const kbd = {
+  el: document.getElementById("kbd"),
+  rows: document.getElementById("kbdRows"),
+  label: document.getElementById("kbdFor"),
+  echo: document.getElementById("kbdEcho"),
+  peek: document.getElementById("kbdPeek"),
+  target: null,
+  shift: false,
+  symbols: false,
+  reveal: false,
+};
+
+const KBD_LETTERS = [
+  "1234567890",
+  "qwertyuiop",
+  "asdfghjkl",
+  "zxcvbnm",
+];
+const KBD_SYMBOLS = [
+  "1234567890",
+  "-/:;()$&@\"",
+  ".,?!'#%^*+=",
+  "_\\|~<>[]{}",
+];
+
+function kbdBuild() {
+  const rows = kbd.symbols ? KBD_SYMBOLS : KBD_LETTERS;
+  kbd.rows.innerHTML = "";
+
+  rows.forEach((chars, i) => {
+    const row = document.createElement("div");
+    row.className = "kbd-row";
+    if (i === rows.length - 1) row.appendChild(kbdKey(kbd.shift ? "\u21e7" : "\u21e7", "shift", { wide: true, on: kbd.shift }));
+    for (const ch of chars) {
+      const label = (kbd.shift && !kbd.symbols) ? ch.toUpperCase() : ch;
+      row.appendChild(kbdKey(label, "char"));
+    }
+    if (i === rows.length - 1) row.appendChild(kbdKey("\u232b", "back", { wide: true }));
+    kbd.rows.appendChild(row);
+  });
+
+  const last = document.createElement("div");
+  last.className = "kbd-row";
+  last.appendChild(kbdKey(kbd.symbols ? "abc" : "?123", "layer", { wider: true }));
+  last.appendChild(kbdKey("space", "space", { space: true }));
+  last.appendChild(kbdKey("Done", "done", { wider: true, go: true }));
+  kbd.rows.appendChild(last);
+}
+
+function kbdKey(label, action, opts = {}) {
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = "kbd-key";
+  b.textContent = label;
+  b.dataset.action = action;
+  if (opts.wide)  b.dataset.wide = "";
+  if (opts.wider) b.dataset.wider = "";
+  if (opts.space) b.dataset.space = "";
+  if (opts.go)    b.dataset.go = "";
+  if (opts.on)    b.dataset.on = "";
+  /* pointerdown, and prevented, so the field never loses focus to the key. */
+  b.addEventListener("pointerdown", e => { e.preventDefault(); kbdPress(action, label); });
+  return b;
+}
+
+function kbdPress(action, label) {
+  const t = kbd.target;
+  if (!t) return;
+  if (action === "char") {
+    t.value += label;
+  } else if (action === "space") {
+    t.value += " ";
+  } else if (action === "back") {
+    t.value = t.value.slice(0, -1);
+  } else if (action === "shift") {
+    kbd.shift = !kbd.shift; kbdBuild(); return;
+  } else if (action === "layer") {
+    kbd.symbols = !kbd.symbols; kbd.shift = false; kbdBuild(); return;
+  } else if (action === "done") {
+    kbdHide(); return;
+  }
+  if (kbd.shift && action === "char") { kbd.shift = false; kbdBuild(); }
+  t.dispatchEvent(new Event("input", { bubbles: true }));
+  kbdEcho();
+}
+
+function kbdEcho() {
+  const t = kbd.target;
+  if (!t) return;
+  const secret = t.type === "password" && !kbd.reveal;
+  setText(kbd.echo, secret ? "•".repeat(t.value.length) : t.value);
+}
+
+function kbdShow(target) {
+  kbd.target = target;
+  kbd.shift = false;
+  kbd.symbols = false;
+  kbd.reveal = false;
+  setText(kbd.peek, "Show");
+  if (target.type === "password") target.dataset.kbdSecret = "";
+  setText(kbd.label, target.dataset.kbdLabel || (target.type === "password" ? "Password" : "Text"));
+  kbdBuild();
+  kbdEcho();
+  kbd.el.hidden = false;
+
+  /* Make room and bring the field above the keys. Without this the keyboard
+     covers the very field being typed into, which on a touchscreen means
+     typing blind. */
+  requestAnimationFrame(() => {
+    const stage = target.closest(".stage");
+    if (!stage) return;
+    stage.style.paddingBottom = kbd.el.offsetHeight + 16 + "px";
+    /* Scroll by exactly the overlap. scrollIntoView centres within the whole
+       container, and on a short screen the container's centre is itself behind
+       the keyboard, so the field stayed hidden. */
+    const keysTop = kbd.el.getBoundingClientRect().top;
+    const box = target.getBoundingClientRect();
+    const overlap = box.bottom - (keysTop - 14);
+    if (overlap > 0) stage.scrollTop += overlap;
+  });
+}
+
+function kbdHide() {
+  kbd.el.hidden = true;
+  if (kbd.target) {
+    const stage = kbd.target.closest(".stage");
+    if (stage) stage.style.paddingBottom = "";
+    /* Leave a password field masked again, whatever the reveal toggle was. */
+    if (kbd.target.dataset.kbdSecret === "") kbd.target.type = "password";
+    kbd.target.blur();
+  }
+  kbd.target = null;
+}
+
+kbd.peek.addEventListener("pointerdown", e => {
+  e.preventDefault();
+  kbd.reveal = !kbd.reveal;
+  setText(kbd.peek, kbd.reveal ? "Hide" : "Show");
+  if (kbd.target) kbd.target.type = kbd.reveal ? "text" : "password";
+  kbdEcho();
+});
+
+/* Any text field in the page raises it. There is only one today, but a kiosk
+   with no keyboard should never present a field it cannot fill. */
+document.addEventListener("focusin", e => {
+  const t = e.target;
+  if (t instanceof HTMLInputElement && ["text", "password", "search"].includes(t.type)) {
+    kbdShow(t);
+  }
+});
+
+/* ------------------------------------------------------------- bluetooth */
+
+const btEl = {};
+for (const id of ["btNow", "btList", "btScan", "btGo", "btNote"]) {
+  btEl[id] = document.getElementById(id);
+}
+let btDevices = [];
+
+function renderBt(d) {
+  btDevices = d.devices || [];
+  const live = btDevices.find(x => x.connected);
+  setText(btEl.btNow, live ? live.name : "none");
+
+  const keep = btEl.btList.value;
+  btEl.btList.innerHTML = "";
+  const blank = document.createElement("option");
+  blank.value = "";
+  blank.textContent = btDevices.length ? "Choose a speaker…" : "None found yet";
+  btEl.btList.appendChild(blank);
+  for (const x of btDevices) {
+    const o = document.createElement("option");
+    o.value = x.mac;
+    o.textContent = x.name + (x.connected ? "  ·  connected" : x.paired ? "  ·  paired" : "");
+    btEl.btList.appendChild(o);
+  }
+  if (keep && btDevices.some(x => x.mac === keep)) btEl.btList.value = keep;
+  btSelectionChanged();
+
+  if (d.audio) {
+    const sinks = d.audio.sinks || [];
+    setEl.setSink.innerHTML = "";
+    for (const sk of sinks) {
+      const o = document.createElement("option");
+      o.value = sk.id; o.textContent = sk.name;
+      setEl.setSink.appendChild(o);
+    }
+    if (d.audio.default) setEl.setSink.value = d.audio.default;
+    setEl.setSink.disabled = sinks.length < 2;
+  }
+}
+
+function btSelectionChanged() {
+  const mac = btEl.btList.value;
+  const dev = btDevices.find(x => x.mac === mac);
+  btEl.btGo.disabled = !mac;
+  setText(btEl.btGo, dev && dev.connected ? "Disconnect" : "Connect");
+}
+
+btEl.btList.onchange = btSelectionChanged;
+
+function loadBt(scanFor) {
+  const url = scanFor ? `/api/bluetooth?scan=${scanFor}` : "/api/bluetooth";
+  return fetch(url).then(r => {
+    if (r.status === 403) throw new Error("remote");
+    return r.json();
+  }).then(renderBt).catch(() => {
+    setText(btEl.btNote, "Bluetooth can only be changed on the Pi itself.");
+    [btEl.btList, btEl.btScan, btEl.btGo].forEach(e => e.disabled = true);
+  });
+}
+
+btEl.btScan.onclick = () => {
+  btEl.btScan.disabled = true;
+  setText(btEl.btNote, "Searching. Put the speaker in pairing mode…");
+  loadBt(12).then(() => {
+    setText(btEl.btNote, btDevices.length
+      ? "Pick a speaker and connect. Check the glove still responds afterwards."
+      : "No speakers found. Put it in pairing mode and search again.");
+  }).finally(() => { btEl.btScan.disabled = false; });
+};
+
+btEl.btGo.onclick = () => {
+  const mac = btEl.btList.value;
+  if (!mac) return;
+  const dev = btDevices.find(x => x.mac === mac);
+  const action = dev && dev.connected ? "disconnect" : "connect";
+  btEl.btGo.disabled = true;
+  setText(btEl.btNote, action === "connect" ? "Connecting…" : "Disconnecting…");
+  fetch("/api/bluetooth", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ mac, action }),
+  }).then(r => r.json()).then(d => {
+    setText(btEl.btNote, d.ok
+      ? (action === "connect"
+          ? "Connected. Choose it under Audio, then check the glove still responds."
+          : "Disconnected.")
+      : (d.message || "That did not work."));
+    renderBt(d);
+  }).catch(() => setText(btEl.btNote, "Could not reach the server."))
+    .finally(() => { btEl.btGo.disabled = false; });
+};
+
+/* ------------------------------------------------------------------ wifi */
+
+const wifiEl = {};
+for (const id of ["wifiNow", "wifiIp", "wifiIpRow", "wifiList", "wifiPassRow", "wifiPass", "wifiConnect", "wifiNote"]) {
+  wifiEl[id] = document.getElementById(id);
+}
+let wifiNets = [];
+
+function renderWifi(d) {
+  wifiNets = d.networks || [];
+  const st = d.status || {};
+  setText(wifiEl.wifiNow, st.ssid
+    ? `${st.ssid}${st.signal ? `  ·  ${st.signal}%` : ""}`
+    : (st.state || "not connected"));
+
+  /* The address is what someone types into a phone to watch the demo, so show
+     it with the port that actually serves the page. Hidden when there is none
+     rather than shown as a dash. */
+  wifiEl.wifiIpRow.hidden = !st.ip;
+  if (st.ip) setText(wifiEl.wifiIp, `${st.ip}:${location.port || 80}`);
+
+  const keep = wifiEl.wifiList.value;
+  wifiEl.wifiList.innerHTML = "";
+  const blank = document.createElement("option");
+  blank.value = ""; blank.textContent = wifiNets.length ? "Choose a network…" : "No networks found";
+  wifiEl.wifiList.appendChild(blank);
+  for (const n of wifiNets) {
+    const o = document.createElement("option");
+    o.value = n.ssid;
+    o.textContent = `${n.ssid}  ${n.signal != null ? n.signal + "%" : ""}${n.secure ? "" : "  (open)"}`;
+    wifiEl.wifiList.appendChild(o);
+  }
+  if (keep && wifiNets.some(n => n.ssid === keep)) wifiEl.wifiList.value = keep;
+  wifiSelectionChanged();
+}
+
+function wifiSelectionChanged() {
+  const ssid = wifiEl.wifiList.value;
+  const net = wifiNets.find(n => n.ssid === ssid);
+  wifiEl.wifiPassRow.hidden = !net || !net.secure;
+  wifiEl.wifiConnect.disabled = !ssid;
+}
+
+function loadWifi() {
+  fetch("/api/wifi").then(r => {
+    if (r.status === 403) throw new Error("remote");
+    return r.json();
+  }).then(renderWifi).catch(() => {
+    setText(wifiEl.wifiNote, "WiFi can only be changed on the Pi itself.");
+    [wifiEl.wifiList, wifiEl.wifiPass, wifiEl.wifiConnect].forEach(e => e.disabled = true);
+  });
+}
+
+wifiEl.wifiList.onchange = wifiSelectionChanged;
+
+wifiEl.wifiConnect.onclick = () => {
+  const ssid = wifiEl.wifiList.value;
+  if (!ssid) return;
+  wifiEl.wifiConnect.disabled = true;
+  setText(wifiEl.wifiNote, `Joining ${ssid}…`);
+  fetch("/api/wifi", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ssid, password: wifiEl.wifiPass.value }),
+  }).then(r => r.json()).then(d => {
+    wifiEl.wifiPass.value = "";               /* not kept around after use */
+    setText(wifiEl.wifiNote, d.ok ? `Joined ${ssid}.` : (d.message || "Could not join."));
+    renderWifi(d);
+  }).catch(() => setText(wifiEl.wifiNote, "Could not reach the server."))
+    .finally(() => { wifiEl.wifiConnect.disabled = false; });
+};
+
 /* ---------------------------------------------------------------- stream */
 
 let latest = null, lastAt = 0;
 const es = new EventSource("/stream");
-es.addEventListener("frame", e => { latest = JSON.parse(e.data); lastAt = performance.now(); });
+es.addEventListener("frame", e => { latest = JSON.parse(e.data); lastAt = performance.now(); schedule(); });
 es.addEventListener("status", e => {
   const s = JSON.parse(e.data);
-  document.getElementById("dSource").textContent = s.source;
-  document.getElementById("dFrames").textContent = s.stats.frames;
-  document.getElementById("dRate").textContent = s.stats.rate_hz.toFixed(1) + " Hz";
-  document.getElementById("dErr").textContent = s.stats.error_pct.toFixed(1) + "%";
-  document.getElementById("rateText").textContent = s.stats.rate_hz.toFixed(0) + " Hz";
+  setText(el.rateText, s.stats.rate_hz.toFixed(0) + " Hz");
+  if (!diagDrawer.open) return;          // the rest feeds a closed drawer
+  setText(el.dSource, s.source);
+  setText(el.dFrames, s.stats.frames);
+  setText(el.dRate, s.stats.rate_hz.toFixed(1) + " Hz");
+  setText(el.dErr, s.stats.error_pct.toFixed(1) + "%");
 });
-es.onerror = () => { document.getElementById("lamp").dataset.state = "disconnected"; };
+es.onerror = () => { setData(el.lamp, "state", "disconnected"); };
 
 fetch("/api/status").then(r => r.json()).then(s => {
   if (s.ble) {
-    document.getElementById("dSvc").textContent = s.ble.service;
-    document.getElementById("dChr").textContent = s.ble.characteristic;
+    setText(el.dSvc, s.ble.service);
+    setText(el.dChr, s.ble.characteristic);
   }
   if (s.energy_thresholds) eThresh = s.energy_thresholds;
 }).catch(() => {});
@@ -687,74 +1572,147 @@ fetch("/api/status").then(r => r.json()).then(s => {
 const qt = new THREE.Quaternion();
 let fpsAcc = 0, fpsT = performance.now();
 let lastLetter = null;
+let lastFrame = null;
+let lastActed = null;
+
+/* --- smooth hand motion -------------------------------------------------
+   Sensor data arrives at 20Hz. Drawing one frame per packet is correct but
+   looks stepped, and the packets do not land evenly, so the steps are uneven
+   too. Instead each sensor has a target orientation, updated when data
+   arrives, and a displayed orientation that eases toward it on a
+   vsync-aligned loop. The motion becomes continuous without inventing data:
+   the target is only ever what the glove actually reported.
+
+   This loop uses requestAnimationFrame, which is what makes it smooth. That is
+   affordable *because it only runs while the hand is actually moving*. The
+   expensive case measured on 2026-09-11 was rAF left running with nothing to
+   draw; see the note on schedule(). When the data stops, so does this. */
+const SENSORS = ["palm", ...FINGERS];
+const targetQ = {}, dispQ = {}, seen = {};
+for (const n of SENSORS) {
+  targetQ[n] = new THREE.Quaternion();
+  dispQ[n] = new THREE.Quaternion();
+  seen[n] = false;
+}
+/* Easing time constant. This must be comfortably LONGER than the gap between
+   rendered frames, or each frame closes almost the whole gap and the motion
+   goes back to looking stepped. Measured on the Pi 2026-09-11: a rendered
+   frame costs about 134ms at 2560x1440 and 83ms at 1920x1080, so 55ms was far
+   too short and was itself a cause of the judder. */
+const EASE_TAU = 0.18;
+const LIVE_AFTER_MS = 600;     // data older than this counts as stopped
+let lastSensorAt = 0, rafId = 0, lastRenderTs = 0;
+
+function handLive() {
+  return mode === "hand" && performance.now() - lastSensorAt < LIVE_AFTER_MS;
+}
+
+function startRender() {
+  if (!rafId && handLive()) {
+    lastRenderTs = 0;
+    rafId = requestAnimationFrame(renderFrame);
+  }
+}
+
+function renderFrame(ts) {
+  rafId = 0;
+  const dt = lastRenderTs ? Math.min(0.1, (ts - lastRenderTs) / 1000) : 0.016;
+  lastRenderTs = ts;
+  const a = 1 - Math.exp(-dt / EASE_TAU);
+
+  if (seen.palm) {
+    dispQ.palm.slerp(targetQ.palm, a);
+    views.forEach(v => v.hand.palmPivot.quaternion.copy(dispQ.palm));
+  }
+  for (const n of FINGERS) {
+    if (!seen[n]) continue;
+    dispQ[n].slerp(targetQ[n], a);
+    if (compare) poseRaw(vCmp.hand, n, dispQ[n]);
+    const t = poseProjected(vMain.hand, n, dispQ[n], axis, coupling);
+    const row = rows[n];
+    setText(row.v, (t.curl * 180 / Math.PI).toFixed(0) + "\u00b0");
+    setFlag(row.v, "clamped", t.clamped);
+    setFlag(row.b, "clamped", t.clamped);
+    const span = t.max - t.min, zero = (0 - t.min) / span, pos = (t.curl - t.min) / span;
+    setStyle(row.b, "left", (Math.min(zero, pos) * 100).toFixed(1) + "%");
+    setStyle(row.b, "width", (Math.abs(pos - zero) * 100).toFixed(1) + "%");
+  }
+
+  placeCameras(views);
+  vMain.renderer.render(vMain.scene, vMain.camera);
+  if (compare) vCmp.renderer.render(vCmp.scene, vCmp.camera);
+  dirty = false;
+  fpsAcc++;
+
+  if (handLive()) rafId = requestAnimationFrame(renderFrame);
+}
 
 function tick() {
-  requestAnimationFrame(tick);
+  scheduled = false;
   const now = performance.now();
 
-  if (latest) {
+  /* Only touch the interface when a new frame has actually arrived. Frames come
+     at 20Hz from the glove and 5Hz from the idle heartbeat, but this loop runs
+     at the display's rate. Everything below used to run on every one of those,
+     rewriting values that had not changed. */
+  if (latest && latest !== lastFrame) {
+    lastFrame = latest;
     const s = latest.sensors || {};
     const hasSensors = !latest.idle && Object.keys(s).length > 0;
 
-    if (hasSensors && s.palm) {
-      const [w, x, y, z] = s.palm.q;
-      qt.set(x, y, z, w).normalize();
-      views.forEach(v => v.hand.palmPivot.quaternion.copy(qt));
-    }
-    document.getElementById("dPresent").textContent = latest.idle
-      ? "no sensor source"
-      : Object.keys(s).length + " of 6" + (latest.simulated ? " (simulated)" : "");
-
-    if (hasSensors) dirty = true;
-    for (const n of (hasSensors ? FINGERS : [])) {
-      const rec = s[n], row = rows[n];
-      if (!rec) {
-        row.v.textContent = "no signal";
-        row.v.dataset.stale = ""; delete row.v.dataset.clamped;
-        row.b.style.width = "0"; continue;
+    if (hasSensors) {
+      for (const n of SENSORS) {
+        const rec = s[n];
+        if (!rec) continue;
+        const [w, x, y, z] = rec.q;
+        targetQ[n].set(x, y, z, w).normalize();
+        if (!seen[n]) { dispQ[n].copy(targetQ[n]); seen[n] = true; }  // no swing on first sight
       }
-      delete row.v.dataset.stale;
-      const [w, x, y, z] = rec.q;
-      qt.set(x, y, z, w).normalize();
+      lastSensorAt = now;
+      startRender();
+    }
+    setText(el.dPresent, latest.idle
+      ? "no sensor source"
+      : Object.keys(s).length + " of 6" + (latest.simulated ? " (simulated)" : ""));
 
-      poseRaw(vCmp.hand, n, qt);
-      const t = poseProjected(vMain.hand, n, qt, axis, coupling);
-
-      row.v.textContent = (t.curl * 180 / Math.PI).toFixed(0) + "°";
-      t.clamped ? row.v.dataset.clamped = "" : delete row.v.dataset.clamped;
-      t.clamped ? row.b.dataset.clamped = "" : delete row.b.dataset.clamped;
-      const span = t.max - t.min, zero = (0 - t.min) / span, pos = (t.curl - t.min) / span;
-      row.b.style.left = (Math.min(zero, pos) * 100).toFixed(1) + "%";
-      row.b.style.width = (Math.abs(pos - zero) * 100).toFixed(1) + "%";
+    /* A sensor that dropped out says so. The ones still reporting are drawn by
+       renderFrame, which owns posing so it can interpolate between packets. */
+    for (const n of (hasSensors ? FINGERS : [])) {
+      const row = rows[n];
+      if (!s[n]) {
+        setText(row.v, "no signal");
+        setFlag(row.v, "stale", true); setFlag(row.v, "clamped", false);
+        setStyle(row.b, "width", "0");
+      } else {
+        setFlag(row.v, "stale", false);
+      }
     }
 
     /* ---- fingerspell ---- */
     const asl = latest.asl;
-    const glyph = document.getElementById("glyph");
     if (asl && asl.letter && !asl.stale) {
-      glyph.textContent = asl.letter;
-      delete glyph.dataset.idle;
+      setText(el.glyph, asl.letter);
+      setFlag(el.glyph, "idle", false);
       const hasConf = asl.confidence != null;
       const pct = hasConf ? Math.round(asl.confidence * 100) : 0;
-      document.getElementById("confBar").style.width = pct + "%";
-      document.getElementById("confPct").textContent = hasConf ? pct + "%" : "no score";
-      document.getElementById("alts").innerHTML = (asl.candidates || []).slice(1, 4)
-        .map(([c, p]) => `<span><b>${c}</b> ${Math.round(p * 100)}%</span>`).join("");
+      setStyle(el.confBar, "width", pct + "%");
+      setText(el.confPct, hasConf ? pct + "%" : "no score");
+      setHTML(el.alts, (asl.candidates || []).slice(1, 4)
+        .map(([c, p]) => `<span><b>${c}</b> ${Math.round(p * 100)}%</span>`).join(""));
       if (asl.letter !== lastLetter) {
-        Object.values(stripCells).forEach(el => delete el.dataset.on);
+        Object.values(stripCells).forEach(e => delete e.dataset.on);
         if (stripCells[asl.letter]) stripCells[asl.letter].dataset.on = "";
         lastLetter = asl.letter;
       }
-      const buf = document.getElementById("buffer");
-      buf.innerHTML = asl.text
-        ? asl.text.replace(/</g, "&lt;") + '<span class="caret">▌</span>'
-        : "<u>Nothing spelled yet</u>";
+      setHTML(el.buffer, asl.text
+        ? asl.text.replace(/</g, "&lt;") + '<span class="caret">\u258c</span>'
+        : "<u>Nothing spelled yet</u>");
     } else if (asl && asl.stale) {
-      glyph.dataset.idle = "";
-      glyph.textContent = "·";
-      document.getElementById("confPct").textContent = "—";
-      document.getElementById("confBar").style.width = "0";
-      document.getElementById("alts").innerHTML = "";
+      setFlag(el.glyph, "idle", true);
+      setText(el.glyph, "\u00b7");
+      setText(el.confPct, "\u2014");
+      setStyle(el.confBar, "width", "0");
+      setHTML(el.alts, "");
     }
 
     /* ---- swipe ---- */
@@ -763,52 +1721,82 @@ function tick() {
       /* Stock ble-tinyml-enum firmware transmits only the classified result —
          no energy trace. Say so rather than drawing a flat line at zero, which
          would read as "no motion detected". */
+      const wasLive = energyLive;
       energyLive = g.energy != null;
-      if (energyLive) { eHist.push(g.energy); eHist.shift(); }
-      const chip = document.getElementById("swipeState");
-      chip.textContent = g.state || "idle";
-      g.state && g.state !== "idle" ? chip.dataset.on = g.state : delete chip.dataset.on;
+      if (energyLive) { eHist.push(g.energy); eHist.shift(); eDirty = true; }
+      if (energyLive !== wasLive) eDirty = true;
 
-      const act = document.getElementById("swipeAct"), sub = document.getElementById("swipeSub");
+      setText(el.swipeState, g.state || "idle");
+      if (g.state && g.state !== "idle") setData(el.swipeState, "on", g.state);
+      else setFlag(el.swipeState, "on", false);
+
       const live = g.gesture && !g.stale;
-      Object.entries(pads).forEach(([k, el]) =>
-        live && k === g.gesture ? el.dataset.on = "" : delete el.dataset.on);
+      Object.entries(pads).forEach(([k, e]) => setFlag(e, "on", !!live && k === g.gesture));
+
+      /* Act once per classification. The bridge clears `gesture` back to null
+         after its hold time, so a null-to-value edge is one real swipe; the
+         device timestamp separates two identical gestures in a row. */
+      if (!g.gesture) {
+        lastActed = null;
+      } else if (live) {
+        const key = g.gesture + ":" + (g.device_ts != null ? g.device_ts : "");
+        if (key !== lastActed) { lastActed = key; applyMedia(g.gesture); }
+      }
 
       if (live) {
-        delete act.dataset.idle;
-        act.textContent = g.action || g.gesture;
-        sub.textContent = g.confidence != null
+        setFlag(el.swipeAct, "idle", false);
+        setText(el.swipeAct, g.action || g.gesture);
+        setText(el.swipeSub, g.confidence != null
           ? `${g.gesture.toLowerCase()}, ${Math.round(g.confidence * 100)}% confident`
-          : g.gesture.toLowerCase();
+          : g.gesture.toLowerCase());
       } else if (g.state === "recording") {
-        act.dataset.idle = ""; act.textContent = "Recording";
-        sub.textContent = "Hold the movement until it settles";
+        setFlag(el.swipeAct, "idle", true); setText(el.swipeAct, "Recording");
+        setText(el.swipeSub, "Hold the movement until it settles");
       } else {
-        act.dataset.idle = ""; act.textContent = "Waiting for a swipe";
-        sub.textContent = "Move the hand to start recording";
+        setFlag(el.swipeAct, "idle", true); setText(el.swipeAct, "Waiting for a swipe");
+        setText(el.swipeSub, "Move the hand to start recording");
       }
     }
-    if (mode === "swipe") drawEnergy();
 
     /* ---- link ---- */
     const L = latest.link || {};
-    const lamp = document.getElementById("lamp");
-    lamp.dataset.state = L.state || "unknown";
-    document.getElementById("linkText").textContent =
+    setData(el.lamp, "state", L.state || "unknown");
+    setText(el.linkText,
       L.state === "connected" ? (L.device || "Glove connected")
       : L.state === "scanning" ? "Scanning"
       : L.state === "connecting" ? "Connecting"
-      : L.state === "disconnected" ? "Glove disconnected" : "Waiting for glove";
-    document.getElementById("dTransport").textContent = L.transport || "—";
-    document.getElementById("dState").textContent = L.state || "—";
-    document.getElementById("dDevice").textContent = L.device || "—";
-    document.getElementById("dAddr").textContent = L.address || "—";
-    document.getElementById("dRssi").textContent = L.rssi != null ? L.rssi + " dBm" : "—";
-    document.getElementById("dSeq").textContent =
-      L.seq != null ? `#${L.seq}${L.dropped ? ` · ${L.dropped} lost` : ""}` : "—";
+      : L.state === "disconnected" ? "Glove disconnected" : "Waiting for glove");
+
+    if (mode === "settings") {
+      setText(setEl.setLink, L.state === "connected" ? (L.device || "connected") : (L.state || "—"));
+      /* A row appears only when there is a real number behind it. The adapter
+         often reports no signal level at all after reconnecting to a cached
+         device, and an empty dash is just clutter. */
+      setEl.setRssiRow.hidden = L.rssi == null;
+      if (L.rssi != null) setText(setEl.setRssi, L.rssi + " dBm");
+      setEl.setSeqRow.hidden = L.seq == null;
+      if (L.seq != null) {
+        setText(setEl.setSeq, `${L.seq}${L.dropped ? `, ${L.dropped} lost` : ", none lost"}`);
+      }
+    }
+
+    /* Eight more nodes behind a drawer that is usually shut. */
+    if (diagDrawer.open) {
+      setText(el.dTransport, L.transport || "\u2014");
+      setText(el.dState, L.state || "\u2014");
+      setText(el.dDevice, L.device || "\u2014");
+      setText(el.dAddr, L.address || "\u2014");
+      setText(el.dRssi, L.rssi != null ? L.rssi + " dBm" : "\u2014");
+      setText(el.dSeq,
+        L.seq != null ? `#${L.seq}${L.dropped ? ` \u00b7 ${L.dropped} lost` : ""}` : "\u2014");
+    }
   }
 
-  if (mode === "hand" && dirty) {
+  if (mode === "swipe" && eDirty) drawEnergy();
+
+  /* One-off redraw for a camera or control change while the hand is not live.
+     When renderFrame is running it owns the drawing and this stays out of it. */
+  if (mode === "hand" && dirty && !rafId) {
     placeCameras(views);
     vMain.renderer.render(vMain.scene, vMain.camera);
     if (compare) vCmp.renderer.render(vCmp.scene, vCmp.camera);
@@ -816,18 +1804,26 @@ function tick() {
     fpsAcc++;
   }
 
-  if (now - fpsT > 1000) {
-    /* Renders per second, not animation-frame ticks. Zero while the scene is
-       unchanged is correct, not a stall. */
-    document.getElementById("dFps").textContent =
-      fpsAcc ? Math.round(fpsAcc * 1000 / (now - fpsT)) + " fps" : "idle";
-    fpsAcc = 0; fpsT = now;
-  }
+}
+
+/* Renders per second, not animation-frame ticks. Zero while the scene is
+   unchanged is correct, not a stall. On its own timer because the loop only
+   runs when there is something to draw. */
+setInterval(() => {
+  const now = performance.now();
+  setText(el.dFps, fpsAcc ? Math.round(fpsAcc * 1000 / (now - fpsT)) + " fps" : "idle");
+  fpsAcc = 0; fpsT = now;
+}, 1000);
+
+/* One timer drives every blinking thing on the page. Two style invalidations a
+   second, against sixty frames a second for the CSS animations this replaced. */
+if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  setInterval(() => document.body.classList.toggle("blink"), 550);
 }
 
 resize();
 drawEnergy();
-tick();
+schedule();
 </script>
 </body>
 </html>

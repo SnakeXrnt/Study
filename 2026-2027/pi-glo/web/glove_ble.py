@@ -27,6 +27,7 @@ import argparse
 import asyncio
 import json
 import queue
+import signal
 import struct
 import sys
 import threading
@@ -47,6 +48,26 @@ MEDIA_ACTIONS = {
 
 # How long a classified gesture stays lit before the UI falls back to idle.
 HOLD_SECONDS = 1.2
+
+# Longest wait between scans once the glove has repeatedly failed to appear.
+SCAN_BACKOFF_CAP = 10.0
+
+
+def scan_backoff(misses: int) -> float:
+    """Seconds to wait before rescanning, after `misses` consecutive failures.
+
+    The first two retries are immediate, so a glove switched on at the start of
+    a demo is picked up straight away. After that the wait grows. Continuous
+    BlueZ discovery is expensive — on the Pi it was measured driving
+    `bluetoothd` and `dbus-daemon` hard — and with no glove in the room it would
+    otherwise scan forever for nothing.
+
+    The cap is deliberately short. A visitor should never wait long for the
+    glove to come up once it is switched on.
+    """
+    if misses <= 2:
+        return 0.0
+    return min(SCAN_BACKOFF_CAP, 2.0 ** (misses - 2))
 
 
 class Poster:
@@ -200,8 +221,23 @@ async def run(args) -> None:
 
     poster = Poster(args.server, args.verbose)
     bridge = Bridge(poster, args)
+    misses = 0
 
-    while True:
+    # Shut down cleanly, which matters more than it sounds. A BLE peripheral
+    # stops advertising while it believes a central is attached, and the Nano
+    # only notices an abrupt disappearance after its supervision timeout. Killed
+    # without disconnecting, `systemctl restart piglo-ble` therefore leaves the
+    # glove silent and unfindable until someone resets the board. Catching the
+    # signal lets the client context exit and disconnect properly.
+    stopping = asyncio.Event()
+    loop = asyncio.get_running_loop()
+    for sig in (signal.SIGTERM, signal.SIGINT):
+        try:
+            loop.add_signal_handler(sig, stopping.set)
+        except (NotImplementedError, RuntimeError):
+            pass
+
+    while not stopping.is_set():
         poster.link(state="scanning", device=None, address=None, rssi=None,
                     seq=None, service_uuid=SERVICE_UUID, char_uuid=CHAR_UUID)
         print(f"[bridge] scanning for {args.name!r} / {SERVICE_UUID}", flush=True)
@@ -226,14 +262,24 @@ async def run(args) -> None:
         except Exception as exc:                      # noqa: BLE001
             print(f"[bridge] scan failed: {exc}", flush=True)
 
+        if stopping.is_set():
+            return
         if device is None:
-            print("[bridge] not found, retrying", flush=True)
+            misses += 1
+            wait = scan_backoff(misses)
+            print(f"[bridge] not found ({misses}), retrying in {wait:.0f}s", flush=True)
             poster.link(state="disconnected", device=None, address=None, rssi=None)
-            await asyncio.sleep(2.0)
+            await asyncio.sleep(wait)
             continue
+
+        misses = 0
 
         bridge.address = getattr(device, "address", None)
         rssi = seen_rssi.get(bridge.address)
+        # -127 is BlueZ's "no reading", not a signal level. Showing it as one
+        # would be inventing data; the interface says nothing instead.
+        if rssi is not None and rssi <= -127:
+            rssi = None
         raw_name = device.name or ""
         # A MAC-derived placeholder is not a name; fall back to the configured one.
         friendly = raw_name if raw_name and raw_name.replace("-", "") \
@@ -261,10 +307,29 @@ async def run(args) -> None:
                             dropped=bridge.dropped,
                             service_uuid=SERVICE_UUID, char_uuid=CHAR_UUID)
                 print("[bridge] subscribed; waiting for gestures", flush=True)
-                while client.is_connected:
+
+                # Re-assert the link while connected. Announcing it once on
+                # connect is not enough: the visualiser can be restarted
+                # underneath us, and it then shows "waiting for glove" while
+                # telemetry is plainly arriving. Overlays also go stale after a
+                # few seconds without an update.
+                last_link = 0.0
+                while client.is_connected and not stopping.is_set():
+                    now = asyncio.get_event_loop().time()
+                    if now - last_link >= 2.0:
+                        last_link = now
+                        poster.link(state="connected", device=friendly,
+                                    address=bridge.address, rssi=rssi,
+                                    seq=bridge.last_seq, dropped=bridge.dropped,
+                                    service_uuid=SERVICE_UUID, char_uuid=CHAR_UUID)
                     await asyncio.sleep(0.5)
         except Exception as exc:                      # noqa: BLE001
             print(f"[bridge] link error: {exc}", flush=True)
+
+        if stopping.is_set():
+            print("[bridge] stopping, glove released cleanly", flush=True)
+            poster.link(state="disconnected", device=None, address=None, rssi=None)
+            return
 
         print("[bridge] disconnected", flush=True)
         poster.link(state="disconnected", device=None, address=None, rssi=None)

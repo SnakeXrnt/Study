@@ -42,8 +42,12 @@ import math
 import os
 import queue
 import random
+import re
+import shutil
 import socketserver
+import subprocess
 import sys
+import urllib.parse
 import threading
 import time
 from dataclasses import dataclass, field
@@ -63,6 +67,15 @@ FINGER_REF_LOCS = {
 }
 
 STATIC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
+
+# Music lives OUTSIDE the app directory on purpose. Deploys rsync web/ with
+# --delete, so anything dropped inside static/ would be erased on the next one.
+DEFAULT_MUSIC_DIR = os.path.join(os.path.expanduser("~"), "pi-glo", "music")
+AUDIO_TYPES = {
+    ".mp3": "audio/mpeg", ".m4a": "audio/mp4", ".aac": "audio/aac",
+    ".ogg": "audio/ogg", ".oga": "audio/ogg", ".opus": "audio/ogg",
+    ".wav": "audio/wav", ".flac": "audio/flac",
+}
 
 # Gesture vocabulary and BLE identifiers, from examples/ttgo-complete and
 # examples/ble-tinyml-enum. Values are the on-wire enum ordinals.
@@ -85,6 +98,76 @@ ENERGY_START = 0.10
 ENERGY_END = 0.06
 
 ALPHABET = [chr(c) for c in range(ord("A"), ord("Z") + 1)]
+
+
+_ART_CACHE: dict = {}
+
+
+def _embedded_art(path: str) -> tuple:
+    """Pull the front cover out of a FLAC file, or return (None, None).
+
+    FLAC metadata blocks are simple enough to walk directly, so this needs no
+    audio library on a machine where every dependency is one more thing to
+    install at a venue. Anything that is not a FLAC, or carries no picture,
+    simply has no art; nothing is substituted.
+    """
+    try:
+        key = (path, os.path.getmtime(path))
+    except OSError:
+        return (None, None)
+    if key in _ART_CACHE:
+        return _ART_CACHE[key]
+
+    found = (None, None)
+    try:
+        with open(path, "rb") as f:
+            if f.read(4) == b"fLaC":
+                while True:
+                    head = f.read(4)
+                    if len(head) < 4:
+                        break
+                    last, btype = head[0] & 0x80, head[0] & 0x7F
+                    length = int.from_bytes(head[1:4], "big")
+                    if btype != 6:                       # 6 is PICTURE
+                        f.seek(length, os.SEEK_CUR)
+                        if last:
+                            break
+                        continue
+                    data = f.read(length)
+                    o = 4                                 # skip picture type
+                    mlen = int.from_bytes(data[o:o + 4], "big"); o += 4
+                    mime = data[o:o + mlen].decode("ascii", "replace"); o += mlen
+                    dlen = int.from_bytes(data[o:o + 4], "big"); o += 4 + dlen
+                    o += 16                               # w, h, depth, colours
+                    blen = int.from_bytes(data[o:o + 4], "big"); o += 4
+                    found = (mime, data[o:o + blen])
+                    break
+                    
+    except OSError:
+        found = (None, None)
+
+    _ART_CACHE.clear()          # one cover at a time is plenty; covers are large
+    _ART_CACHE[key] = found
+    return found
+
+
+def _split_track_name(stem: str) -> tuple:
+    """Turn a filename into something worth putting on a screen.
+
+    Ripped files arrive as "09-the_weeknd-blinding_lights". Shown raw that is
+    ugly on a projector, so drop the track number, split artist from title on
+    the first dash, and tidy the separators. Nothing is invented: if the name
+    carries no artist, the artist comes back empty rather than guessed.
+    """
+    name = re.sub(r"^\s*\d+\s*[-._ ]+", "", stem)
+    artist = ""
+    if "-" in name:
+        left, _, right = name.partition("-")
+        if left.strip() and right.strip():
+            artist, name = left, right
+    tidy = lambda t: re.sub(r"\s+", " ", t.replace("_", " ")).strip()
+    cap = lambda t: " ".join(w if w.isupper() else w.capitalize() for w in tidy(t).split())
+    return cap(name) or stem, cap(artist)
 
 
 # --------------------------------------------------------------------------
@@ -505,6 +588,122 @@ def run_heartbeat(bus: Broadcaster, stop: threading.Event, period: float = 0.2) 
 
 
 # --------------------------------------------------------------------------
+# Settings
+# --------------------------------------------------------------------------
+
+CONFIG_TOOL = "/usr/local/bin/piglo-config"
+
+# Audio lives in the user's PipeWire session, which a system service does not
+# join automatically, so its socket has to be pointed at explicitly.
+def _user_env() -> dict:
+    env = dict(os.environ)
+    env.setdefault("XDG_RUNTIME_DIR", f"/run/user/{os.getuid()}")
+    return env
+
+
+def _run(cmd: list, timeout: float = 5.0) -> tuple:
+    """Run a command, returning (ok, output). Never raises."""
+    try:
+        r = subprocess.run(cmd, capture_output=True, text=True,
+                           timeout=timeout, env=_user_env())
+        return r.returncode == 0, (r.stdout or r.stderr).strip()
+    except (OSError, subprocess.SubprocessError) as exc:
+        return False, str(exc)
+
+
+def read_config() -> dict:
+    ok, out = _run(["sudo", "-n", CONFIG_TOOL, "get"])
+    cfg = {}
+    if ok:
+        for line in out.splitlines():
+            k, _, v = line.partition("=")
+            if k.startswith("PIGLO_"):
+                cfg[k] = v
+    return cfg
+
+
+def audio_outputs() -> dict:
+    """The PipeWire sinks, and which one is currently default."""
+    ok, out = _run(["pactl", "list", "short", "sinks"])
+    sinks = []
+    if ok:
+        for line in out.splitlines():
+            parts = line.split("\t")
+            if len(parts) >= 2:
+                sinks.append({"id": parts[1], "name": _friendly_sink(parts[1])})
+    ok2, cur = _run(["pactl", "get-default-sink"])
+    return {"sinks": sinks, "default": cur if ok2 else None}
+
+
+def _friendly_sink(sink: str) -> str:
+    """A sink name a person can read, without inventing detail."""
+    s = sink.lower()
+    if "hdmi" in s:
+        return "HDMI"
+    if "bluez" in s or "bluetooth" in s:
+        return "Bluetooth speaker"
+    if "usb" in s:
+        return "USB audio"
+    if "headphone" in s or "analog" in s:
+        return "Headphone jack"
+    return sink
+
+
+def wifi_state() -> dict:
+    """Current network and what is in range. Reading only; joining is a POST."""
+    ok, out = _run(["sudo", "-n", CONFIG_TOOL, "wifi-status"])
+    status = {}
+    if ok:
+        for line in out.splitlines():
+            k, _, v = line.partition("=")
+            if k:
+                status[k] = v
+
+    ok2, out2 = _run(["sudo", "-n", CONFIG_TOOL, "wifi-list"], timeout=20.0)
+    nets = []
+    if ok2:
+        for line in out2.splitlines():
+            parts = line.split("|")
+            if len(parts) < 4 or not parts[1]:
+                continue
+            try:
+                signal = int(parts[2])
+            except ValueError:
+                signal = None
+            nets.append({"ssid": parts[1], "signal": signal,
+                         "secure": bool(parts[3].strip()),
+                         "current": parts[0].strip() == "*"})
+    return {"status": status, "networks": nets, "available": ok or ok2}
+
+
+def bluetooth_audio(scan_seconds: int = 0) -> dict:
+    """Audio devices the adapter can see, and which one is in use.
+
+    The adapter is shared with the glove's BLE link. Scanning was measured on
+    2026-09-11 not to disturb it; streaming is the case that needs watching.
+    """
+    args = ["sudo", "-n", CONFIG_TOOL, "bt-scan", str(int(scan_seconds))]
+    ok, out = _run(args, timeout=max(20.0, scan_seconds + 15))
+    devices = []
+    if ok:
+        for line in out.splitlines():
+            parts = line.split("|")
+            if len(parts) >= 4:
+                devices.append({"mac": parts[0], "name": parts[1],
+                                "paired": parts[2] == "yes",
+                                "connected": parts[3] == "yes"})
+    return {"devices": devices}
+
+
+def serial_ports() -> list:
+    try:
+        return sorted("/dev/" + n for n in os.listdir("/dev")
+                      if n.startswith(("ttyACM", "ttyUSB")))
+    except OSError:
+        return []
+
+
+# --------------------------------------------------------------------------
 # HTTP
 # --------------------------------------------------------------------------
 
@@ -513,6 +712,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     stats: Stats
     overlays: Overlays
     source_label: str
+    music_dir: str
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=STATIC_DIR, **kwargs)
@@ -521,11 +721,137 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         if "/stream" not in (self.path or ""):
             super().log_message(fmt, *args)
 
+    def end_headers(self):
+        """Never let a browser cache anything we serve.
+
+        Without this the UI is served with only a Last-Modified date, so Firefox
+        applies heuristic freshness and can keep showing a stale index.html after
+        a redeploy. On the Pi that silently invalidated a round of performance
+        measurements: the page under test was not the page that had been
+        deployed. Nothing here is big enough for caching to be worth that.
+        """
+        if not self._cache_header_sent:
+            # The app itself must never be cached, or a redeploy silently serves
+            # the old page. Audio and artwork are the opposite: large, immutable
+            # for the life of a file, and re-fetching a 3MB cover on every track
+            # change would be daft.
+            if (self.path or "").startswith("/music/"):
+                self.send_header("Cache-Control", "public, max-age=3600")
+            else:
+                self.send_header("Cache-Control", "no-store, must-revalidate")
+            self._cache_header_sent = True
+        super().end_headers()
+
+    def send_response(self, *args, **kwargs):
+        self._cache_header_sent = False
+        super().send_response(*args, **kwargs)
+
+    _cache_header_sent = False
+
     ACCEPTS = {"/api/asl": "asl", "/api/gesture": "gesture", "/api/link": "link"}
+
+    def _music_files(self) -> list:
+        """Audio files in the music directory, newest naming order aside, sorted."""
+        try:
+            names = sorted(os.listdir(self.music_dir))
+        except OSError:
+            return []
+        out = []
+        for n in names:
+            ext = os.path.splitext(n)[1].lower()
+            if ext not in AUDIO_TYPES:
+                continue
+            full = os.path.join(self.music_dir, n)
+            if not os.path.isfile(full):
+                continue
+            title, artist = _split_track_name(os.path.splitext(n)[0])
+            out.append({"name": title, "artist": artist,
+                        "art": ext == ".flac",
+                        "file": n, "type": AUDIO_TYPES[ext],
+                        "bytes": os.path.getsize(full)})
+        return out
+
+    def _serve_music(self, rel: str) -> None:
+        """Serve one audio file, refusing anything that escapes the directory."""
+        rel = urllib.parse.unquote(rel)
+        full = os.path.normpath(os.path.join(self.music_dir, rel))
+        root = os.path.normpath(self.music_dir)
+        if not full.startswith(root + os.sep) or not os.path.isfile(full):
+            self.send_error(404, "no such track")
+            return
+        ctype = AUDIO_TYPES.get(os.path.splitext(full)[1].lower())
+        if ctype is None:
+            self.send_error(404, "not an audio file")
+            return
+        try:
+            fh = open(full, "rb")
+        except OSError:
+            self.send_error(404, "cannot read track")
+            return
+        with fh:
+            size = os.fstat(fh.fileno()).st_size
+            self.send_response(200)
+            self.send_header("Content-Type", ctype)
+            self.send_header("Content-Length", str(size))
+            self.send_header("Accept-Ranges", "none")
+            self.end_headers()
+            try:
+                shutil.copyfileobj(fh, self.wfile)
+            except (BrokenPipeError, ConnectionResetError):
+                pass
+
+    def _serve_art(self, rel: str) -> None:
+        rel = urllib.parse.unquote(rel)
+        full = os.path.normpath(os.path.join(self.music_dir, rel))
+        root = os.path.normpath(self.music_dir)
+        if not full.startswith(root + os.sep) or not os.path.isfile(full):
+            self.send_error(404, "no such track")
+            return
+        mime, blob = _embedded_art(full)
+        if not blob:
+            self.send_error(404, "no embedded artwork")
+            return
+        self.send_response(200)
+        self.send_header("Content-Type", mime or "image/jpeg")
+        self.send_header("Content-Length", str(len(blob)))
+        self.end_headers()
+        try:
+            self.wfile.write(blob)
+        except (BrokenPipeError, ConnectionResetError):
+            pass
 
     def do_GET(self):  # noqa: N802
         if self.path.startswith("/stream"):
             return self._sse()
+        if self.path.startswith("/api/settings"):
+            if not self._local_only():
+                return
+            return self._json({
+                "config": read_config(),
+                "audio": audio_outputs(),
+                "serial_ports": serial_ports(),
+                "source": self.source_label,
+            })
+        if self.path.startswith("/api/bluetooth"):
+            if not self._local_only():
+                return
+            q = urllib.parse.urlparse(self.path).query
+            secs = 0
+            try:
+                secs = int(urllib.parse.parse_qs(q).get("scan", ["0"])[0])
+            except ValueError:
+                secs = 0
+            return self._json(bluetooth_audio(max(0, min(20, secs))))
+        if self.path.startswith("/api/wifi"):
+            if not self._local_only():
+                return
+            return self._json(wifi_state())
+        if self.path.startswith("/api/music"):
+            return self._json({"dir": self.music_dir, "tracks": self._music_files()})
+        if self.path.startswith("/music/art/"):
+            return self._serve_art(self.path[len("/music/art/"):].split("?", 1)[0])
+        if self.path.startswith("/music/"):
+            return self._serve_music(self.path[len("/music/"):].split("?", 1)[0])
         if self.path.startswith("/api/status"):
             return self._json({
                 "source": self.source_label,
@@ -543,6 +869,12 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
     def do_POST(self):  # noqa: N802
         path = self.path.split("?", 1)[0].rstrip("/")
+        if path == "/api/settings":
+            return self._post_settings()
+        if path == "/api/wifi":
+            return self._post_wifi()
+        if path == "/api/bluetooth":
+            return self._post_bluetooth()
         kind = self.ACCEPTS.get(path)
         if kind is None:
             self.send_error(404, "unknown endpoint")
@@ -564,19 +896,151 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             return
         self._json({"ok": True, kind: self.overlays.update(kind, payload)})
 
+    def _local_only(self) -> bool:
+        """Settings are for whoever is at the machine, not the whole network.
+
+        The visualiser deliberately listens on every interface so visitors can
+        watch from a phone. Changing the demo's configuration is a different
+        thing entirely, so those endpoints answer the loopback address only.
+        """
+        host = self.client_address[0]
+        if host in ("127.0.0.1", "::1", "::ffff:127.0.0.1"):
+            return True
+        self.send_error(403, "settings are only available on the device itself")
+        return False
+
+    def _post_settings(self) -> None:
+        if not self._local_only():
+            return
+        payload = self._read_json()
+        if payload is None:
+            return
+
+        results, errors = {}, {}
+
+        # Everything privileged goes through the helper, which has its own
+        # whitelist. Nothing here constructs a shell command from user input.
+        for key, value in (payload.get("config") or {}).items():
+            key, value = str(key), str(value)
+            # The helper enforces this too. Both layers check it on purpose: the
+            # config file is read by systemd as an EnvironmentFile, so a value
+            # carrying a newline would append a second key to it.
+            if any(c in value for c in "\r\n\x00") or not value.isprintable():
+                errors[key] = "control characters are not allowed"
+                continue
+            ok, out = _run(["sudo", "-n", CONFIG_TOOL, "set", key, value])
+            (results if ok else errors)[key] = out
+
+        sink = payload.get("audio_sink")
+        if sink:
+            ok, out = _run(["pactl", "set-default-sink", str(sink)])
+            (results if ok else errors)["audio_sink"] = out or sink
+
+        vol = payload.get("audio_volume")
+        if vol is not None:
+            try:
+                v = max(0.0, min(1.0, float(vol)))
+                ok, out = _run(["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", f"{v:.2f}"])
+                (results if ok else errors)["audio_volume"] = out or f"{v:.2f}"
+            except (TypeError, ValueError):
+                errors["audio_volume"] = "not a number"
+
+        restarted = False
+        if payload.get("restart"):
+            ok, out = _run(["sudo", "-n", CONFIG_TOOL, "restart"], timeout=10.0)
+            restarted = ok
+            if not ok:
+                errors["restart"] = out
+
+        self._json({"ok": not errors, "applied": results, "errors": errors,
+                    "restarted": restarted, "config": read_config(),
+                    "audio": audio_outputs()})
+
+    def _post_wifi(self) -> None:
+        """Join a network. The password reaches nmcli on standard input.
+
+        It is never an argument to anything, so it does not appear in the
+        process list or in any log, and it is not written to disk here. The
+        endpoint answers the loopback address only, so the password is typed on
+        the machine's own screen rather than sent across the network.
+        """
+        if not self._local_only():
+            return
+        payload = self._read_json()
+        if payload is None:
+            return
+
+        ssid = str(payload.get("ssid") or "")
+        if not ssid or any(c in ssid for c in "\r\n\x00"):
+            self._json({"ok": False, "error": "no usable network name"})
+            return
+
+        if payload.get("forget"):
+            ok, out = _run(["sudo", "-n", CONFIG_TOOL, "wifi-forget", ssid], timeout=20.0)
+            self._json({"ok": ok, "message": out, **wifi_state()})
+            return
+
+        password = str(payload.get("password") or "")
+        try:
+            r = subprocess.run(
+                ["sudo", "-n", CONFIG_TOOL, "wifi-connect", ssid],
+                input=password + "\n", capture_output=True, text=True,
+                timeout=45.0, env=_user_env())
+            ok = r.returncode == 0
+            msg = (r.stdout or r.stderr).strip()
+        except (OSError, subprocess.SubprocessError) as exc:
+            ok, msg = False, str(exc)
+        del password
+
+        self._json({"ok": ok, "message": msg, **wifi_state()})
+
+    def _post_bluetooth(self) -> None:
+        if not self._local_only():
+            return
+        payload = self._read_json()
+        if payload is None:
+            return
+        mac = str(payload.get("mac") or "")
+        action = str(payload.get("action") or "connect")
+        if action not in ("connect", "disconnect", "forget"):
+            self._json({"ok": False, "message": "unknown action"})
+            return
+        ok, out = _run(["sudo", "-n", CONFIG_TOOL, "bt-" + action, mac], timeout=60.0)
+        # PipeWire takes a moment to publish a new sink after a speaker joins.
+        if ok and action == "connect":
+            time.sleep(2.0)
+        self._json({"ok": ok, "message": out,
+                    **bluetooth_audio(0), "audio": audio_outputs()})
+
+    def _read_json(self):
+        try:
+            length = int(self.headers.get("Content-Length") or 0)
+        except ValueError:
+            length = 0
+        if length <= 0 or length > 64 * 1024:
+            self.send_error(400, "expected a JSON body")
+            return None
+        try:
+            payload = json.loads(self.rfile.read(length))
+        except (json.JSONDecodeError, UnicodeDecodeError) as exc:
+            self.send_error(400, f"invalid JSON: {exc}")
+            return None
+        if not isinstance(payload, dict):
+            self.send_error(400, "body must be a JSON object")
+            return None
+        return payload
+
     def _json(self, payload: dict) -> None:
         body = json.dumps(payload).encode()
         self.send_response(200)
         self.send_header("Content-Type", "application/json")
         self.send_header("Content-Length", str(len(body)))
-        self.send_header("Cache-Control", "no-store")
         self.end_headers()
         self.wfile.write(body)
 
     def _sse(self) -> None:
         self.send_response(200)
         self.send_header("Content-Type", "text/event-stream")
-        self.send_header("Cache-Control", "no-store")
         self.send_header("Connection", "keep-alive")
         self.send_header("X-Accel-Buffering", "no")
         self.end_headers()
@@ -629,6 +1093,9 @@ def main() -> None:
     ap.add_argument("--http-port", type=int, default=8080)
     ap.add_argument("--host", default="0.0.0.0")
     ap.add_argument("--record", metavar="FILE", help="append frames as JSON lines")
+    ap.add_argument("--music", metavar="DIR", default=DEFAULT_MUSIC_DIR,
+                    help="folder of audio files for the swipe demo "
+                         "(default: %(default)s)")
     ap.add_argument("--fake-predictions", action="store_true",
                     help="synthesise ASL/swipe/link overlays alongside real sensor data")
     args = ap.parse_args()
@@ -663,9 +1130,12 @@ def main() -> None:
     Handler.stats = stats
     Handler.overlays = overlays
     Handler.source_label = label
+    Handler.music_dir = os.path.abspath(os.path.expanduser(args.music))
 
     httpd = ThreadedHTTPServer((args.host, args.http_port), Handler)
     print(f"[pi-glo] source={label}", flush=True)
+    n = len(Handler._music_files(Handler)) if os.path.isdir(Handler.music_dir) else 0
+    print(f"[pi-glo] music={Handler.music_dir} ({n} tracks)", flush=True)
     print(f"[pi-glo] http://localhost:{args.http_port}/  (Ctrl-C to stop)", flush=True)
     try:
         httpd.serve_forever()

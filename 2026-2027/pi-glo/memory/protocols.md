@@ -30,6 +30,11 @@ From `ttgo-complete`'s `MODE_MEDIA` branch:
 
 ## USB serial — the 6-IMU hand
 
+> **Current firmware, not the target.** A decision on 2026-09-11 moves fusion to
+> the Pi, which means the Nano will stream raw accelerometer and gyroscope data
+> and this record shape will be replaced. The replacement is unspecified. What
+> follows is accurate for the firmware as flashed today. See `open-items.md`.
+
 115200 baud on `/dev/ttyACM0`. Records are `;`-terminated:
 
 ```
@@ -110,6 +115,28 @@ but notifying that fast floods the connection interval for no visible gain.
 Deliberately a **second characteristic** rather than an extension of the command
 packet, so the existing TTGO client — which reads fixed offsets from the first
 six bytes — keeps working untouched.
+
+### Restarting the bridge can strand the glove
+
+A BLE peripheral stops advertising while it believes a central is attached, and
+the Nano only notices an abrupt disappearance after its supervision timeout.
+Killing `piglo-ble` without disconnecting therefore leaves the glove **silent and
+unfindable**, sometimes for minutes, and in practice until someone presses reset
+on the board. Observed on 2026-09-11 after a plain `systemctl restart piglo-ble`.
+
+`glove_ble.py` now handles SIGTERM and SIGINT so the client context exits and
+disconnects properly, which is what systemd sends on restart and stop. If the
+glove ever does go quiet after a restart, **reset the Nano**; nothing on the Pi
+can rescue it.
+
+Two related things worth knowing:
+
+- **Two bridges cannot share one glove.** The Nano accepts a single central, so
+  whichever connects first wins and the other scans forever. Do not leave a
+  second Pi running `piglo-ble`.
+- **`--simulate` fights a real glove.** It starts the fake prediction generator,
+  which posts invented gestures and scores over the same overlay endpoints. With
+  hardware attached, use `--idle`.
 
 ## Prediction overlays — the UI's HTTP contract
 

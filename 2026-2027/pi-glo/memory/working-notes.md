@@ -20,9 +20,21 @@ terminal, or find a non-interactive route — appending a public key to
 
 ## Verify on the real hardware
 
-A browser on a laptop pointed at the Pi tests the *laptop's* GPU. The 13 fps
+A browser on a laptop pointed at the Pi tests the *laptop's* GPU. The frame-rate
 problem was invisible that way and only appeared in a `grim` screenshot taken on
 the Pi itself. Same principle throughout: the Pi is the target, so measure there.
+
+Two follow-ons learned the hard way on 2026-09-11:
+
+**Measure the thing you are actually changing.** Antialiasing and the drawing
+buffer were both ruled out by watching CPU, which was the wrong metric: the cost
+was per-frame presentation, and it only showed up once frame *time* was measured.
+Both were later confirmed irrelevant anyway, but for a while the wrong metric
+pointed at the wrong conclusion.
+
+**Instantaneous `top` samples are too noisy to compare against.** Differences of
+15 points between samples were routine. Accumulating CPU time over a fixed window
+made the real differences obvious and the false ones disappear.
 
 ## Read the code before designing around it
 
@@ -46,6 +58,11 @@ rewritten. **Read the firmware before specifying anything that talks to it.**
 - SSE clients receive the last published frame first, which may predate a POST
   you just made. Skip the first frame when testing overlay delivery, or it looks
   like the overlay never arrived.
+- **A browser will serve a stale page after a redeploy.** `server.py` sent no
+  cache headers, only a Last-Modified date, so Firefox applied heuristic
+  freshness and kept an old `index.html`. That silently invalidated a whole round
+  of performance measurements: the page under test was not the page deployed. It
+  now sends `no-store` on everything.
 - Blender's `-o` must precede `-f` or the output path is silently ignored.
 
 ## Conventions in this project

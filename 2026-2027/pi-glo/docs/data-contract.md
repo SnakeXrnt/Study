@@ -6,6 +6,13 @@ What the glove actually puts on the wire, and where host-side code plugs in.
 > emitting raw accelerometer and gyroscope data, with calibration to be applied
 > on the host. Reading `examples/sense-6madgwick` disproved all three points.
 > The real system is described below.
+>
+> **Superseded in part, 2026-09-11.** A decision was taken to move fusion onto
+> the Pi, which means the Nano will be reflashed to stream raw accelerometer and
+> gyroscope data after all. The sensor count stays at six. Nothing has been
+> built, the replacement wire format is unspecified, and everything below still
+> describes the firmware as flashed. Settle the new format against the firmware
+> before writing it down here — that mistake has already been made once.
 
 ## What the firmware actually does
 
@@ -172,7 +179,7 @@ COOLDOWN` gated on smoothed accelerometer energy:
 | Start threshold | 0.10 |
 | End threshold | 0.06 |
 | Energy window | 20 samples |
-| Pre-buffer | 200 ms retained before motion is detected |
+| Pre-buffer | 300 ms retained before motion is detected |
 | Max window | 300 samples (3 s) |
 | Cooldown | 0.3 s |
 
@@ -219,7 +226,8 @@ to agree with the visualiser beyond these three shapes.
    defined, so the hardcoded misalignment matrices are used and the functional
    calibration stages are disabled. Whether the demo runs calibrated-at-boot or
    with baked constants changes what "before" means.
-4. **BLE mode** — the firmware supports it and the protocol is documented above,
-   but the host-side client is not written. USB serial first.
+4. ~~**BLE mode** — host-side client not written.~~ Resolved: `web/glove_ble.py`
+   is the client, and a telemetry characteristic was added on 2026-09-11. See
+   `memory/protocols.md`.
 5. **Who drives the ASL model.** The 26-letter classifier is not in this repo;
    only its output shape is agreed.

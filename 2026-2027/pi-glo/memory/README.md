@@ -35,4 +35,5 @@ Every claim here is dated. Anything marked "verified" was actually observed at
 that time, not inferred. Before acting on a specific file path, flag or service
 name, check it still exists — several months of drift will not announce itself.
 
-As of 2026-09-10 the Pi was **not reachable** to re-verify. See `open-items.md`.
+The Pi moved to `145.76.18.112` and SSH access was restored on 2026-09-11.
+Its address is DHCP and will move again. See `open-items.md`.

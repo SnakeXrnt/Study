@@ -30,7 +30,13 @@ fused, calibrated, palm-relative **quaternion**. Calibration is already done in
 C++ before anything leaves the board.
 
 No magnetometers are configured, so **heading is unobservable and yaw drifts**.
-That is inherent, not a bug to fix.
+That is inherent, not a bug to fix, and moving the fusion elsewhere will not
+change it.
+
+> **This describes the firmware as flashed.** As of 2026-09-11 the plan is to
+> reflash the Nano to stream **raw accelerometer and gyroscope data** and do all
+> of the above on the Pi instead. Nothing has changed yet. See `open-items.md`
+> for what that migration costs.
 
 ### Swipe gestures — `examples/ble-tinyml-enum`
 

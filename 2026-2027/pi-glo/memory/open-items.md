@@ -2,79 +2,184 @@
 
 Check this before starting work. Most recent first.
 
-## The Pi is unreachable, and its SSH host key changed — 2026-09-10
+## Resolved: the Pi moved to 145.76.18.112 — 2026-09-11
 
-`ssh pi-glo` fails with `REMOTE HOST IDENTIFICATION HAS CHANGED`. The key
-offered by `192.168.3.121` is now
-`SHA256:KjcKy1xS83n6H3BJgsgwsU1mQi7tGM4sTqPPX39KjjU`, which does not match
-`~/.ssh/known_hosts:25`.
+The Pi was never gone. It changed address, and its old address was reassigned to
+a different machine, which is exactly why `ssh pi-glo` reported a changed host
+key. The warning was correct and pointed at the other device, not at the Pi.
 
-What was observed:
+Verified by **key continuity, not by assumption**: all three host keys served by
+`145.76.18.112` match byte-for-byte the keys recorded for `192.168.3.121` on
+2026-09-06, and the host still reports its hostname as `1770np-pi`. Same
+machine, new address.
 
-- `192.168.3.121` responds to ping and answers SSH, with a **different key**.
-- `192.168.3.60`, the Pi's other address, is **silent**.
+What changed on Ethan's Mac. Both files were backed up first, alongside the
+originals, suffixed `.bak-20260911`:
 
-Most likely DHCP reassigned `.121` to a different device on the network, and the
-Pi moved or is off. A reimaged Pi would also explain it.
+- `~/.ssh/config` — the `pi-glo` block's `HostName` is now `145.76.18.112`.
+- `~/.ssh/known_hosts` — the Pi's three keys added under the new address, and
+  the stale `192.168.3.121` lines removed, since a different device answers
+  there now.
 
-**Do not delete the `known_hosts` entry to make the warning go away.** That is
-the one reflex this warning exists to prevent. Establish what is actually at
-that address first — check the router's lease table, or read the Pi's address
-from its own screen. When the Pi's real address is known, update the `HostName`
-in the `pi-glo` block of `~/.ssh/config` rather than trusting whatever answers.
+`ssh pi-glo` connects. On reconnection both `piglo-server` and `piglo-ble`
+reported `active`, and `/etc/default/piglo` still read `PIGLO_SOURCE=--idle`.
 
-Everything in `pi-deployment.md` describing services and state was true on
-2026-09-06 and has not been re-verified since.
+Two things to know about the new address:
 
-## Uncommitted firmware on a shared branch
+- **It is DHCP.** The lease had under an hour left when checked, so it will move
+  again. If `ssh pi-glo` fails in future, suspect the address before suspecting
+  anything else, and read the Pi's real address off its own screen.
+- **It is a publicly routable address, not a private one.** The Mac sat on the
+  same `/26` when this was verified, so reachability from outside the campus was
+  not tested. Worth establishing before the open day.
 
-Three modified files in `~/pi-glo/Saxion-SSP`, branch `openday`, still
-uncommitted as of 2026-09-10 (confirmed):
+## Resolved: the firmware is committed and pushed — 2026-09-11
 
-```
-M examples/ble-tinyml-enum/src/main.cpp
-M lib/ble-enum/libs/BleConnectionEnum.cpp
-M lib/ble-enum/libs/BleConnectionEnum.h
-```
+The three modified files that existed only on Ethan's Mac are now on `openday`
+as commit `1ac3352`, "feat : live BLE telemetry characteristic", and the local
+checkout is level with `origin/openday` in both directions. The build-breaking
+`g_ g_calibrating` typo went with it, so `openday` compiles for the teammate
+again.
 
-They are flashed to the Nano and working, but exist **only on Ethan's Mac**. A
-lost machine or a stray `git checkout` destroys work the demo depends on.
+The telemetry characteristic itself is described in `protocols.md`. It is no
+longer an uncommitted local change.
 
-Two logically separate changes, worth separate commits:
+## Planned: fusion moves off the Nano and onto the Pi — decided 2026-09-11
 
-1. **A build-breaking typo fix.** `main.cpp` had `g_ g_calibrating = false;`
-   with a stray `g_ ` fragment that fails to compile. This is committed and
-   broken on `openday` for the teammate too, not just locally.
+**Decision, not yet built. No code or firmware has changed.** The Nano will be
+reflashed to stream **raw accelerometer and gyroscope data** for all six sensors,
+and everything currently done on-device moves to the Pi: misalignment,
+sensitivity and offset correction, gyro bias tracking, Madgwick fusion, the
+palm-relative transform, and the forward-kinematics pass.
 
-2. **The BLE telemetry characteristic** (`...b26a9`) — see `protocols.md`. Also
-   captures `max_confidence` in `classify_gesture()`, which the original computed
-   and threw away. Costs +232 bytes flash, +16 bytes RAM.
+Everything `protocols.md` and `hardware.md` say about the serial wire format
+describes the **current** firmware, which still fuses on-device and emits
+quaternions. Both are correct until the reflash happens. Do not read them as
+describing the target.
 
-`openday` is shared with a collaborator. Pushing affects their work.
+What this actually costs, checked against the code on 2026-09-11:
 
-## Open bug: the energy trace does not draw
+- **The serial parser rejects raw records today.** `FrameAssembler._parse` in
+  `web/server.py` requires exactly seven floats per record and returns `None`
+  otherwise, counting the record as bad. A six-float raw record is dropped by
+  every branch. The record shape has to be redefined before anything parses.
+- **The wire format is unspecified.** Field order, units, whether each sensor
+  still gets its own record, and the output rate are all open. Settle this
+  first; the last data contract written ahead of the firmware had to be
+  rewritten.
+- **Throughput needs measuring, not assuming.** The firmware fuses internally at
+  200 Hz, and fusion needs input near that rate to be worth moving. Six sensors
+  at 200 Hz with six ASCII floats each is roughly 66 KB/s. The nominal 115200
+  baud does not apply directly, since `/dev/ttyACM0` is USB CDC and the rate
+  setting is cosmetic, but this is a large step up from the current 20 Hz
+  quaternion burst and has never been measured.
+- **The calibration constants live in firmware.** `CAL_DISABLE_FUNCTIONAL` is
+  set, so the baked `g_gyro_accel_misalignment_matrices` are what is actually
+  used. Those values must move to the Pi or be re-derived, or the fusion runs on
+  uncorrected data.
+- **CPU budget is unknown.** Madgwick across six sensors at 100 to 200 Hz in
+  Python, on a Pi 4 that is also rendering the UI, may not fit. Measure on the
+  Pi. Remember Debian 12 marks the system Python externally-managed, so numpy
+  comes from apt, not pip.
+- **Yaw drift does not improve.** There are still no magnetometers. Heading
+  stays unobservable wherever the fusion runs.
 
-**Unresolved.** The firmware sends live motion energy, the server carries it, the
-browser does not render it.
+Two things get easier, and they are the reason to do it:
 
-Confirmed working — do not re-investigate this half:
+- `loc` stops being a dead constant, because the FK pass runs somewhere it can
+  be given real bone lengths.
+- The online `q_offset` alignment from `projections.py` becomes implementable,
+  since the host would own the full pipeline rather than receiving its output.
 
-- `/api/status` and the SSE frames both contain `gesture.energy` as a live float
-  (~0.003 idle, >0.10 while moving).
-- `gesture.state` transitions `idle -> recording` correctly.
-- `confidence` arrives (0.9961 observed).
+## Resolved: the energy trace draws — 2026-09-11
 
-Confirmed broken: in the page, `energyLive` reads `false` and `eHist` is all
-zeros, *even though `latest.gesture.energy` is a number in the same frame*.
+Closed by observation, with the glove powered on and connected to the Pi 5. The
+trace renders live motion energy, crosses the firmware's start threshold, and the
+state chip follows `idle` to `recording` as the hand moves.
 
-The setter is `energyLive = g.energy != null` inside `tick()` in
-`web/static/index.html`. Since the data is present in `latest`, the leading
-hypothesis is **an exception thrown earlier in `tick()`**, before the gesture
-block is reached — `requestAnimationFrame(tick)` is called at the *top* of the
-function, so the loop keeps spinning while silently never reaching later code.
+The original hypothesis, an exception thrown earlier in `tick()`, was never
+confirmed and is moot: `tick()` was rewritten during the 2026-09-11 performance
+work and the path is now gated on new data and guarded throughout.
 
-**This is a hypothesis, not a finding.** Start by opening devtools on the page
-and looking for a thrown error, or wrap the tick body in try/catch and log.
+**This was also the first real swipe end to end**, which `Never tested` below had
+flagged. Observed on the Pi 5: `LEFT` classified at 0.9961 confidence with the
+full per-class score vector, link RSSI -54, 217 packets, none dropped, and the
+live telemetry characteristic subscribed and delivering energy at 20Hz.
+
+**One trap found while doing it.** `PIGLO_SOURCE=--simulate` also starts the fake
+prediction generator, which posts invented gestures and scores over the same
+overlay endpoints the real glove uses. With hardware attached the two fight and
+the interface shows a mixture. Use `--idle` whenever a real glove is connected.
+
+## The kiosk is on: Firefox opens the demo at power-on — 2026-09-11
+
+Verified on the Pi, not assumed. Auto-login was already configured, the
+installer now writes a Firefox launcher and hooks it into the labwc autostart,
+and a screenshot taken on the Pi shows the demo full-screen with no browser
+chrome and no first-run dialogs.
+
+`/etc/default/piglo` is the switch for what the server reads. Changing
+`PIGLO_SOURCE` and restarting `piglo-server` was tested both ways on
+2026-09-11: the browser reconnects on its own and the diagnostics panel follows.
+It is back on `--idle`, as it was.
+
+**Not yet confirmed across an actual reboot.** Every piece was verified
+individually and the kiosk was launched by hand into the running session. The
+one untested link is labwc reading the modified autostart at login, which is
+exactly where the seeding trap lives. See `pi-deployment.md`.
+
+## The checked-in training pipeline cannot rebuild the flashed swipe model
+
+Found 2026-09-11, in `Saxion-SSP`. The firmware expects **six** classes and its
+bundled model declares them: `cobra, down, left, right, still, up`
+(`examples/ble-tinyml-enum/include/swipe_model.h`, `NUM_GESTURES = 6`).
+
+The training side has **five**. `model/training/config.py` lists five gestures
+with no cobra, and `model/training/dataset/` holds five folders, also no cobra.
+There is no cobra capture anywhere in the repo.
+
+So the flashed model cannot be reproduced from what is committed. Retraining
+from this tree yields a five-class model whose output indices no longer line up
+with `ModelToCommandMap`, which would silently mislabel every gesture rather
+than fail. Cobra is also the play/pause binding, so losing it is visible.
+
+The cobra data presumably exists on whoever trained it. Get it into the repo.
+
+## Latent crash in the BLE bridge's hold timer
+
+`web/glove_ble.py` never initialises `telemetry_seen` in `Bridge.__init__`. It
+is set to `True` only when a telemetry packet arrives, and to `False` only when
+the telemetry subscription fails.
+
+If a gesture is classified before the first telemetry packet lands, the `clear()`
+coroutine in `_schedule_idle` reads an attribute that does not exist. The
+`except` clause there catches `CancelledError` only, so the `AttributeError`
+escapes into a task nobody awaits: no traceback in the normal path, and the
+gesture never clears from the screen.
+
+Narrow window in practice, since telemetry notifies at 20 Hz as soon as a
+central connects. One line in the constructor closes it.
+
+## Pending: migration to a Raspberry Pi 5 — 2026-09-11
+
+A Pi 5 (8GB) has been acquired and the demo is to move to it. Nothing has run on
+it yet. `web/bootstrap-pi.sh` and `../docs/migrate-to-pi5.md` were written for
+this and the bootstrap script is verified on the Pi 4, but the Pi 5 path itself
+is untested.
+
+**Keep the Pi 4 imaged and working until after the open day.** It is the only
+fallback that exists.
+
+Two things to re-measure rather than inherit, because both are tuned to the Pi
+4's GPU and browser and may not hold:
+
+- `PIGLO_MODE=1920x1080@60`. Set because the Pi 4 could not drive the hand at
+  1440p. The open-day monitor is 1080p anyway, so keep it for the venue, but the
+  Pi 5 may not need the limit.
+- The `setTimeout` scheduler in `web/static/index.html`. The 62%-of-a-core cost
+  of an idle `requestAnimationFrame` is a quirk of the Pi 4's browser and
+  compositor. It may not reproduce, and the comment in the file says to measure
+  before changing it.
 
 ## Never tested
 

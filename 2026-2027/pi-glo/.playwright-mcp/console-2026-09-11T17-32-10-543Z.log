@@ -1,0 +1,7 @@
+[     436ms] TypeError: Cannot read properties of null (reading 'addEventListener')
+    at http://localhost:8099/:1307:10
+[     447ms] [VERBOSE] [DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o @ http://localhost:8099/:0
+[   14978ms] ReferenceError: Cannot access 'latest' before initialization
+    at tick (http://localhost:8099/:1502:3)
+[   15147ms] ReferenceError: Cannot access 'wifiEl' before initialization
+    at http://localhost:8099/:1366:13

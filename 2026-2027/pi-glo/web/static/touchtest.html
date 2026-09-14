@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>pi-glo touch check</title>
+<style>
+  html, body { height: 100%; margin: 0; overflow: hidden;
+               background: #15181d; color: #e8e4de;
+               font: 15px/1.4 ui-sans-serif, system-ui, sans-serif; }
+  .corner { position: fixed; padding: 10px 14px; background: #27459a; color: #fff;
+            font-weight: 600; border-radius: 8px; font-size: 17px; }
+  #tl { top: 12px;    left: 12px; }
+  #tr { top: 12px;    right: 12px; background: #c4831f; }
+  #bl { bottom: 12px; left: 12px; background: #4a7c59; }
+  #br { bottom: 12px; right: 12px; background: #b4463c; }
+  #mid { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+         text-align: center; opacity: .85; }
+  #mid h1 { margin: 0 0 8px; font-size: 21px; }
+  #mid p  { margin: 4px 0; color: #97a0ae; }
+  #read { font: 500 15px ui-monospace, monospace; color: #8fd67f; margin-top: 12px; }
+  .dot { position: fixed; width: 54px; height: 54px; margin: -27px 0 0 -27px;
+         border: 3px solid #8fd67f; border-radius: 50%; pointer-events: none;
+         background: rgba(143,214,127,.18); }
+  .dot::after { content: ""; position: absolute; inset: 24px; background: #8fd67f;
+                border-radius: 50%; }
+</style>
+</head>
+<body>
+  <div class="corner" id="tl">TOP LEFT</div>
+  <div class="corner" id="tr">TOP RIGHT</div>
+  <div class="corner" id="bl">BOTTOM LEFT</div>
+  <div class="corner" id="br">BOTTOM RIGHT</div>
+  <div id="mid">
+    <h1>Touch alignment check</h1>
+    <p>Press each corner in turn. A green ring should appear under your finger.</p>
+    <p>If pressing <b>TOP LEFT</b> puts the ring anywhere else, the mapping is still wrong.</p>
+    <div id="read">waiting for a touch</div>
+  </div>
+<script>
+const read = document.getElementById("read");
+const nearest = (x, y) => {
+  let best = null, bd = Infinity;
+  for (const id of ["tl", "tr", "bl", "br"]) {
+    const r = document.getElementById(id).getBoundingClientRect();
+    const d = Math.hypot(x - (r.left + r.width / 2), y - (r.top + r.height / 2));
+    if (d < bd) { bd = d; best = id.toUpperCase(); }
+  }
+  return best;
+};
+function mark(x, y, kind) {
+  const d = document.createElement("div");
+  d.className = "dot";
+  d.style.left = x + "px";
+  d.style.top = y + "px";
+  document.body.appendChild(d);
+  setTimeout(() => d.remove(), 1400);
+  read.textContent = `${kind} at ${Math.round(x)}, ${Math.round(y)}  ·  nearest corner: ${nearest(x, y)}`
+    + `  ·  screen ${innerWidth}x${innerHeight}`;
+}
+addEventListener("touchstart", e => {
+  for (const t of e.changedTouches) mark(t.clientX, t.clientY, "touch");
+}, { passive: true });
+addEventListener("touchmove", e => {
+  for (const t of e.changedTouches) mark(t.clientX, t.clientY, "drag");
+}, { passive: true });
+addEventListener("pointerdown", e => mark(e.clientX, e.clientY, e.pointerType));
+</script>
+</body>
+</html>
