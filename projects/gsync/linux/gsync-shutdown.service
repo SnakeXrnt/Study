@@ -1,0 +1,14 @@
+[Unit]
+Description=gsync: commit and push git repos on logout/shutdown
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/true
+ExecStop=%h/.local/bin/gsync --fast
+TimeoutStopSec=90
+
+[Install]
+WantedBy=default.target

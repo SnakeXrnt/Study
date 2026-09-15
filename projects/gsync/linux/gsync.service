@@ -1,0 +1,9 @@
+[Unit]
+Description=gsync: commit and push git repos when idle
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/gsync --idle
+Nice=10

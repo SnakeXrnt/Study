@@ -1,0 +1,14 @@
+[Unit]
+Description=gsync: commit and push git repos of @USER@ before suspend
+Before=sleep.target
+
+[Service]
+Type=oneshot
+User=@USER@
+Environment=XDG_RUNTIME_DIR=/run/user/@UID@
+Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/@UID@/bus
+ExecStart=@HOME@/.local/bin/gsync --fast
+TimeoutStartSec=60
+
+[Install]
+WantedBy=sleep.target

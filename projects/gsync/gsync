@@ -1,0 +1,454 @@
+#!/usr/bin/env bash
+# gsync - automatically commit and push git repositories, with commit
+# messages written by an AI CLI (Cline) in Conventional Commits format.
+#
+# Compatible with bash 3.2 (macOS). See docs/spec.md for the design.
+
+VERSION=0.1.0
+
+usage() {
+	cat <<'EOF'
+Usage: gsync [options]
+
+Commit, rebase onto upstream and push every repo in the config.
+
+Options:
+  --idle         only commit repos whose changes are older than IDLE_MINUTES
+  --fast         cap AI_TIMEOUT at 20s (used before suspend/shutdown)
+  -n, --dry-run  show which commits would be made; change nothing, no AI
+  -h, --help     show this help
+  -V, --version  show version
+
+Config: ${GSYNC_CONFIG:-~/.config/gsync/config}
+Log:    ~/.local/state/gsync/gsync.log
+EOF
+}
+
+resolve_path() {
+	local p=$1 target
+	while [ -L "$p" ]; do
+		target=$(readlink "$p")
+		case $target in
+		/*) p=$target ;;
+		*) p=$(dirname "$p")/$target ;;
+		esac
+	done
+	printf '%s\n' "$p"
+}
+
+GSYNC_HOME=$(cd "$(dirname "$(resolve_path "$0")")" && pwd)
+PROMPT_FILE=$GSYNC_HOME/prompt.md
+
+# Defaults, overridable in the config file.
+REPOS="$HOME/study $HOME/study/work"
+IDLE_MINUTES=10
+AI_CMD=cline
+AI_TIMEOUT=60
+MAX_DIFF_LINES=300
+MAX_DIFF_BYTES=60000
+
+CONFIG=${GSYNC_CONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}/gsync/config}
+# shellcheck source=/dev/null
+[ -f "$CONFIG" ] && . "$CONFIG"
+
+STATE_DIR=${GSYNC_STATE_DIR:-${XDG_STATE_HOME:-$HOME/.local/state}/gsync}
+LOG=$STATE_DIR/gsync.log
+mkdir -p "$STATE_DIR"
+
+HOST=$(uname -n)
+HOST=${HOST%%.*}
+TMP_BASE=${TMPDIR:-/tmp}
+
+export GIT_LITERAL_PATHSPECS=1
+export GIT_TERMINAL_PROMPT=0
+
+log() {
+	printf '%s [%s] %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$HOST" "$*" >>"$LOG"
+	[ -t 2 ] && printf 'gsync: %s\n' "$*" >&2
+	return 0
+}
+
+notify() {
+	log "NOTIFY: $*"
+	[ -n "$GSYNC_NO_NOTIFY" ] && return 0
+	case $(uname -s) in
+	Darwin)
+		local text
+		text=$(printf '%s' "$*" | sed 's/["\\]/\\&/g')
+		osascript -e "display notification \"$text\" with title \"gsync\"" >/dev/null 2>&1
+		;;
+	*)
+		command -v notify-send >/dev/null 2>&1 &&
+			notify-send -a gsync gsync "$*" >/dev/null 2>&1
+		;;
+	esac
+	return 0
+}
+
+# run_with_timeout SECONDS CMD... - portable replacement for timeout(1).
+# Redirect the output to a file, not a command substitution, so that a
+# killed command's children cannot keep the pipe open.
+run_with_timeout() {
+	local secs=$1 pid watcher rc
+	shift
+	"$@" &
+	pid=$!
+	(
+		sleep "$secs"
+		kill "$pid"
+	) >/dev/null 2>&1 &
+	watcher=$!
+	wait "$pid"
+	rc=$?
+	kill "$watcher" 2>/dev/null
+	wait "$watcher" 2>/dev/null
+	return $rc
+}
+
+# ---------------------------------------------------------------- changes
+
+# collect_changes - fill CH_PATHS, CH_SCOPES and CH_ADD (1 = needs git add)
+# with the changed paths of the current repo, skipping submodules and
+# nested repositories.
+collect_changes() {
+	CH_PATHS=()
+	CH_SCOPES=()
+	CH_ADD=()
+	local entry xy path subs n
+	subs=$(git config -f .gitmodules --get-regexp '^submodule\..*\.path$' 2>/dev/null | sed 's/^[^ ]* //')
+	while IFS= read -r -d '' entry; do
+		xy=${entry:0:2}
+		path=${entry:3}
+		case $path in */) continue ;; esac # untracked nested repository
+		if [ -n "$subs" ] && printf '%s\n' "$subs" | grep -qxF -- "$path"; then
+			continue
+		fi
+		n=${#CH_PATHS[@]}
+		CH_PATHS[n]=$path
+		scope_of "$path"
+		CH_SCOPES[n]=$SCOPE
+		# A staged deletion is gone from both index and work tree; adding
+		# it again would fail with "pathspec did not match".
+		case $xy in D*) CH_ADD[n]=0 ;; *) CH_ADD[n]=1 ;; esac
+	done < <(git status --porcelain=v1 -z --no-renames --untracked-files=all --ignore-submodules=all)
+}
+
+# scope_of PATH - set SCOPE to the first two directories of PATH.
+#   projects/esp32/src/main.c -> projects/esp32
+#   projects/calculator.py    -> projects
+#   README.md                 -> root
+scope_of() {
+	local dir rest
+	case $1 in
+	*/*) dir=${1%/*} ;;
+	*)
+		SCOPE=root
+		return
+		;;
+	esac
+	case $dir in
+	*/*)
+		rest=${dir#*/}
+		SCOPE=${dir%%/*}/${rest%%/*}
+		;;
+	*) SCOPE=$dir ;;
+	esac
+}
+
+# short_scope SCOPE - commit scope: last component, lowercased and sanitized.
+short_scope() {
+	printf '%s' "${1##*/}" | tr 'A-Z' 'a-z' | tr -c 'a-z0-9._-' '-'
+}
+
+# recently_modified - print the first changed path modified within
+# IDLE_MINUTES; fail if the repo has been idle long enough.
+recently_modified() {
+	local i
+	for ((i = 0; i < ${#CH_PATHS[@]}; i++)); do
+		[ -e "${CH_PATHS[i]}" ] || continue
+		if [ -n "$(find "./${CH_PATHS[i]}" -prune -mmin "-$IDLE_MINUTES" 2>/dev/null)" ]; then
+			printf '%s\n' "${CH_PATHS[i]}"
+			return 0
+		fi
+	done
+	return 1
+}
+
+# ---------------------------------------------------------------- messages
+
+# ai_message INPUT_FILE - print a cleaned AI commit message, or fail.
+ai_message() {
+	local input=$1 out cwd text rc
+	[ -n "$AI_CMD" ] || return 1
+	if ! command -v jq >/dev/null 2>&1; then
+		log "jq not found, AI disabled"
+		return 1
+	fi
+	out=$(mktemp "$TMP_BASE/gsync-ai.XXXXXX")
+	cwd=$(mktemp -d "$TMP_BASE/gsync-cwd.XXXXXX")
+	set -f
+	# shellcheck disable=SC2086 # AI_CMD may carry extra arguments
+	set -- $AI_CMD -c "$cwd" -s "$(cat "$PROMPT_FILE")" --auto-approve false --json "$(cat "$input")"
+	set +f
+	run_with_timeout "$AI_TIMEOUT" "$@" >"$out" 2>/dev/null </dev/null
+	rc=$?
+	text=$(jq -rR 'fromjson? | select(.type == "run_result") | .text // empty' "$out" 2>/dev/null |
+		tr -d '\r' | grep -v '^[[:space:]]*```' | sed -e '/[^[:space:]]/,$!d')
+	rm -rf "$out" "$cwd"
+	if [ -z "$text" ]; then
+		log "AI returned no message (exit $rc)"
+		return 1
+	fi
+	printf '%s\n' "$text"
+}
+
+valid_message() {
+	local first second
+	first=$(printf '%s\n' "$1" | sed -n 1p)
+	second=$(printf '%s\n' "$1" | sed -n 2p)
+	[ ${#first} -le 72 ] || return 1
+	printf '%s\n' "$first" |
+		grep -Eq '^(feat|fix|docs|refactor|chore|test|style|perf|build|ci)(\([a-z0-9._/-]+\))?!?: [^ ].*$' ||
+		return 1
+	[ -z "$second" ]
+}
+
+fallback_message() {
+	local stamp
+	stamp=$(date '+%Y-%m-%d %H:%M')
+	if [ "$1" = root ]; then
+		printf 'chore: sync %s from %s\n' "$stamp" "$HOST"
+	else
+		printf 'chore(%s): sync %s from %s\n' "$1" "$stamp" "$HOST"
+	fi
+}
+
+# ---------------------------------------------------------------- git steps
+
+# commit_group NAME SCOPE PATH... - stage and commit one group of paths.
+commit_group() {
+	local name=$1 scope=$2 short input msg first i
+	shift 2
+	short=$(short_scope "$scope")
+	[ "$scope" = root ] && short=root
+
+	if [ -n "$DRY_RUN" ]; then
+		printf '%s: would commit [%s]\n' "$name" "$short"
+		printf '    %s\n' "$@"
+		return 0
+	fi
+
+	local add=()
+	for ((i = 0; i < ${#CH_PATHS[@]}; i++)); do
+		[ "${CH_SCOPES[i]}" = "$scope" ] && [ "${CH_ADD[i]}" = 1 ] && add[${#add[@]}]=${CH_PATHS[i]}
+	done
+	if [ ${#add[@]} -gt 0 ] && ! git add -A -- "${add[@]}" >>"$LOG" 2>&1; then
+		notify "$name: git add failed for $scope"
+		return 1
+	fi
+
+	input=$(mktemp "$TMP_BASE/gsync-input.XXXXXX")
+	{
+		printf 'Repository: %s\nSuggested scope: %s\n\nChanged files:\n' "$name" "$short"
+		git diff --cached --stat=100 -- "$@"
+		printf '\nDiff (may be truncated):\n'
+		git diff --cached --no-color --no-ext-diff -- "$@" |
+			head -n "$MAX_DIFF_LINES" | head -c "$MAX_DIFF_BYTES"
+	} >"$input"
+
+	if msg=$(ai_message "$input") && valid_message "$msg"; then
+		:
+	else
+		[ -n "$msg" ] && log "rejected AI message: $(printf '%s\n' "$msg" | sed -n 1p)"
+		msg=$(fallback_message "$short")
+	fi
+
+	printf '%s\n\nDevice: %s\n' "$msg" "$HOST" >"$input"
+	first=$(printf '%s\n' "$msg" | sed -n 1p)
+	if git commit -q -F "$input" -- "$@" >>"$LOG" 2>&1; then
+		log "$name: committed \"$first\""
+		rm -f "$input"
+		return 0
+	fi
+	rm -f "$input"
+	notify "$name: git commit failed for $scope (see log)"
+	return 1
+}
+
+commit_changes() {
+	local name=$1 busy scope i rc=0
+	collect_changes
+	if [ ${#CH_PATHS[@]} -eq 0 ]; then
+		log "$name: nothing to commit"
+		return 0
+	fi
+	if [ "$MODE" = idle ] && busy=$(recently_modified); then
+		log "$name: not idle ($busy changed < ${IDLE_MINUTES}m ago), not committing"
+		return 0
+	fi
+
+	local scopes group
+	scopes=$(printf '%s\n' "${CH_SCOPES[@]}" | sort -u)
+	while IFS= read -r scope; do
+		group=()
+		for ((i = 0; i < ${#CH_PATHS[@]}; i++)); do
+			[ "${CH_SCOPES[i]}" = "$scope" ] && group[${#group[@]}]=${CH_PATHS[i]}
+		done
+		commit_group "$name" "$scope" "${group[@]}" || rc=1
+	done <<EOF
+$scopes
+EOF
+	return $rc
+}
+
+tracked_clean() {
+	git diff --quiet --ignore-submodules=all &&
+		git diff --cached --quiet --ignore-submodules=all
+}
+
+# rebase_and_push NAME BRANCH - bring the branch up to date and publish it.
+rebase_and_push() {
+	local name=$1 branch=$2 upstream counts behind ahead remote
+
+	if ! git remote | grep -q .; then
+		log "$name: no remote, skipping pull/push"
+		return 0
+	fi
+
+	upstream=$(git rev-parse --abbrev-ref --symbolic-full-name '@{u}' 2>/dev/null)
+	remote=${upstream%%/*}
+	[ -n "$upstream" ] || remote=origin
+
+	if [ -n "$DRY_RUN" ]; then
+		printf '%s: would rebase onto %s and push\n' "$name" "${upstream:-$remote/$branch}"
+		return 0
+	fi
+
+	if ! git fetch -q "$remote" >>"$LOG" 2>&1; then
+		log "$name: fetch from $remote failed (offline?), commits stay local"
+		return 0
+	fi
+
+	if [ -z "$upstream" ]; then
+		if git rev-parse -q --verify "refs/remotes/$remote/$branch" >/dev/null; then
+			git branch -q --set-upstream-to="$remote/$branch" >>"$LOG" 2>&1
+			upstream=$remote/$branch
+		elif git rev-parse -q --verify HEAD >/dev/null; then
+			if git push -q -u "$remote" "$branch" >>"$LOG" 2>&1; then
+				log "$name: pushed new branch $branch to $remote"
+			else
+				log "$name: push of new branch $branch failed"
+			fi
+			return 0
+		else
+			return 0
+		fi
+	fi
+
+	counts=$(git rev-list --left-right --count "$upstream...HEAD")
+	behind=${counts%%[[:space:]]*}
+	ahead=${counts##*[[:space:]]}
+
+	if [ "$behind" -gt 0 ]; then
+		if ! tracked_clean; then
+			log "$name: $behind new upstream commit(s), but uncommitted changes; not rebasing"
+		elif git rebase -q "$upstream" >>"$LOG" 2>&1; then
+			log "$name: rebased onto $upstream ($behind new commit(s))"
+		else
+			git rebase --abort >>"$LOG" 2>&1
+			notify "$name: conflict rebasing onto $upstream. Your commits are safe locally; resolve with 'git pull --rebase'."
+			return 1
+		fi
+		counts=$(git rev-list --left-right --count "$upstream...HEAD")
+		behind=${counts%%[[:space:]]*}
+		ahead=${counts##*[[:space:]]}
+	fi
+
+	if [ "$ahead" -gt 0 ]; then
+		if [ "$behind" -gt 0 ]; then
+			log "$name: branch has diverged from $upstream, not pushing"
+		elif git push -q "$remote" "HEAD:refs/heads/${upstream#*/}" >>"$LOG" 2>&1; then
+			log "$name: pushed $ahead commit(s) to $upstream"
+		else
+			log "$name: push to $upstream failed (offline?), commits stay local"
+		fi
+	fi
+	return 0
+}
+
+sync_repo() {
+	local repo=$1 name gitdir branch rc=0
+
+	if ! git -C "$repo" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+		log "$repo: not a git repository, skipping"
+		return 0
+	fi
+	cd "$repo" && cd "$(git rev-parse --show-toplevel)" || return 1
+	name=$(basename "$(pwd)")
+	gitdir=$(git rev-parse --absolute-git-dir)
+
+	LOCK_DIR=$gitdir/gsync.lock
+	if [ -n "$(find "$LOCK_DIR" -maxdepth 0 -mmin +30 2>/dev/null)" ]; then
+		log "$name: removing stale lock"
+		rmdir "$LOCK_DIR" 2>/dev/null
+	fi
+	if ! mkdir "$LOCK_DIR" 2>/dev/null; then
+		log "$name: another gsync run holds the lock, skipping"
+		return 0
+	fi
+	trap 'rmdir "$LOCK_DIR" 2>/dev/null' EXIT
+
+	if [ -d "$gitdir/rebase-merge" ] || [ -d "$gitdir/rebase-apply" ] ||
+		[ -f "$gitdir/MERGE_HEAD" ] || [ -f "$gitdir/CHERRY_PICK_HEAD" ] ||
+		[ -f "$gitdir/REVERT_HEAD" ] || [ -n "$(git diff --name-only --diff-filter=U)" ]; then
+		notify "$name: merge/rebase in progress or unmerged files; resolve it manually"
+		return 1
+	fi
+	if ! branch=$(git symbolic-ref --short -q HEAD); then
+		notify "$name: detached HEAD, skipping"
+		return 1
+	fi
+
+	commit_changes "$name" || rc=1
+	rebase_and_push "$name" "$branch" || rc=1
+	return $rc
+}
+
+# ---------------------------------------------------------------- main
+
+MODE=now
+FAST=
+DRY_RUN=
+while [ $# -gt 0 ]; do
+	case $1 in
+	--idle) MODE=idle ;;
+	--fast) FAST=1 ;;
+	-n | --dry-run) DRY_RUN=1 ;;
+	-h | --help)
+		usage
+		exit 0
+		;;
+	-V | --version)
+		echo "gsync $VERSION"
+		exit 0
+		;;
+	*)
+		echo "gsync: unknown option: $1" >&2
+		usage >&2
+		exit 2
+		;;
+	esac
+	shift
+done
+
+[ -n "$FAST" ] && [ "$AI_TIMEOUT" -gt 20 ] && AI_TIMEOUT=20
+
+log "run started (mode=$MODE${FAST:+, fast}${DRY_RUN:+, dry run})"
+status=0
+set -f
+for repo in $REPOS; do
+	set +f
+	(sync_repo "$repo") || status=1
+done
+set +f
+exit $status

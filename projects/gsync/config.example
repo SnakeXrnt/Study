@@ -1,0 +1,19 @@
+# gsync config, sourced by bash. Lives at ~/.config/gsync/config.
+
+# Space-separated list of repositories to sync (no spaces inside paths).
+REPOS="$HOME/study $HOME/study/work"
+
+# Only auto-commit (gsync --idle) when no changed file was touched for this long.
+IDLE_MINUTES=10
+
+# AI command used to write commit messages. Extra arguments are allowed,
+# e.g. AI_CMD="cline -m cline-free/deepseek-v4.1-flash".
+# Leave empty to always use the fallback message.
+AI_CMD="cline"
+
+# Seconds to wait for the AI before falling back (capped at 20 with --fast).
+AI_TIMEOUT=60
+
+# How much of the diff is sent to the AI per commit.
+MAX_DIFF_LINES=300
+MAX_DIFF_BYTES=60000
