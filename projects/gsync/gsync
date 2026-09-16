@@ -178,27 +178,31 @@ recently_modified() {
 
 # ai_message INPUT_FILE - print a cleaned AI commit message, or fail.
 ai_message() {
-	local input=$1 out cwd text rc
+	local input=$1 out err cwd text rc
 	[ -n "$AI_CMD" ] || return 1
 	if ! command -v jq >/dev/null 2>&1; then
 		log "jq not found, AI disabled"
 		return 1
 	fi
 	out=$(mktemp "$TMP_BASE/gsync-ai.XXXXXX")
+	err=$(mktemp "$TMP_BASE/gsync-err.XXXXXX")
 	cwd=$(mktemp -d "$TMP_BASE/gsync-cwd.XXXXXX")
 	set -f
 	# shellcheck disable=SC2086 # AI_CMD may carry extra arguments
 	set -- $AI_CMD -c "$cwd" -s "$(cat "$PROMPT_FILE")" --auto-approve false --json "$(cat "$input")"
 	set +f
-	run_with_timeout "$AI_TIMEOUT" "$@" >"$out" 2>/dev/null </dev/null
+	run_with_timeout "$AI_TIMEOUT" "$@" >"$out" 2>"$err" </dev/null
 	rc=$?
 	text=$(jq -rR 'fromjson? | select(.type == "run_result") | .text // empty' "$out" 2>/dev/null |
 		tr -d '\r' | grep -v '^[[:space:]]*```' | sed -e '/[^[:space:]]/,$!d')
-	rm -rf "$out" "$cwd"
 	if [ -z "$text" ]; then
 		log "AI returned no message (exit $rc)"
+		[ -s "$err" ] && log "AI stderr: $(head -c 500 "$err" | tr '\n' ' ')"
+		[ "$rc" = 137 ] && log "AI was killed (SIGKILL): check that '${AI_CMD%% *}' runs at $(command -v "${AI_CMD%% *}" || echo "not on PATH")"
+		rm -rf "$out" "$err" "$cwd"
 		return 1
 	fi
+	rm -rf "$out" "$err" "$cwd"
 	printf '%s\n' "$text"
 }
 
@@ -206,7 +210,7 @@ valid_message() {
 	local first second
 	first=$(printf '%s\n' "$1" | sed -n 1p)
 	second=$(printf '%s\n' "$1" | sed -n 2p)
-	[ ${#first} -le 72 ] || return 1
+	[ ${#first} -le 80 ] || return 1
 	printf '%s\n' "$first" |
 		grep -Eq '^(feat|fix|docs|refactor|chore|test|style|perf|build|ci)(\([a-z0-9._/-]+\))?!?: [^ ].*$' ||
 		return 1

@@ -22,7 +22,8 @@ Rules:
   digits, ".", "_", "/" and "-" only. If the suggested scope is "root", omit the
   scope and its parentheses.
 - summary: imperative mood ("add", not "added"), lowercase first word, no
-  trailing period. The whole first line is at most 72 characters.
+  trailing period. The whole first line MUST be at most 65 characters,
+  including the type and scope; count them before you answer.
 - body: optional. After exactly one blank line, write 1 to 5 short bullet
   points starting with "- " that say what changed and why. Wrap at 72
   characters. Omit the body for trivial changes.

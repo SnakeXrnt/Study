@@ -11,6 +11,11 @@ IDLE_MINUTES=10
 # Leave empty to always use the fallback message.
 AI_CMD="cline"
 
+# If gsync logs "AI returned no message (exit 137)", the cline binary is being
+# SIGKILLed by the OS (a bad or unsigned build). Point the wrapper at a copy
+# that runs:
+#   export CLINE_BIN_PATH="$HOME/.local/lib/cline/cline"
+
 # Seconds to wait for the AI before falling back (capped at 20 with --fast).
 AI_TIMEOUT=60
 
