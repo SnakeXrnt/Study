@@ -1,7 +1,7 @@
 ---
 title: Common Mistakes
 tags: [calculus-a, practice, mistakes]
-updated: 2026-09-14
+updated: 2026-09-16
 ---
 
 # ⚠️ Common Mistakes
@@ -36,6 +36,9 @@ Ethan's own errors from past sessions, each with its fix. Add new ones as they h
 ## Integrals (watch in L03)
 | Likely mistake | Fix |
 |---|---|
+| **Reaching for the Chain Rule on a fraction** (Ex 23, 2026-09-16) | Ask *"is there something **inside** something?"* No inner function → split the fraction and use the Power Rule |
+| Dividing by a fractional exponent: $\frac{s^{-1/2}}{-1/2}$ read as $-\frac12 s^{-1/2}$ | Dividing by $-\frac12$ = **multiplying by $-2$** → $-2s^{-1/2}$ |
+| Leaving $\sqrt{\sqrt2}$ or $\frac{2}{2^{1/4}}$ unsimplified | Convert roots to powers: $\sqrt{\sqrt2}=2^{1/4}$, $\frac{2}{2^{1/4}}=2^{3/4}$ |
 | Forgetting $+C$ | Indefinite always gets $+C$; definite never |
 | $\int\sin x=\cos x$ | $-\cos x$ (the sign flips the opposite way from derivatives) |
 | $\int\sin(ax)$ without dividing by $a$ | $-\frac1a\cos(ax)$ |
@@ -46,3 +49,4 @@ Ethan's own errors from past sessions, each with its fix. Add new ones as they h
 ## Meta
 - **Not verifying.** Every final answer gets a check → [[Verification Methods]].
 - **Not simplifying first.** Trig identities or splitting fractions often make the problem much easier.
+- **Picking the technique before looking.** Name *why* a rule applies before using it — see the "inside something?" test above.

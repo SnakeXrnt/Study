@@ -1,7 +1,7 @@
 ---
 title: Integration Rules
 tags: [calculus-a, reference, integration]
-updated: 2026-09-14
+updated: 2026-09-16
 ---
 
 # 📐 Integration Rules
@@ -38,13 +38,25 @@ $\int_b^a=-\int_a^b$ · $\int_a^a=0$ · $\int kf=k\int f$ · $\int(f\pm g)=\int 
 - **FTC II:** $\int_a^bf=F(b)-F(a)$.
 
 ## Techniques — which one?
+> [!tip] Ask first: **is there something *inside* something?**
+> If no inner function, don't reach for the Chain Rule/substitution — simplify algebraically first.
+
 | Integrand looks like | Use |
 |---|---|
+| **Fraction with a single power on the bottom**, e.g. $\frac{s^2+\sqrt s}{s^2}$ | **Split the fraction** term by term, rewrite each as $s^n$, then Power Rule |
+| $\sin(ax)$, $(ax+b)^n$, $e^{ax}$ — a *linear* inside | reverse Chain Rule: antiderivative ÷ $a$ |
 | Function × derivative of its inside, e.g. $x^2e^{x^3}$ | **Substitution** $u=$ inside |
 | Product of unrelated types, e.g. $x\cos x$, $x^2e^x$, $\ln x$ | **By parts** $\int fg'=fg-\int f'g$ (LIATE picks $f$) |
 | $\sin^m x\cos^n x$, one power odd | save one factor, Pythagorean identity, substitute |
 | $\sin^2x$, $\cos^2x$ (even) | half-angle: $\sin^2x=\frac{1-\cos2x}2$, $\cos^2x=\frac{1+\cos2x}2$ |
 | Infinite limit or blow-up inside | **Improper** — write as a limit |
+
+## Splitting a fraction
+$$\frac{a+b}{c}=\frac ac+\frac bc \quad\text{(sum on top only — never split a sum on the bottom)}$$
+Then use $\sqrt s=s^{1/2}$ and $\frac{s^m}{s^n}=s^{m-n}$ to turn each piece into a single power, e.g.
+$$\frac{s^2+\sqrt s}{s^2}=1+s^{-3/2}$$
+Power Rule: $\int s^n ds=\frac{s^{n+1}}{n+1}$ — add 1 to the exponent, divide by the new exponent.
+⚠️ Dividing by a negative fraction: $\frac{s^{-1/2}}{-1/2}=-2s^{-1/2}$.
 
 ## Substitution checklist
 1. $u=g(x)$, $du=g'(x)dx$

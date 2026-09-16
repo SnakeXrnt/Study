@@ -1,7 +1,7 @@
 ---
 title: Exercise Log
 tags: [calculus-a, practice]
-updated: 2026-09-14
+updated: 2026-09-16
 ---
 
 # ✍️ Exercise Log
@@ -84,5 +84,26 @@ a $=1$ · b $=6$ · c $=1$ · d $=-\frac19$ · e $=-\frac{40}3$ · f $=-\frac13$
 | Ex 13c: $\int(\sin\pi x-3\sin3x)dx$ | $-\frac1\pi\cos\pi x+\cos3x+C$ |
 | Ex 25: $\int(x+1)dx$ | $\frac{x^2}2+x+C$ |
 
-## Lecture 3
-*(none yet)*
+## Lecture 3 — Integration (2026-09-16)
+
+### Definite integrals with FTC II
+| # | Problem | Technique | Answer | Numeric check |
+|---|---|---|---|---|
+| Ex 17 | $\int_0^{\pi/8}\sin 2x\,dx$ | reverse Chain Rule: $\int\sin(ax)dx=-\frac1a\cos(ax)$ | $\frac{2-\sqrt2}{4}$ | $\approx0.1464$ ✅ |
+| Ex 23 | $\int_1^{\sqrt2}\frac{s^2+\sqrt s}{s^2}\,ds$ | **split the fraction**, then Power Rule | $\sqrt2-2^{3/4}+1$ | $\approx0.732421$ ✅ |
+
+**Ex 17, full run:** antiderivative $F(x)=-\frac12\cos 2x$. $F(\pi/8)-F(0)=-\frac12\cos\frac\pi4+\frac12\cos 0=-\frac{\sqrt2}{4}+\frac12=\frac{2-\sqrt2}{4}$.
+Side quest: Ethan asked where $\cos 0$ and $\cos\frac\pi4$ come from → derived from the unit circle (cos = $x$-coordinate, sin = $y$-coordinate). Interactive tool built for it, see [[00 Index]].
+
+**Ex 23, full run:**
+1. Split: $\frac{s^2+\sqrt s}{s^2}=\frac{s^2}{s^2}+\frac{\sqrt s}{s^2}=1+s^{-3/2}$ (uses $\sqrt s=s^{1/2}$ and $\frac{s^m}{s^n}=s^{m-n}$).
+2. Power Rule: $\int s^{-3/2}ds=\frac{s^{-1/2}}{-1/2}=-\frac{2}{\sqrt s}$, so $F(s)=s-\frac2{\sqrt s}$.
+3. Check by differentiating: $F'(s)=1+s^{-3/2}$ ✅
+4. FTC II: $F(\sqrt2)=\sqrt2-2^{3/4}$ (since $\sqrt{\sqrt2}=2^{1/4}$ and $2/2^{1/4}=2^{3/4}$), $F(1)=-1$ → $\sqrt2-2^{3/4}+1$.
+
+> [!tip] The decision Ethan got wrong at first
+> He assumed Ex 23 was Chain Rule. Ask **"is there something *inside* something?"**
+> - Yes (e.g. $\cos 2x$, $(3x+1)^5$) → reverse Chain Rule
+> - No, it's a fraction with a single power on the bottom → **split first**, then Power Rule
+
+**Set for Ethan (not yet done):** $\int_1^4\frac{x^2+x}{x^{3/2}}dx$ — same split-then-Power-Rule pattern.

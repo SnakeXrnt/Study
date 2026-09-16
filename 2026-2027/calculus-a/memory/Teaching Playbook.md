@@ -1,7 +1,7 @@
 ---
 title: Teaching Playbook
 tags: [calculus-a, workflow]
-updated: 2026-09-14
+updated: 2026-09-16
 ---
 
 # 🧑‍🏫 Teaching Playbook
@@ -24,10 +24,22 @@ For each slide:
 4. Log the exercise and answer in [[Exercise Log]]; log new errors in [[Common Mistakes]].
 
 ## Explanation format
+> [!important] Plain text in chat — no LaTeX
+> Ethan reads the chat in a terminal, so `$...$` math does not render and he cannot read it.
+> Write `a/b`, `s^(-3/2)`, `sqrt(2)`, `integral from 1 to sqrt(2) of (s^2 + sqrt(s))/s^2 ds`.
+> Markdown headings, tables and bold are fine. LaTeX belongs **only** in these Obsidian notes.
+
 - Numbered steps, each with **what** + **why**
 - Name the rule used in each step
 - End with a ✅ check (numerical or special value)
 - Use Indonesian when a concept is dense or Ethan asks
+
+## Choosing an integration technique
+Before integrating, ask out loud: **"is there something *inside* something?"**
+1. **Yes** — $\cos 2x$, $(3x+1)^5$, $e^{-2x}$ → reverse Chain Rule / substitution
+2. **No, it's a fraction** with a single power on the bottom → **split the fraction**, rewrite each piece as a power, then Power Rule
+3. **No, it's a product of unrelated functions** → integration by parts
+Make Ethan answer this question himself before any algebra happens.
 
 ## Note-keeping rules (Obsidian)
 - Every file is Markdown, math in `$...$` / `$$...$$`
