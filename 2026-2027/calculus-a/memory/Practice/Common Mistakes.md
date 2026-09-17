@@ -1,7 +1,7 @@
 ---
 title: Common Mistakes
 tags: [calculus-a, practice, mistakes]
-updated: 2026-09-16
+updated: 2026-09-17
 ---
 
 # ⚠️ Common Mistakes
@@ -42,9 +42,12 @@ Ethan's own errors from past sessions, each with its fix. Add new ones as they h
 | Forgetting $+C$ | Indefinite always gets $+C$; definite never |
 | $\int\sin x=\cos x$ | $-\cos x$ (the sign flips the opposite way from derivatives) |
 | $\int\sin(ax)$ without dividing by $a$ | $-\frac1a\cos(ax)$ |
+| **Using "divide by $a$" on a non-linear inside**, e.g. $\int e^{x^2}dx=\frac1{x^2}e^{x^2}$ | The ÷$a$ shortcut is only valid when the inside is **linear** ($ax+b$). Curved inside → needs substitution, and only works if the inner derivative is present. $e^{x^2}$ alone has **no** elementary antiderivative |
 | Substitution: keeping old $x$-limits after switching to $u$ | Convert the limits or substitute back, never mix |
 | Area between curves as bottom − top | top − bottom; test a point |
 | FTC II straight through a blow-up point | Check the interval first → improper integral |
+| **FTC I with the variable in the lower limit**, applied without flipping | $\int_b^a=-\int_a^b$ first, so $\frac{d}{dx}\int_{g(x)}^{a}f=-f(g(x))g'(x)$ — the minus is the whole trick (Ex 47) |
+| Forgetting $g'(x)$ in FTC I when the limit isn't plain $x$ | $\frac{d}{dx}\int_a^{g(x)}f=f(g(x))\cdot g'(x)$ — same inner-derivative habit as the Chain Rule |
 
 ## Meta
 - **Not verifying.** Every final answer gets a check → [[Verification Methods]].

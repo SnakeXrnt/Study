@@ -1,7 +1,7 @@
 ---
 title: Exercise Log
 tags: [calculus-a, practice]
-updated: 2026-09-16
+updated: 2026-09-17
 ---
 
 # ✍️ Exercise Log
@@ -91,6 +91,7 @@ a $=1$ · b $=6$ · c $=1$ · d $=-\frac19$ · e $=-\frac{40}3$ · f $=-\frac13$
 |---|---|---|---|---|
 | Ex 17 | $\int_0^{\pi/8}\sin 2x\,dx$ | reverse Chain Rule: $\int\sin(ax)dx=-\frac1a\cos(ax)$ | $\frac{2-\sqrt2}{4}$ | $\approx0.1464$ ✅ |
 | Ex 23 | $\int_1^{\sqrt2}\frac{s^2+\sqrt s}{s^2}\,ds$ | **split the fraction**, then Power Rule | $\sqrt2-2^{3/4}+1$ | $\approx0.732421$ ✅ |
+| Ex 35 | $\int_0^1 xe^{x^2}dx$ | **substitution** $u=x^2$ (first one) | $\frac{e-1}{2}$ | $\approx0.8591409142$ ✅ |
 
 **Ex 17, full run:** antiderivative $F(x)=-\frac12\cos 2x$. $F(\pi/8)-F(0)=-\frac12\cos\frac\pi4+\frac12\cos 0=-\frac{\sqrt2}{4}+\frac12=\frac{2-\sqrt2}{4}$.
 Side quest: Ethan asked where $\cos 0$ and $\cos\frac\pi4$ come from → derived from the unit circle (cos = $x$-coordinate, sin = $y$-coordinate). Interactive tool built for it, see [[00 Index]].
@@ -106,4 +107,36 @@ Side quest: Ethan asked where $\cos 0$ and $\cos\frac\pi4$ come from → derived
 > - Yes (e.g. $\cos 2x$, $(3x+1)^5$) → reverse Chain Rule
 > - No, it's a fraction with a single power on the bottom → **split first**, then Power Rule
 
-**Set for Ethan (not yet done):** $\int_1^4\frac{x^2+x}{x^{3/2}}dx$ — same split-then-Power-Rule pattern.
+**Ex 35, full run — first substitution (2026-09-17):**
+1. Inside $=x^2$ → $u=x^2$, $du=2x\,dx$, so $x\,dx=\frac12du$ (the $\frac12$ pays back the $2$ the Chain Rule would have produced).
+2. Regroup and swap: $xe^{x^2}dx=e^{x^2}(x\,dx)=\frac12e^u\,du$ — every $x$ is gone ✅
+3. Convert the limits: $x=0\to u=0$, $x=1\to u=1$. *They coincide only because $0^2=0$ and $1^2=1$ — not a rule.*
+4. $\frac12\int_0^1e^u\,du=\frac12\big[e^u\big]_0^1=\frac12(e^1-e^0)=\frac{e-1}2$. Limits converted ⇒ never go back to $x$.
+5. Check by differentiating $\frac12e^{x^2}$: Chain Rule → $\frac12e^{x^2}\cdot2x=xe^{x^2}$ ✅; numerically $\frac{e-1}2\approx0.8591409142$ vs Simpson $0.8591409142295228$ ✅
+
+> [!warning] Why the Ex 17 "divide by $a$" trick fails here
+> $\int e^{ax}dx=\frac1ae^{ax}$ requires a **linear** inside. Here the inside is $x^2$ (curved), so ÷$a$ is illegal — $\frac1{x^2}e^{x^2}$ is *not* an antiderivative.
+> $e^{x^2}$ **on its own has no elementary antiderivative.** The lone $x$ out front is the entire reason this integral is doable: it supplies the inner derivative that substitution needs.
+
+*Ethan asked for the worked solution rather than attempting the setup himself — worth re-testing this pattern cold next session.*
+
+### FTC Part I — differentiating an integral (2026-09-17)
+| # | Problem | Technique | Answer | Numeric check |
+|---|---|---|---|---|
+| Ex 47 | $y=\int_{\sqrt x}^{0}\sin(t^2)\,dt$, find $\frac{dy}{dx}$ | lower limit → **flip sign**, then FTC I + Chain Rule | $-\frac{\sin x}{2\sqrt x}$ | ✅ matches central-difference at $x=0.5,2,3.7$ to 10 dp |
+
+**Ex 47, full run:**
+1. The variable is in the **lower** limit, but FTC I needs it on top. Order rule $\int_b^a=-\int_a^b$ gives $y=-\int_0^{\sqrt x}\sin(t^2)\,dt$.
+2. FTC I with Chain Rule: $\frac{d}{dx}\int_a^{g(x)}f(t)\,dt=f(g(x))\,g'(x)$, with $f(t)=\sin(t^2)$, $g(x)=\sqrt x$.
+3. $f(g(x))=\sin\big((\sqrt x)^2\big)=\sin x$ — the square and the root cancel.
+4. $g'(x)=\frac{d}{dx}x^{1/2}=\frac12x^{-1/2}=\frac1{2\sqrt x}$.
+5. Reattach the minus: $\frac{dy}{dx}=-\frac{\sin x}{2\sqrt x}$. Domain $x>0$.
+
+> [!important] The point of the whole exercise
+> $\sin(t^2)$ has **no elementary antiderivative** — exactly like $e^{x^2}$ in Ex 35. This integral *cannot be evaluated*.
+> FTC I still hands you its derivative without ever computing it. That is what the theorem buys you.
+> Sanity check: at $x=3.7$, $\sin(3.7)<0$ so the answer is **positive** — sign behaves correctly.
+
+**Set for Ethan (not yet done):**
+- $\int_1^4\frac{x^2+x}{x^{3/2}}dx$ — split-then-Power-Rule pattern (set 2026-09-16)
+- $\int_0^2 x\sqrt{x^2+1}\,dx$ — substitution, cold re-test, limits genuinely change; answer $\frac{5\sqrt5-1}3\approx3.3934466292$ (set 2026-09-17, **not revealed to Ethan**)
