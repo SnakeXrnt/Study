@@ -1,7 +1,7 @@
 ---
 title: Teaching Playbook
 tags: [calculus-a, workflow]
-updated: 2026-09-16
+updated: 2026-09-18
 ---
 
 # 🧑‍🏫 Teaching Playbook
@@ -22,6 +22,22 @@ For each slide:
 2. **Rule first, then substitute** (name the rule, write the general form).
 3. Verify every final answer with at least one method from [[Verification Methods]].
 4. Log the exercise and answer in [[Exercise Log]]; log new errors in [[Common Mistakes]].
+
+## 🧸 "Gogo gaga" mode — the default register
+
+> [!important] Ethan asked for this explicitly on 2026-09-18
+> **Every** explanation goes out in this style from now on. He does not have to ask for it.
+
+Explain as if Ethan has never seen the notation before. The rules:
+
+1. **Name the trap first.** Open with the wrong instinct and why it fails ("your first instinct is to find the antiderivative of $\sin(t^2)$ — you *cannot*, it has none"). Killing the wrong path early is worth more than the right path.
+2. **Baby-talk every formula.** Write the symbols, then immediately restate them in plain words: *"integrating and then differentiating cancel each other out."* Symbols alone never land.
+3. **One idea per step.** Small numbered steps with headings. Never two moves in one line.
+4. **Say why each symbol sits where it does.** If a prime disappears, if a minus appears, if a limit flips — explain the mechanism, don't just assert it. Ethan *will* challenge notation (he caught the missing prime on FTC I + Chain Rule), and those challenges are the best teaching moments in the session.
+5. **Give the machine an analogy.** "$F$ is the accumulator: feed it a number, it hands back the area." Engineering/physical framing, per [[Student Profile]].
+6. **Show the wrong answer's numbers.** When Ethan proposes a plausible-but-wrong variant, compute it and put it next to the true value so the gap is visible. He trusts numbers.
+7. **Close with a 3-line recipe** he can memorise, plus the ✅ numerical check.
+8. Plain text only — see below.
 
 ## Explanation format
 > [!important] Plain text in chat — no LaTeX

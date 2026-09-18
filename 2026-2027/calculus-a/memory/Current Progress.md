@@ -1,7 +1,7 @@
 ---
 title: Current Progress
 tags: [calculus-a, progress]
-updated: 2026-09-16
+updated: 2026-09-18
 last_device: "Ethan's main laptop"
 ---
 
@@ -16,6 +16,9 @@ Back to [[00 Index]] · History: [[Session Log]]
 > Ethan reads the chat in a **terminal**, so `$...$` LaTeX does **not** render and he literally cannot read it.
 > In chat, write plain text: `a/b`, `s^(-3/2)`, `sqrt(2)`, `integral from 1 to sqrt(2) of (s^2 + sqrt(s))/s^2 ds`.
 > LaTeX is fine (and wanted) **inside these Obsidian notes**. See [[Teaching Playbook]].
+
+> [!important] Explain in "gogo gaga" mode
+> Ethan asked for this on **2026-09-18**: explain everything as if he is a complete beginner who has never seen the notation — name the wrong instinct first, restate every formula in plain words, one idea per step, and show the numbers when a variant is wrong. It is the **default** register now. Recipe: [[Teaching Playbook]].
 
 ## Last session
 - **Date:** 2026-09-16
